@@ -30,6 +30,8 @@
             padding-top: var(--header-height);
         }
 
+        .no-scroll { overflow: hidden; }
+
         /* --- En-tête / Navigation --- */
         header {
             background-color: #fff;
@@ -76,6 +78,7 @@
             gap: 20px;
             margin: 0;
             padding: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out; 
         }
         .nav-links a {
             text-decoration: none;
@@ -109,7 +112,7 @@
             border-bottom: 1px solid #f0f0f0;
             transition: background-color 0.3s;
         }
-        .dropdown-content a:hover { background-color: var(--bg-alt-color); }
+        .dropdown-content a:hover { background-color: var(--bg-alt-color); color: var(--color-purple-dark); padding-left: 25px;}
 
         .cta-menu-button {
             display: inline-block;
@@ -121,7 +124,9 @@
             text-transform: uppercase;
             font-size: 0.8rem;
             border: none;
+            transition: transform 0.3s, box-shadow 0.3s !important;
         }
+        .cta-menu-button:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(217, 73, 207, 0.4); color: #fff !important; }
 
         /* Burger Menu */
         .burger-menu {
@@ -140,6 +145,10 @@
             background-color: var(--color-blue-dark); 
             transition: all 0.3s ease-in-out;
         }
+        .burger-menu span:last-child { margin-bottom: 0; }
+        .burger-menu.active span:nth-child(1) { transform: rotate(-45deg) translate(-5px, 6px); }
+        .burger-menu.active span:nth-child(2) { opacity: 0; }
+        .burger-menu.active span:nth-child(3) { transform: rotate(45deg) translate(-5px, -6px); }
 
         /* --- SECTION CONTACT --- */
         .contact-section {
@@ -252,7 +261,7 @@
 
         /* --- STYLE DU BOUTON TOP --- */
         #scrollTopBtn {
-            display: none; /* Caché par défaut */
+            display: none; 
             position: fixed;
             bottom: 30px;
             right: 30px;
@@ -279,26 +288,80 @@
         footer { background-color: #111; color: #ccc; text-align: center; padding: 40px 20px; }
         footer img { height: 30px; margin-bottom: 10px; }
 
+        /* --- RESPONSIVE MOBILE --- */
         @media (max-width: 768px) {
             .contact-form { grid-template-columns: 1fr; }
             .form-group.full-width { grid-column: span 1; }
             .valider-btn, .mandatory-text { grid-column: span 1; }
 
+            /* Menu unifié UIPACT */
             .burger-menu { display: block; }
+
             .nav-links {
-                position: absolute; top: var(--header-height); right: 0;
-                height: calc(100vh - var(--header-height)); width: 100%; 
-                background-color: #fff; flex-direction: column; justify-content: center;
-                transform: translateY(-110%); opacity: 0; z-index: 1050; transition: 0.3s;
+                position: absolute;
+                top: var(--header-height);
+                right: 0;
+                height: calc(100vh - var(--header-height)); 
+                width: 100%; 
+                background-color: #fff;
+                flex-direction: column; 
+                justify-content: flex-start;
+                gap: 0; 
+                transform: translateY(-110%); 
+                opacity: 0;
+                z-index: 1050;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
             }
-            .nav-links.nav-active { transform: translateY(0%); opacity: 1; }
-            .dropdown-content { position: static; box-shadow: none; display: none; }
-            .dropdown-content.mobile-open { display: block; }
+
+            .nav-links.nav-active {
+                transform: translateY(0%);
+                opacity: 1;
+            }
+
+            .nav-links li {
+                width: 100%;
+                text-align: center;
+                border-bottom: 1px solid var(--bg-alt-color);
+            }
+            .nav-links li:last-child { border-bottom: none; }
+
+            .nav-links a {
+                padding: 20px;
+                font-size: 1.1rem;
+            }
+
+            .dropdown-content {
+                display: none;
+                position: static; 
+                box-shadow: none;
+                border: none;
+                background-color: var(--bg-alt-color); 
+                min-width: 100%;
+            }
+            
+            .dropdown-content.mobile-open {
+                display: block;
+            }
+
+            .dropdown-content a { padding: 15px 20px; border-bottom: 1px solid #fff; }
+            
+            .dropdown:hover .dropdown-content { display: none; }
+            .dropdown:hover .dropdown-content.mobile-open { display: block; } 
+
+            .dropdown > a { font-weight: 700; color: var(--color-blue-dark); }  
+
+            .cta-menu-button { 
+                margin: 20px auto; 
+                width: calc(100% - 40px); 
+                display: block; 
+                box-sizing: border-box;
+            }
+
             #scrollTopBtn { bottom: 20px; right: 20px; width: 45px; height: 45px; }
         }
     </style>
 </head>
-<body>
+<body id="body">
 
      <header>
         <nav>
@@ -407,15 +470,30 @@
     <button id="scrollTopBtn" title="Retour en haut">↑</button>
 
     <script>
-        // Menu Burger
+        // --- SCRIPT MENU MOBILE (Unifié) ---
         const burger = document.getElementById('burgerToggle');
         const nav = document.querySelector('.nav-links');
+        const body = document.getElementById('body'); // Récupération du body
+        
+        const navLinksArr = document.querySelectorAll('.nav-links li a:not(.dropdown-toggle)');
         const dropdown = document.querySelector('.dropdown-toggle');
         const dropContent = document.querySelector('.dropdown-content');
 
-        burger.addEventListener('click', () => {
+        function toggleMenu() {
             burger.classList.toggle('active');
             nav.classList.toggle('nav-active');
+            body.classList.toggle('no-scroll'); // Empêche le scroll quand ouvert
+        }
+
+        burger.addEventListener('click', toggleMenu);
+
+        // Ferme le menu quand on clique sur un lien (sauf le menu déroulant)
+        navLinksArr.forEach(link => {
+            link.addEventListener('click', () => {
+                if (nav.classList.contains('nav-active')) {
+                    toggleMenu();
+                }
+            });
         });
 
         if(dropdown) {
@@ -430,14 +508,13 @@
         // --- SCRIPT BOUTON TOP ---
         const scrollTopBtn = document.getElementById("scrollTopBtn");
 
-        window.onscroll = function() {
-            // Affiche le bouton après 300px de scroll
+        window.addEventListener('scroll', function() {
             if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
                 scrollTopBtn.style.display = "flex";
             } else {
                 scrollTopBtn.style.display = "none";
             }
-        };
+        });
 
         scrollTopBtn.onclick = function() {
             window.scrollTo({
