@@ -166,7 +166,6 @@
         .burger-menu.active span:nth-child(3) { transform: rotate(45deg) translate(-5px, -6px); }
 
         /* Section Héros */
-         /* Section Héros */
         .hero {
             height: calc(100vh - var(--header-height)); 
             display: flex;
@@ -178,9 +177,9 @@
             
             /* --- AJOUT DE L'IMAGE DE FOND ICI --- */
             background-image: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('img/header.png'); 
-            background-size: cover; /* Permet à l'image de prendre tout l'espace sans se déformer */
-            background-position: center; /* Centre l'image */
-            background-repeat: no-repeat; /* Évite que l'image ne se répète */
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat; 
         }
         .hero::before {
             content: ''; position: absolute; top: -20%; right: -20%; width: 60%; height: 60%;
@@ -278,18 +277,18 @@
         }
         .about-text p { margin: 0; line-height: 1.8; }
 
-        /* --- NOUVEAU : CONTACT EN NOIR --- */
+        /* --- CONTACT EN NOIR --- */
         #contact { 
-            max-width: 100%; /* Prend toute la largeur de l'écran */
-            background-color: #111; /* Fond totalement noir */
+            max-width: 100%; 
+            background-color: #111; 
             padding: 100px 20px; 
             margin-top: 50px;
         }
         
         #contact .section-title {
-            background: none; /* Enlève le dégradé de texte */
+            background: none; 
             -webkit-text-fill-color: initial;
-            color: var(--color-fuchsia-vibrant); /* Titre en rose fuchsia */
+            color: var(--color-fuchsia-vibrant); 
             font-family: var(--font-title);
             font-style: italic;
         }
@@ -308,8 +307,92 @@
         }
         #scrollTopBtn:hover { transform: scale(1.1); background: var(--color-blue-dark); }
 
+        /* --- FOOTER & RÉSEAUX SOCIAUX --- */
         footer { background-color: #111; color: #ccc; text-align: center; padding: 40px 20px; }
-        footer img { height: 30px; margin-bottom: 10px; }
+        footer img { height: 30px; margin-bottom: 15px; }
+        footer p { margin: 10px 0; }
+        footer a { color: var(--color-fuchsia-vibrant); text-decoration: none; transition: color 0.3s;}
+        footer a:hover { color: var(--color-cyan-vibrant); }
+        .footer-links { margin-top: 15px; font-size: 0.9rem; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;}
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .social-links a {
+            display: flex; align-items: center; justify-content: center;
+            width: 45px; height: 45px; border-radius: 50%;
+            background-color: #222; color: #fff; transition: all 0.3s ease;
+        }
+        .social-links a:hover {
+            background: linear-gradient(135deg, var(--color-cyan-vibrant), var(--color-fuchsia-vibrant));
+            color: #fff; transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .social-links svg { width: 22px; height: 22px; }
+
+        /* --- POPUP INSTAGRAM --- */
+        .popup-overlay {
+            display: none; 
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .popup-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        .popup-content {
+            background-color: var(--bg-color);
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .popup-overlay.show .popup-content {
+            transform: translateY(0);
+        }
+        .close-popup {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 32px;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+        .close-popup:hover { color: var(--color-fuchsia-vibrant); }
+        .popup-content h3 {
+            color: var(--color-blue-dark);
+            font-family: var(--font-title);
+            font-size: 1.8rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        .popup-content p { color: #555; margin-bottom: 25px; line-height: 1.5; }
+        .popup-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 12px 25px; border-radius: 50px;
+            background: linear-gradient(135deg, var(--color-cyan-vibrant), var(--color-fuchsia-vibrant));
+            color: #fff !important; text-decoration: none; font-weight: 700;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .popup-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(217, 73, 207, 0.4);
+        }
+        .popup-btn svg { width: 20px; height: 20px; }
 
         /* --- RESPONSIVE MOBILE --- */
         @media (max-width: 1024px) {
@@ -520,9 +603,42 @@
         </form>
     </section>
 
-    <footer>
+    <div id="instaPopup" class="popup-overlay">
+        <div class="popup-content">
+            <span class="close-popup" onclick="closePopup()">&times;</span>
+            <h3>Rejoignez la communauté !</h3>
+            <p>Suivez UIPACT sur Instagram pour découvrir mes dernières créations visuelles et les coulisses de mes projets.</p>
+            <a href="https://www.instagram.com/uipact/" target="_blank" rel="noopener noreferrer" class="popup-btn" onclick="closePopup()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+                Suivez-moi sur Instagram
+            </a>
+        </div>
+    </div>
+
+   <footer>
         <img src="logo.png" alt="UIPACT Logo">
+        
+        <div class="social-links">
+            <a href="https://www.instagram.com/uipact/" target="_blank" rel="noopener noreferrer" title="Suivez UIPACT sur Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+            </a>
+        </div>
+
         <p>© 2026 UIPACT - Tous droits réservés.</p>
+        
+        <div class="footer-links">
+            <a href="mentions-legales.html">Mentions Légales</a>
+            <a href="cgu.html">CGU</a>
+            <a href="politique-confidentialite.html">Politique de Confidentialité</a>
+        </div>
     </footer>
 
     <button id="scrollTopBtn" title="Retour en haut">↑</button>
@@ -578,6 +694,34 @@
                 behavior: "smooth"
             });
         });
+
+        // --- SCRIPT POPUP INSTAGRAM ---
+        const instaPopup = document.getElementById('instaPopup');
+        
+        function showPopup() {
+            // Vérifie si le popup a déjà été vu pendant cette session
+            if (!sessionStorage.getItem('instaPopupShown')) {
+                setTimeout(() => {
+                    instaPopup.classList.add('show');
+                }, 3000); // Fait apparaître le popup après 3 secondes
+            }
+        }
+
+        function closePopup() {
+            instaPopup.classList.remove('show');
+            // Enregistre dans le navigateur que le visiteur l'a fermé
+            sessionStorage.setItem('instaPopupShown', 'true');
+        }
+
+        // Fermer le popup en cliquant à l'extérieur de la boîte
+        window.addEventListener('click', function(event) {
+            if (event.target === instaPopup) {
+                closePopup();
+            }
+        });
+
+        // Lance la logique du popup une fois la page chargée
+        window.addEventListener('load', showPopup);
     </script>
 </body>
 </html>
