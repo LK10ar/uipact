@@ -196,8 +196,45 @@
         .btn-black { background-color: var(--color-blue-dark); color: #fff; padding: 12px 25px; text-decoration: none; font-weight: bold; display: inline-block; transition: background-color 0.3s; font-size: 0.9rem; border-radius: 5px; }
         .btn-black:hover { background-color: var(--color-purple-dark); }
         
-       footer { background-color: #111; color: #ccc; text-align: center; padding: 40px 20px; }
-        footer img { height: 30px; margin-bottom: 10px; }
+        /* --- FOOTER & RÉSEAUX SOCIAUX --- */
+        footer { background-color: #111; color: #ccc; text-align: center; padding: 40px 20px; }
+        footer img { height: 30px; margin-bottom: 15px; }
+        footer p { margin: 10px 0; }
+        footer a { color: var(--color-fuchsia-vibrant); text-decoration: none; transition: color 0.3s;}
+        footer a:hover { color: var(--color-cyan-vibrant); }
+        .footer-links { margin-top: 15px; font-size: 0.9rem; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;}
+
+        /* Styles spécifiques pour Instagram */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: #222; /* Fond gris foncé */
+            color: #fff; /* Icône blanche */
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            /* Le même dégradé que tes boutons pour rester cohérent ! */
+            background: linear-gradient(135deg, var(--color-cyan-vibrant), var(--color-fuchsia-vibrant));
+            color: #fff;
+            transform: translateY(-3px); /* Petit effet de soulèvement */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        .social-links svg {
+            width: 22px;
+            height: 22px;
+        }
 
         @media (max-width: 1024px) { 
             .print-grid { grid-template-columns: repeat(2, 1fr); } 
@@ -402,7 +439,24 @@
     
     <footer>
         <img src="logo.png" alt="UIPACT Logo">
+        
+        <div class="social-links">
+            <a href="https://www.instagram.com/uipact/" target="_blank" rel="noopener noreferrer" title="Suivez UIPACT sur Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+            </a>
+        </div>
+
         <p>© 2026 UIPACT - Tous droits réservés.</p>
+        
+        <div class="footer-links">
+            <a href="mentions-legales.html">Mentions Légales</a>
+            <a href="cgu.html">CGU</a>
+            <a href="politique-confidentialite.html">Politique de Confidentialité</a>
+        </div>
     </footer>
 
     <script>
