@@ -113,7 +113,7 @@
         .project-category { font-size: 0.8rem; text-transform: uppercase; font-weight: 800; color: var(--color-fuchsia-vibrant); margin-bottom: 10px; display: block; }
         .project-title { font-size: 1.4rem; color: var(--color-blue-dark); margin: 0; font-weight: 700; }
 
-        /* --- CTA Portfolio (MODIFIÉ : Fond noir + Bouton bleu/violet) --- */
+        /* --- CTA Portfolio --- */
         .cta-portfolio { background-color: #111; color: #fff; text-align: center; padding: 80px 20px; }
         .cta-portfolio h2 { 
             font-family: var(--font-title); 
@@ -140,11 +140,27 @@
         }
 
         /* --- STYLES DE LA MODALE --- */
-        .modal { display: none; position: fixed; z-index: 2000; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); }
-        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 85vh; object-fit: contain; border-radius: 5px; animation: zoomIn 0.3s ease; }
+        .modal { 
+            display: none; position: fixed; z-index: 2000; padding-top: 50px; left: 0; top: 0; 
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); 
+            overflow: auto; /* Permet le scroll si l'écran est tout petit */
+        }
+        .modal-content { 
+            margin: auto; display: block; max-width: 90%; max-height: 85vh; 
+            object-fit: contain; border-radius: 5px; animation: zoomIn 0.3s ease; 
+        }
         @keyframes zoomIn { from {transform: scale(0.8); opacity: 0;} to {transform: scale(1); opacity: 1;} }
-        .modal-close { position: absolute; top: 20px; right: 35px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer; transition: color 0.3s; }
+        .modal-close { position: absolute; top: 20px; right: 35px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer; transition: color 0.3s; z-index: 2001; }
         .modal-close:hover { color: var(--color-cyan-vibrant); }
+
+        /* Correction Iframe Youtube pour Mobile et PC */
+        #fullIframe {
+            width: 90%;
+            max-width: 1000px;
+            aspect-ratio: 16 / 9; /* Maintient les proportions parfaites de la vidéo */
+            height: auto;
+            background-color: #000;
+        }
 
         footer { background-color: #111; color: #ccc; text-align: center; padding: 40px 20px; }
         footer img { height: 30px; margin-bottom: 10px; }
@@ -182,6 +198,11 @@
             
             .portfolio-header h1 { font-size: 2.2rem; }
             .portfolio-container { grid-template-columns: 1fr; }
+
+            /* Sur mobile, la vidéo prend presque toute la largeur */
+            #fullIframe {
+                width: 95%;
+            }
         }
     </style>
 </head>
@@ -251,7 +272,7 @@
                 </div>
             </div>
 
-<div class="project-card" data-category="uxui" onclick="openModal('https://www.youtube.com/watch?v=83NiDu1uN8k')">
+            <div class="project-card" data-category="uxui" onclick="openModal('https://www.youtube.com/watch?v=83NiDu1uN8k')">
                 <div class="project-image" style="background-image: url('img/sport.png'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: var(--bg-alt-color);"></div>
                 
                 <div class="project-info">
@@ -379,7 +400,7 @@
         <span class="modal-close" onclick="closeModal()">&times;</span>
         <img class="modal-content" id="fullImage" style="display: none;">
         <video class="modal-content" id="fullVideo" controls autoplay style="display: none;"></video>
-        <iframe class="modal-content" id="fullIframe" frameborder="0" allow="autoplay; encrypted-media; fullscreen" style="display: none; height: 80vh; width: 90%; max-width: 1000px; border-radius: 5px;"></iframe>
+        <iframe class="modal-content" id="fullIframe" frameborder="0" allow="autoplay; encrypted-media; fullscreen" style="display: none;"></iframe>
     </div>
 
     <button id="scrollTopBtn" title="Retour en haut">↑</button>
@@ -459,7 +480,19 @@
         const modal = document.getElementById("imageModal");
         const modalImg = document.getElementById("fullImage");
         const modalVideo = document.getElementById("fullVideo");
-        const modalIframe = document.getElementById("fullIframe"); // On ajoute l'iframe
+        const modalIframe = document.getElementById("fullIframe");
+
+        // Fonction pour transformer un lien Youtube "watch" en lien Youtube "embed"
+        function getYoutubeEmbedUrl(url) {
+            let videoId = "";
+            if (url.includes('youtube.com/watch?v=')) {
+                videoId = url.split('v=')[1].split('&')[0];
+            } else if (url.includes('youtu.be/')) {
+                videoId = url.split('youtu.be/')[1].split('?')[0];
+            }
+            // Retourne le format Embed avec Autoplay
+            return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        }
 
         function openModal(mediaSrc) {
             modal.style.display = "block";
@@ -474,9 +507,9 @@
 
             // On vérifie le type de média cliqué
             if (mediaSrc.includes('youtube.com') || mediaSrc.includes('youtu.be')) {
-                // C'est un lien YouTube !
+                // C'est un lien YouTube ! On génère le bon lien
                 modalIframe.style.display = "block";
-                modalIframe.src = mediaSrc;
+                modalIframe.src = getYoutubeEmbedUrl(mediaSrc);
             } else if (mediaSrc.endsWith('.mp4')) {
                 // C'est une vidéo locale
                 modalVideo.style.display = "block";
