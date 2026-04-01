@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UX / UI Design - UIPACT</title>
-    <link rel="icon" type="image/png" href="logo.png"> 
     <style>
         /* --- CSS : Variables et base --- */
         :root {
@@ -427,37 +426,37 @@
     <section class="portfolio-preview">
         <h2>Exemples de maquettes UX/UI</h2>
         
-        <div class="carousel-container">
+       <div class="carousel-container">
             <button class="carousel-btn prev" onclick="moveSlide(-1)">&#10094;</button>
             
             <div class="carousel-track-wrapper">
                 <ul class="carousel-track" id="track">
                     <li class="carousel-slide">
-                        <div class="carousel-image" style="background: linear-gradient(135deg, var(--color-blue-dark), var(--color-cyan-vibrant));">
-                            [Aperçu Maquette Dashboard]
+                        <div class="carousel-image" style="background-image: url('img/sport.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
                         </div>
                         <div class="carousel-caption">
-                            <strong>SaaS Dashboard :</strong> Refonte complète de l'interface utilisateur pour simplifier la lecture des données.
+                            <strong>Application de Sport :</strong> L'interface utilisateur pour simplifier la lecture des données.
                         </div>
                     </li>
                     <li class="carousel-slide">
-                        <div class="carousel-image" style="background: linear-gradient(135deg, var(--color-purple-dark), var(--color-fuchsia-vibrant));">
-                            [Aperçu Maquette App Mobile]
+                        <div class="carousel-image" style="background-image: url('img/cheneweb.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
                         </div>
                         <div class="carousel-caption">
-                            <strong>Application e-commerce :</strong> Optimisation du parcours d'achat (UX) et design des écrans (UI).
+                            <strong>Design Web :</strong> Design Web du site Le Chêne Doré.
                         </div>
                     </li>
                     <li class="carousel-slide">
-                        <div class="carousel-image" style="background: linear-gradient(135deg, #333, #666); color: #fff;">
-                            [Aperçu Audit UX]
+                        <div class="carousel-image" style="background-image: url('img/foodweb.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
                         </div>
                         <div class="carousel-caption">
-                            <strong>Audit Ergonomique :</strong> Identification des points de blocage sur le site vitrine d'une agence immobilière.
+                            <strong>Design Web Ergonomique :</strong> Identification des points de blocage sur le site one page d'un fast food.
                         </div>
                     </li>
                 </ul>
             </div>
+            
+            <button class="carousel-btn next" onclick="moveSlide(1)">&#10095;</button>
+        </div>
             
             <button class="carousel-btn next" onclick="moveSlide(1)">&#10095;</button>
         </div>
@@ -477,7 +476,7 @@
         <a href="contact.html" class="btn-black">Contactez-moi</a>
     </section>
 
-   <footer>
+    <footer>
         <img src="logo.png" alt="UIPACT Logo">
         <p>© 2026 UIPACT - Tous droits réservés.</p>
     </footer>
@@ -485,42 +484,7 @@
     <button id="scrollTopBtn" title="Retour en haut">↑</button>
 
     <script>
-        // --- SCRIPT DARK MODE (Même si les boutons HTML ne sont pas sur cette page, on garde le code JS pour ne rien casser) ---
-        const bodyEl = document.getElementById('body');
-        const themeBtnDesktop = document.getElementById('themeToggleBtnDesktop');
-        const themeBtnMobile = document.getElementById('themeToggleBtnMobile');
-        
-        function updateButtonAppearance(isDark) {
-            const icon = isDark ? '☀️' : '🌙';
-            const text = isDark ? 'Passer en mode clair' : 'Passer en mode sombre';
-            if (themeBtnDesktop) {
-                themeBtnDesktop.textContent = icon;
-                themeBtnDesktop.title = text;
-            }
-            if (themeBtnMobile) {
-                themeBtnMobile.textContent = icon;
-                themeBtnMobile.title = text;
-            }
-        }
-
-        const currentTheme = localStorage.getItem('uipact_theme');
-        if(currentTheme === 'dark') {
-            bodyEl.classList.add('dark-mode');
-            updateButtonAppearance(true);
-        } else {
-            updateButtonAppearance(false);
-        }
-
-        function toggleTheme() {
-            bodyEl.classList.toggle('dark-mode');
-            const isDark = bodyEl.classList.contains('dark-mode');
-            localStorage.setItem('uipact_theme', isDark ? 'dark' : 'light');
-            updateButtonAppearance(isDark);
-        }
-
-        if (themeBtnDesktop) themeBtnDesktop.addEventListener('click', toggleTheme);
-        if (themeBtnMobile) themeBtnMobile.addEventListener('click', toggleTheme);
-
+    
 
         // --- SCRIPT CARROUSEL ---
         let slideIndex = 0;
