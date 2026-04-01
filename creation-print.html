@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Création Print - UIPACT</title>
+    <style>
+        /* --- CSS : Variables et base --- */
+        :root {
+            --color-blue-dark: #223c94;
+            --color-cyan-vibrant: #22e1f2;
+            --color-purple-dark: #6e2da3;
+            --color-fuchsia-vibrant: #d949cf;
+            --color-orange: #f39c12;
+            --text-color: #333;
+            --bg-color: #fff;
+            --bg-alt-color: #f4f7f6;
+            --font-family: 'Inter', sans-serif;
+            --font-title: 'Georgia', serif; 
+            --header-height: 80px; 
+        }
+
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            scroll-behavior: smooth;
+            line-height: 1.6;
+            padding-top: var(--header-height); 
+        }
+
+        /* --- En-tête / Navigation --- */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            height: var(--header-height);
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .logo-container { display: flex; align-items: center; text-decoration: none; }
+        .logo-container img { height: 40px; margin-right: 10px; }
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--color-blue-dark), var(--color-purple-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Menu Normal (Ordinateur) */
+        .nav-links {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out; 
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+            display: block;
+            padding: 10px 0;
+        }
+
+        .nav-links a:hover { color: var(--color-purple-dark); }
+
+        /* Menu déroulant (Ordinateur) */
+        .dropdown { position: relative; }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #fff;
+            min-width: 260px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+            z-index: 1001;
+            border-radius: 0 0 8px 8px;
+            overflow: hidden;
+            border-top: 3px solid var(--color-cyan-vibrant);
+        }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; }
+        .dropdown-content a:hover { background-color: var(--bg-alt-color); color: var(--color-purple-dark); padding-left: 25px; }
+
+        .cta-menu-button {
+            display: inline-block;
+            padding: 10px 20px !important;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--color-cyan-vibrant), var(--color-fuchsia-vibrant));
+            color: #fff !important;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
+            border: none;
+            transition: transform 0.3s, box-shadow 0.3s !important;
+        }
+        .cta-menu-button:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(217, 73, 207, 0.4); color: #fff !important;}
+
+        /* Bouton BURGER */
+        .burger-menu {
+            display: none; 
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 10px;
+            z-index: 1100; 
+        }
+
+        .burger-menu span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin-bottom: 5px;
+            background-color: var(--color-blue-dark); 
+            transition: all 0.3s ease-in-out;
+        }
+        .burger-menu span:last-child { margin-bottom: 0; }
+        .burger-menu.active span:nth-child(1) { transform: rotate(-45deg) translate(-5px, 6px); }
+        .burger-menu.active span:nth-child(2) { opacity: 0; }
+        .burger-menu.active span:nth-child(3) { transform: rotate(45deg) translate(-5px, -6px); }
+
+        /* --- Structure de la page --- */
+        .page-header { padding: 80px 20px 50px; text-align: center; } 
+        .page-title { font-size: 3rem; color: var(--color-blue-dark); margin-bottom: 20px; }
+        .page-intro { max-width: 800px; margin: 0 auto 40px auto; font-size: 1.1rem; color: #555; }
+        .service-section { max-width: 800px; margin: 0 auto 80px auto; text-align: center; padding: 0 20px; }
+        .service-icon-large { width: 120px; height: 120px; background-color: #333; border-radius: 50%; margin: 0 auto 20px; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; }
+        .geo-placeholder { width: 60px; height: 60px; }
+        .geo-placeholder.shape-print { background: var(--color-cyan-vibrant); clip-path: polygon(10% 0, 90% 0, 100% 10%, 100% 100%, 0 100%, 0 10%); }
+        .service-title { font-family: var(--font-title); font-size: 2.2rem; color: var(--color-blue-dark); margin-bottom: 20px; font-style: italic; }
+        .service-text { text-align: left; margin-bottom: 20px; color: #444; }
+        .service-text p { margin-bottom: 15px; }
+        .service-list { text-align: left; margin-bottom: 20px; padding-left: 20px; color: #444; }
+        .service-list li { margin-bottom: 10px; }
+        .separator { width: 50px; height: 1px; background-color: #ccc; margin: 40px auto; }
+        .tarifs-title { font-weight: bold; margin-bottom: 20px; }
+        .tarif-item { margin-bottom: 10px; color: #444; }
+        .tarif-disclaimer { font-size: 0.9rem; font-style: italic; color: #777; margin-top: 15px; margin-bottom: 30px; display: block; }
+
+        .print-gallery-section { max-width: 1400px; margin: 0 auto 80px auto; padding: 60px 20px; background-color: var(--bg-alt-color); border-radius: 20px; }
+        .gallery-title { font-size: 2.2rem; color: var(--color-blue-dark); margin-bottom: 40px; font-weight: 800; text-align: center; }
+        /* CORRECTION ICI : Le mot exemples en dark purple */
+        .gallery-title span { font-family: var(--font-title); color: var(--color-purple-dark); font-style: italic; font-weight: normal; }
+        
+        .print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
+       .print-card { 
+            display: block; /* Ajout : permet au lien de prendre toute la taille de la carte */
+            text-decoration: none; /* Ajout : empêche le texte d'être souligné */
+            position: relative; 
+            border-radius: 15px; 
+            overflow: hidden; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+            height: 400px; 
+            transition: transform 0.3s; 
+            background-color: #eaeaea; 
+        }
+         .print-card:hover { transform: translateY(-10px); }
+        .print-img-placeholder { width: 100%; height: 100%; background-size: cover; background-position: center; }
+        .img-1 { background-image: url('nom-de-ton-image.jpg'); }
+        .img-2 { background-image: url('nom-de-ton-image.jpg'); }
+        .img-3 { background-image: url('nom-de-ton-image.jpg'); }
+        .img-4 { background-image: url('nom-de-ton-image.jpg'); }
+        .print-label { position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px 20px 20px 20px; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); color: #fff; font-size: 1.4rem; font-weight: 700; box-sizing: border-box; }
+
+        .cta-final { background-color: #111; color: #fff; text-align: center; padding: 80px 20px; margin-top: 50px; }
+        .cta-final h2 { font-family: var(--font-title); font-size: 2rem; color: var(--color-fuchsia-vibrant); margin-bottom: 15px; font-style: italic; }
+        .cta-final p { margin-bottom: 30px; font-size: 1.1rem; }
+        
+        /* Bouton Demander un devis */
+        .btn-black { background-color: var(--color-blue-dark); color: #fff; padding: 12px 25px; text-decoration: none; font-weight: bold; display: inline-block; transition: background-color 0.3s; font-size: 0.9rem; border-radius: 5px; }
+        .btn-black:hover { background-color: var(--color-purple-dark); }
+        
+        footer { background-color: #111; color: #fff; text-align: center; padding: 30px 20px; }
+
+        @media (max-width: 1024px) { 
+            .print-grid { grid-template-columns: repeat(2, 1fr); } 
+        }
+
+        @media (max-width: 768px) {
+            .burger-menu { display: block; }
+
+            .nav-links {
+                position: absolute;
+                top: var(--header-height);
+                right: 0;
+                height: calc(100vh - var(--header-height)); 
+                width: 100%; 
+                background-color: #fff;
+                flex-direction: column; 
+                justify-content: flex-start; /* Changé pour s'aligner par le haut */
+                gap: 0; 
+                transform: translateY(-110%); 
+                opacity: 0;
+                z-index: 1050;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.nav-active {
+                transform: translateY(0%);
+                opacity: 1;
+            }
+
+            .nav-links li {
+                width: 100%;
+                text-align: center;
+                border-bottom: 1px solid #eee;
+            }
+            .nav-links li:last-child { border-bottom: none; } /* Enlève la bordure sous le bouton contact */
+
+            .nav-links a {
+                padding: 20px;
+                font-size: 1.1rem;
+            }
+
+            .dropdown-content {
+                display: none;
+                position: static; 
+                box-shadow: none;
+                border: none;
+                background-color: var(--bg-alt-color); 
+                min-width: 100%;
+            }
+            
+            .dropdown-content.mobile-open {
+                display: block;
+            }
+
+            .dropdown-content a { padding: 15px 20px; border-bottom: 1px solid #ddd; }
+            
+            .dropdown:hover .dropdown-content { display: none; }
+            .dropdown:hover .dropdown-content.mobile-open { display: block; } 
+
+            /* CORRECTION ICI : "Mes savoir-faire" en violet sur mobile */
+             .dropdown > a { font-weight: 700; color: var(--color-blue-dark); }  
+
+            /* CORRECTION ICI : Bouton CTA prend toute la largeur */
+            .cta-menu-button { 
+                margin: 20px auto; 
+                width: calc(100% - 40px); 
+                display: block; 
+                box-sizing: border-box;
+            }
+            
+            .print-grid { grid-template-columns: 1fr; }
+            .page-title { font-size: 2.2rem; }
+            .gallery-title { font-size: 1.8rem; }
+        }
+        
+        /* --- Bouton Retour en Haut --- */
+        #scrollTopBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1099;
+            font-size: 24px;
+            font-weight: bold;
+            border: none;
+            outline: none;
+            background: linear-gradient(135deg, var(--color-cyan-vibrant), var(--color-fuchsia-vibrant));
+            color: white;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        #scrollTopBtn:hover {
+            transform: scale(1.1); 
+            background: var(--color-blue-dark); 
+        }
+    </style>
+</head>
+<body id="body">
+
+    <header>
+        <nav>
+            <a href="index.html" class="logo-container">
+                <img src="logo.png" alt="UIPACT Logo">
+                <span class="brand-name">UIPACT</span>
+            </a>
+
+            <button class="burger-menu" id="burgerToggle">
+                <span></span><span></span><span></span>
+            </button>
+
+            <ul class="nav-links">
+                <li><a href="index.html">Accueil</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle">Mes savoir-faire ▾</a>
+                    <div class="dropdown-content">
+                        <a href="creation-graphique.html">Création graphique &amp; Webdesign</a>
+                        <a href="creation-print.html">Création Print</a>
+                        <a href="sites-web.html">Sites Web</a>
+                        <a href="identite-visuelle.html">Logo, identité visuelle</a>
+                        <a href="ux-ui.html">UX Design / UI Design</a>
+                    </div>
+                </li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="a-propos.html">À propos</a></li>
+                <li><a href="contact.html" class="cta-menu-button">CONTACT</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="page-header"></div>
+
+    <section class="service-section">
+        <div class="service-icon-large">
+            <div class="geo-placeholder shape-print"></div>
+        </div>
+        <h2 class="service-title">Création de supports Print</h2>
+        
+        <div class="service-text">
+            <p><strong>Le papier reste un vecteur d'émotion puissant et un outil marketing indispensable.</strong></p>
+            <p>Je conçois l'ensemble de vos supports de communication imprimés pour mettre en valeur votre image de marque lors de vos rendez-vous clients, sur vos points de vente ou lors d'événements professionnels.</p>
+            <p>De la création graphique jusqu'à la préparation des fichiers pour l'imprimeur, je vous accompagne sur :</p>
+        </div>
+        
+        <ul class="service-list">
+            <li><strong>Papeterie :</strong> Cartes de visite, papier à en-tête, chemises à rabats, enveloppes personnalisées...</li>
+            <li><strong>Supports promotionnels :</strong> Flyers, dépliants, affiches, plaquettes commerciales...</li>
+            <li><strong>Édition :</strong> Brochures, catalogues produits, rapports d'activité, magazines...</li>
+            <li><strong>Grands formats &amp; Signalétique :</strong> Bâches, roll-ups, kakémonos, habillage de stand...</li>
+        </ul>
+
+        <div class="separator"></div>
+
+        <div class="tarifs-title">TARIFS</div>
+        <div class="tarif-item"><strong>Carte de visite (Création Recto/Verso) :</strong> à partir de 90 € HT</div>
+        <div class="tarif-item"><strong>Flyer / Affiche :</strong> à partir de 150 € HT</div>
+        <div class="tarif-item"><strong>Dépliant (2 ou 3 volets) :</strong> à partir de 250 € HT</div>
+        <div class="tarif-item"><strong>Couverture seule (Rapport, magazine, livre) :</strong> à partir de 150 € HT</div>
+         <span class="tarif-disclaimer">*Frais d'impression non inclus. Les tarifs varient selon le nombre de propositions et la complexité du projet.</span>
+        
+        <br>
+        <a href="contact.html" class="btn-black">Demander un devis</a>
+    </section>
+
+    <section class="print-gallery-section">
+        <h2 class="gallery-title">Des <span>exemples</span> de nos réalisations</h2>
+        
+        <div class="print-grid">
+            <a href="creation-graphique.html" class="print-card">
+                <div class="print-img-placeholder" style="background-image: url('img/carte.png'); background-size: cover; background-position: center;"></div>
+                <div class="print-label">Carte de visite</div>
+            </a>
+            
+            <a href="creation-graphique.html" class="print-card">
+                <div class="print-img-placeholder" style="background-image: url('img/flyers-relax.jpg'); background-size: cover; background-position: center;"></div>
+                <div class="print-label">Flyer</div>
+            </a>
+            
+            <a href="creation-graphique.html" class="print-card">
+                <div class="print-img-placeholder" style="background-image: url('img/menu.png'); background-size: cover; background-position: center;"></div>
+                <div class="print-label">Dépliant 3 volets </div>
+            </a>
+            
+            <a href="creation-graphique.html" class="print-card">
+                <div class="print-img-placeholder" style="background-image: url('img/tout.png'); background-size: cover; background-position: center;"></div>
+                <div class="print-label">Rapport</div>
+            </a>
+        </div>
+    </section>
+
+    <section class="cta-final">
+        <h2>Un projet d'impression ?</h2>
+        <p>Contactez-moi pour discuter de vos besoins en papeterie et supports de communication.</p>
+        <a href="contact.html" class="btn-black">Me contacter</a>
+    </section>
+    
+    <button id="scrollTopBtn" title="Retour en haut" style="display: none;">↑</button>
+    
+    <footer>
+        <p>© 2026 UIPACT - Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        const burger = document.getElementById('burgerToggle');
+        const nav = document.querySelector('.nav-links');
+        const body = document.getElementById('body');
+        
+        const navLinksArr = document.querySelectorAll('.nav-links li a:not(.dropdown-toggle)');
+        const dropToggleBtn = document.querySelector('.dropdown-toggle');
+        const dropContent = document.querySelector('.dropdown-content');
+
+        function toggleMenu() {
+            burger.classList.toggle('active'); 
+            nav.classList.toggle('nav-active'); 
+            body.classList.toggle('no-scroll'); 
+        }
+        burger.addEventListener('click', toggleMenu);
+
+        navLinksArr.forEach(link => {
+            link.addEventListener('click', () => {
+                if (nav.classList.contains('nav-active')) {
+                    toggleMenu();
+                }
+            });
+        });
+
+        dropToggleBtn.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768) {
+                event.preventDefault(); 
+                dropContent.classList.toggle('mobile-open'); 
+            }
+        });
+
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+        window.addEventListener('scroll', function() {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollTopBtn.style.display = "block";
+            } else {
+                scrollTopBtn.style.display = "none";
+            }
+        });
+
+        scrollTopBtn.addEventListener("click", function() {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+    </script>
+
+</body>
+</html>
