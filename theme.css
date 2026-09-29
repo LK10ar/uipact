@@ -339,3 +339,100 @@ footer.site-footer .social-links svg { width: 18px; height: 18px; }
     .footer-col h4::after { left: 50%; transform: translateX(-50%); }
     .footer-bottom { justify-content: center; text-align: center; }
 }
+/* ==========================================================================
+   REFONTE 2026 — sombre, serif italique, navigation flottante (sans planètes)
+   Ne modifie aucun contenu : uniquement l'apparence.
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap');
+:root{ --font-family:'Inter',system-ui,sans-serif; --font-title:'Instrument Serif',Georgia,serif; --grad-gold:linear-gradient(90deg,#E4C77A,#C9A24B); }
+html[data-theme="dark"]{ --bg-color:#0A1024; --bg-alt-color:#111A38; --card-bg:#111A38; --header-bg:rgba(17,26,56,.75); --footer-bg:#070C1E; --text-color:#F3EFE4; --border-color:rgba(201,162,75,.18); }
+body{ font-family:var(--font-family); }
+
+/* Titres : serif italique */
+.hero-title,.section-title,.page-title,h1,h2{ font-family:'Instrument Serif',Georgia,serif !important; font-weight:400 !important; letter-spacing:-.01em; }
+.hero-title{ font-style:italic; font-size:clamp(3rem,9vw,6.5rem) !important; line-height:.95 !important; text-transform:none; }
+.section-title{ font-size:clamp(2.2rem,5vw,3.6rem) !important; }
+.hero-subtitle{ letter-spacing:.3em; text-transform:uppercase; font-style:normal !important; font-family:'Inter',sans-serif !important; font-size:.8rem !important; color:#9A9CAA !important; }
+
+/* Navigation : pilule flottante */
+header{ background:transparent !important; box-shadow:none !important; height:auto !important; padding-top:calc(env(safe-area-inset-top,0px) + 14px); pointer-events:none; }
+header nav{ pointer-events:auto; max-width:1100px; width:calc(100% - 24px); margin:0 auto; padding:6px 10px 6px 16px;
+  border-radius:99px; background:var(--header-bg,rgba(255,255,255,.85)); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(201,162,75,.25); transition:box-shadow .3s; }
+header.scrolled nav{ box-shadow:0 8px 24px rgba(0,0,0,.35); }
+html[data-theme="dark"] header nav{ background:rgba(17,26,56,.78); }
+.nav-links a{ font-size:.88rem; }
+@media(max-width:768px){ .nav-links{ border-radius:20px; margin-top:8px; } }
+
+/* Héros : halo doré + motif, sans astre */
+.hero{ background-color:var(--bg-color); }
+html[data-theme="dark"] .hero{ background-image:radial-gradient(circle at 20% 25%,rgba(201,162,75,.16),transparent 42%),radial-gradient(circle at 80% 75%,rgba(28,44,92,.7),transparent 50%),repeating-linear-gradient(135deg,rgba(201,162,75,.05) 0 1px,transparent 1px 56px); }
+.hero::before,.hero::after{ display:none; }
+.cta-button{ border-radius:99px !important; }
+
+/* Cartes arrondies */
+.portfolio-item,.service-card,.project-card,.about-text{ border-radius:28px !important; }
+.portfolio-item-image{ clip-path:none !important; }
+.portfolio-item:hover,.service-card:hover{ border-color:var(--color-gold); }
+.ticker-item{ font-family:'Instrument Serif',serif; font-style:italic; text-transform:none; font-size:1.6rem; letter-spacing:0; }
+
+/* Apparition au scroll */
+.rv{ opacity:0; transform:translateY(30px); transition:opacity .9s ease,transform .9s ease; }
+.rv.in{ opacity:1; transform:none; }
+
+/* Écran de chargement */
+#loader{ position:fixed; inset:0; z-index:9999; background:#0A1024; color:#F3EFE4; transition:opacity .6s; }
+#loader .lt{ position:absolute; top:28px; left:28px; font-size:.72rem; letter-spacing:.3em; text-transform:uppercase; color:#9A9CAA; }
+#loader .lw{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Instrument Serif',serif; font-style:italic; font-size:clamp(2.4rem,8vw,5rem); color:rgba(243,239,228,.8); }
+#loader .lc{ position:absolute; right:28px; bottom:28px; font-family:'Instrument Serif',serif; font-size:clamp(3.5rem,11vw,8rem); line-height:1; font-variant-numeric:tabular-nums; }
+#loader .lb{ position:absolute; left:0; bottom:0; width:100%; height:3px; background:rgba(255,255,255,.08); }
+#loader .lb i{ display:block; height:100%; background:var(--grad-gold); transform:scaleX(0); transform-origin:left; box-shadow:0 0 8px rgba(201,162,75,.4); }
+
+/* Pilule fixe en bas */
+.bottom-pill{ position:fixed; left:50%; bottom:calc(env(safe-area-inset-bottom,0px) + 20px); transform:translateX(-50%); z-index:900; display:flex; align-items:center; gap:16px; padding:7px 8px 7px 24px; border-radius:99px; background:#F3EFE4; color:#101B3D; box-shadow:0 10px 30px rgba(0,0,0,.45); }
+.bottom-pill b{ font-family:'Instrument Serif',serif; font-weight:400; font-size:1.4rem; }
+.bottom-pill a{ background:#101B3D; color:#fff !important; border-radius:99px; padding:9px 20px; font-size:.82rem; text-decoration:none; }
+
+/* ==========================================================================
+   MOTION 3D — perspective, cubes dorés, tilt des cartes, révélation en rotation
+   (formes géométriques uniquement : aucune planète)
+   ========================================================================== */
+#hero,.page-header,.portfolio-header{ position:relative; overflow:hidden; }
+.scene3d{ position:absolute; inset:0; z-index:1; pointer-events:none; perspective:1000px; overflow:hidden; }
+.scene3d .rig{ position:absolute; inset:0; transform-style:preserve-3d; transition:transform .25s ease-out; will-change:transform; }
+.cube{ position:absolute; width:var(--s); height:var(--s); transform-style:preserve-3d; animation:spin3d var(--d) linear infinite; }
+.cube .f{ position:absolute; inset:0; border:1px solid rgba(201,162,75,.65); background:linear-gradient(135deg,rgba(201,162,75,.14),rgba(28,44,92,.25)); backdrop-filter:blur(1px); }
+.cube .f:nth-child(1){ transform:translateZ(calc(var(--s)/2)); }
+.cube .f:nth-child(2){ transform:rotateY(180deg) translateZ(calc(var(--s)/2)); }
+.cube .f:nth-child(3){ transform:rotateY(90deg) translateZ(calc(var(--s)/2)); }
+.cube .f:nth-child(4){ transform:rotateY(-90deg) translateZ(calc(var(--s)/2)); }
+.cube .f:nth-child(5){ transform:rotateX(90deg) translateZ(calc(var(--s)/2)); }
+.cube .f:nth-child(6){ transform:rotateX(-90deg) translateZ(calc(var(--s)/2)); }
+@keyframes spin3d{ from{ transform:rotateX(0) rotateY(0) rotateZ(0); } to{ transform:rotateX(360deg) rotateY(360deg) rotateZ(90deg); } }
+.float3d{ position:absolute; animation:float3d 7s ease-in-out infinite; }
+@keyframes float3d{ 50%{ transform:translateY(-24px); } }
+/* Logo en relief au centre du héros */
+.logo3d{ position:absolute; left:50%; top:50%; width:min(46vw,380px); transform:translate(-50%,-50%) translateZ(-120px); opacity:.16; filter:drop-shadow(0 0 40px rgba(201,162,75,.6)); }
+.hero-content{ transform-style:preserve-3d; }
+.hero-title{ text-shadow:0 1px 0 #b8902f,0 2px 0 #a67f28,0 3px 0 #8f6d22,0 10px 24px rgba(0,0,0,.45); }
+html:not([data-theme="dark"]) .hero-title{ color:#101B3D; }
+
+/* Cartes : tilt 3D + reflet */
+.tilt{ transform-style:preserve-3d; transition:transform .2s ease-out,box-shadow .3s,border-color .3s; will-change:transform; }
+.tilt::after{ content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; opacity:0; transition:opacity .3s;
+  background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.22),transparent 55%); }
+.tilt:hover::after{ opacity:1; }
+.portfolio-item,.service-card,.project-card,.tarif-item{ position:relative; }
+.tilt>*{ transform:translateZ(24px); }
+
+/* Révélation au scroll en rotation 3D */
+.rv{ transform:perspective(900px) rotateX(18deg) translateY(40px); transform-origin:50% 100%; }
+.rv.in{ transform:perspective(900px) rotateX(0) translateY(0); }
+.rv.in.tilt{ transition:transform .2s ease-out; }
+
+/* Bandeau : léger effet de profondeur */
+.ticker-wrap{ perspective:600px; }
+.ticker{ transform:rotateX(8deg); }
+
+@media(prefers-reduced-motion:reduce){ .cube,.float3d,.ticker{ animation:none !important; } .rv{ transform:none; opacity:1; } }
+@media(max-width:768px){ .cube.hide-m{ display:none; } }
