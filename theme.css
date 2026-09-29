@@ -436,3 +436,63 @@ html:not([data-theme="dark"]) .hero-title{ color:#101B3D; }
 
 @media(prefers-reduced-motion:reduce){ .cube,.float3d,.ticker{ animation:none !important; } .rv{ transform:none; opacity:1; } }
 @media(max-width:768px){ .cube.hide-m{ display:none; } }
+
+/* ==========================================================================
+   V3 — fond 3D plein écran (toutes les pages), transitions, animations, CTA
+   ========================================================================== */
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+ background:radial-gradient(circle at 15% 20%,rgba(201,162,75,.15),transparent 40%),radial-gradient(circle at 85% 75%,rgba(28,44,92,.75),transparent 50%),repeating-linear-gradient(135deg,rgba(201,162,75,.045) 0 1px,transparent 1px 56px);
+ background-size:auto,auto,auto;animation:bgd 40s linear infinite}
+@keyframes bgd{to{background-position:0 0,0 0,560px 0}}
+html[data-theme] #hero.hero{background:none!important;max-width:none!important;width:100%}
+main,section,.ticker-wrap,.page-header,.portfolio-header,.section-divider,.services-divider-wrap,footer{position:relative;z-index:1}
+html[data-theme="dark"] .page-header,html[data-theme="dark"] .ticker-wrap{background:transparent!important}
+html[data-theme="dark"] #services,html[data-theme="dark"] .services-divider-wrap{background:rgba(7,12,30,.6)!important}
+#scene3d{position:fixed;inset:0;z-index:0;pointer-events:none;perspective:1100px;overflow:hidden}
+#scene3d .rig{position:absolute;inset:0;transform-style:preserve-3d}
+#scene3d .p{position:absolute;left:0;top:0;transform-style:preserve-3d;will-change:transform}
+#scene3d .bglogo{position:absolute;left:50%;top:50%;width:min(60vw,560px);opacity:.07;filter:drop-shadow(0 0 40px rgba(201,162,75,.7))}
+/* mots qui apparaissent (flou + montée) */
+.w,.bi{animation:wr .9s cubic-bezier(.2,.8,.2,1) backwards paused}
+.w{display:inline-block;animation-delay:calc(var(--i)*70ms + 100ms)}
+.bi{animation-delay:calc(var(--i)*100ms + 200ms);animation-duration:1s}
+@keyframes wr{from{opacity:0;filter:blur(10px);transform:translateY(40px)}}
+.sw.on .w,.go .w,.go .bi{animation-play-state:running}
+.sw{-webkit-text-fill-color:currentColor!important;background:none!important}
+.role-line{color:#B9B6AC;margin:-14px 0 30px;font-size:1.05rem}
+.role-line b{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;font-size:1.5rem;color:var(--color-gold-light);display:inline-block;animation:rf .4s ease-out}
+@keyframes rf{from{opacity:0;transform:translateY(8px)}}
+/* transition de page */
+#pt{position:fixed;inset:0;z-index:99999;background:linear-gradient(180deg,#101B3D,#0A1024);pointer-events:none}
+#pt::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--grad-gold)}
+#pt.out{transform:translateY(-100%);transition:transform .8s cubic-bezier(.76,0,.24,1)}
+#pt.in{transform:translateY(0);transition:transform .6s cubic-bezier(.76,0,.24,1)}
+/* traînée du curseur */
+.trail{position:absolute;width:70px;pointer-events:none;z-index:2;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4))}
+/* bandeau géant avant le footer */
+.mq-band{overflow:hidden;white-space:nowrap;padding:50px 0}
+.mq-band div{display:inline-block;font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(3rem,9vw,7rem);color:transparent;-webkit-text-stroke:1px rgba(201,162,75,.6);animation:mqx 40s linear infinite}
+@keyframes mqx{to{transform:translateX(-50%)}}
+/* portfolio : survol type bento */
+.project-card{position:relative;overflow:hidden;cursor:pointer}
+.project-image{overflow:hidden;position:relative}
+.project-image img{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.project-card:hover .project-image img{transform:scale(1.09)}
+.project-image::after{content:'';position:absolute;inset:0;background:radial-gradient(circle,#000 1px,transparent 1px) 0 0/4px 4px;opacity:.18;pointer-events:none}
+.pv{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;background:rgba(10,16,36,.72);backdrop-filter:blur(8px);opacity:0;transition:opacity .4s;border-radius:inherit;pointer-events:none}
+.project-card:hover .pv{opacity:1}
+.pv b{position:relative;z-index:0;padding:12px 26px;border-radius:99px;background:#F3EFE4;color:#101B3D;font-weight:500;transform:translateY(16px) scale(.9);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.pv i{font-family:'Instrument Serif',serif;font-size:1.15em}
+.project-card:hover .pv b{transform:none}
+.pv b::before{content:'';position:absolute;inset:-2px;z-index:-1;border-radius:inherit;background:linear-gradient(90deg,#E4C77A,#C9A24B,#E4C77A);background-size:200% 100%;animation:gs 3s ease infinite}
+@keyframes gs{50%{background-position:100% 0}}
+/* nouveau bouton « Démarrer un projet » */
+.cta-float{position:fixed;right:22px;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);z-index:900;display:flex;align-items:center;height:58px;padding:0 6px 0 24px;border-radius:99px;background:var(--grad-gold);color:#101B3D!important;font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;overflow:hidden;
+ box-shadow:0 10px 30px rgba(201,162,75,.4),inset 0 2px 8px rgba(255,255,255,.5);opacity:0;pointer-events:none;transform:translateY(30px) scale(.9);transition:opacity .4s,transform .45s cubic-bezier(.2,.8,.2,1)}
+.cta-float.show{opacity:1;pointer-events:auto;transform:none;animation:pulse 2.6s infinite}
+@keyframes pulse{0%{box-shadow:0 10px 30px rgba(201,162,75,.4),0 0 0 0 rgba(201,162,75,.5)}70%,100%{box-shadow:0 10px 30px rgba(201,162,75,.4),0 0 0 18px rgba(201,162,75,0)}}
+.cta-float::before{content:'';position:absolute;top:0;bottom:0;width:60px;left:-80px;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);animation:shine 3.5s ease-in-out infinite}
+@keyframes shine{40%,100%{left:120%}}
+.cta-float .ar{position:relative;margin-left:16px;width:46px;height:46px;border-radius:50%;background:#101B3D;color:#E4C77A;display:grid;place-items:center;font-size:1.2rem;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.cta-float:hover .ar{transform:rotate(45deg) scale(1.08)}
+@media(max-width:600px){.cta-float{padding:0 6px}.cta-float .t{display:none}.cta-float .ar{margin:0}}
