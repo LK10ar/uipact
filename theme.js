@@ -215,7 +215,7 @@
                  ['img/japan.png','Japan and Friends','Identité visuelle'],['img/foodweb.png','Food Burger','Webdesign'],['img/alpharun.png','AlphaRun','Mockup UI'],
                  ['img/flyers-alpharun.png','Flyers AlphaRun','Print'],['img/carte.png','Cartes de visite','Print']];
         var anchor = $('#portfolio') || (document.querySelector('.portfolio-header') && document.querySelector('.portfolio-header').nextElementSibling);
-        if (anchor && !(location.pathname.indexOf('portfolio') < 0 && !$('#portfolio'))) {
+        if (false) {
             var sec = html('<section class="c3d" id="carousel3d"><div class="eb">Réalisations</div><h2 class="lp-t">Le portfolio en <i>3D</i></h2><div class="c3d-stage"><div class="c3d-ring"></div></div>' +
                 '<div class="c3d-cap"><b></b><span></span></div><div class="c3d-nav"><button aria-label="Précédent">‹</button><button aria-label="Suivant">›</button></div></section>');
             anchor.parentNode.insertBefore(sec, $('#portfolio') ? anchor : anchor);
@@ -262,10 +262,10 @@
                         ['identite-visuelle.html','Identité visuelle','Charte · Rédaction'],['ux-ui.html','UX / UI design','Maquettes · Prototypes']];
             var caps = html('<section class="lp" id="capabilities"><div class="eb">Savoir-faire</div><h2 class="lp-t">Le studio, <i>de A à Z</i></h2><div class="lp-g f">' +
                 cap5.map(function (c, i) { return '<a class="glass lp-c" href="' + c[0] + '"><div class="n">0' + (i + 1) + '</div><h3>' + c[1] + '</h3><div class="tg">' + c[2].split(' · ').map(function (t) { return '<span>' + t + '</span>'; }).join('') + '</div></a>'; }).join('') + '</div></section>');
-            proc.after(caps);
+            
             var cta = html('<div class="glass lp-cta"><h2 class="lp-t" style="margin-bottom:10px">Votre prochain projet <i>commence ici</i></h2><p style="color:#B9B6AC">Parlons de votre vision : stratégie, créativité et précision au service de votre image.</p>' +
                 '<div class="bt"><a class="p" href="#contact">Démarrer un projet</a><a class="o" href="portfolio.html">Voir le portfolio</a></div></div>');
-            $('#contact').before(cta);
+            
         }
 
         // ---- Contact : mise en page refaite, formulaire d'origine conservé ----
@@ -299,8 +299,41 @@
     function h(t) { var d = document.createElement('div'); d.innerHTML = t.trim(); return d.firstChild; }
     function bgOf(el) { var m = getComputedStyle(el).backgroundImage.match(/url\(["']?([^"')]+)/); return m ? m[1] : ''; }
 
-    // Carrousel 3D générique
+    // Carrousel coverflow 3D compact
     function c3d(items) {
+        while (items.length < 8) items = items.concat(items);
+        var N = items.length, sec = h('<div class="cf"><div class="cf-stage"></div><div class="cf-cap"><b></b><span></span></div><div class="cf-nav"><button aria-label="Précédent">‹</button><div class="cf-dots"></div><button aria-label="Suivant">›</button></div></div>');
+        var st = sec.querySelector('.cf-stage'), dots = sec.querySelector('.cf-dots'), cap = sec.querySelector('.cf-cap'), cs = [], pos = 0, tgt = 0, drag = false, lx = 0, moved = 0, hov = false, t0 = 0, cw = 300, ci = -1;
+        function go(i) { var cur = Math.round(tgt), d = (((i - cur) % N) + N) % N; if (d > N / 2) d -= N; tgt = cur + d; t0 = 0; }
+        items.forEach(function (d, i) {
+            var a = document.createElement('a'); a.className = 'cf-card'; a.href = d.href || 'portfolio.html'; a.draggable = false; a.style.backgroundImage = "url('" + d.img + "')"; a.innerHTML = '<i></i>';
+            a.addEventListener('click', function (e) { if (moved > 6) { e.preventDefault(); return; } if (i !== ((Math.round(tgt) % N) + N) % N) { e.preventDefault(); go(i); } });
+            st.appendChild(a); cs.push(a);
+            var b = document.createElement('i'); b.onclick = function () { go(i); }; dots.appendChild(b);
+        });
+        st.addEventListener('pointerdown', function (e) { drag = true; lx = e.clientX; moved = 0; });
+        addEventListener('pointermove', function (e) { if (!drag) return; var dx = e.clientX - lx; lx = e.clientX; moved += Math.abs(dx); tgt -= dx / (cw * .5); pos = tgt; });
+        addEventListener('pointerup', function () { if (drag) { drag = false; tgt = Math.round(tgt); } });
+        st.addEventListener('mouseenter', function () { hov = true; }); st.addEventListener('mouseleave', function () { hov = false; });
+        var bt = sec.querySelectorAll('.cf-nav button'); bt[0].onclick = function () { tgt = Math.round(tgt) - 1; t0 = 0; }; bt[1].onclick = function () { tgt = Math.round(tgt) + 1; t0 = 0; };
+        (function loop(n) {
+            var W = st.clientWidth || innerWidth; cw = Math.min(440, Math.max(200, W * .58)); var hh = Math.round(cw * .64); st.style.height = (hh + 40) + 'px';
+            if (!t0) t0 = n; if (!drag && !hov && !reduce && n - t0 > 3800) { t0 = n; tgt++; }
+            pos += (tgt - pos) * .09;
+            cs.forEach(function (c, i) {
+                var o = i - pos; o -= N * Math.round(o / N); var a = Math.abs(o);
+                if (a > 2.6) { c.style.display = 'none'; return; } c.style.display = 'block';
+                c.style.width = cw + 'px'; c.style.height = hh + 'px'; c.style.marginLeft = (-cw / 2) + 'px'; c.style.marginTop = (-hh / 2) + 'px';
+                c.style.transform = 'translateX(' + (o * cw * .62) + 'px) translateZ(' + (-a * 150) + 'px) rotateY(' + (-Math.max(-1, Math.min(1, o)) * 42) + 'deg) scale(' + (1 - Math.min(a, 2) * .05) + ')';
+                c.style.opacity = Math.max(0, 1 - a * .32).toFixed(2); c.style.zIndex = 100 - Math.round(a * 10); c.classList.toggle('on', a < .5);
+            });
+            var idx = ((Math.round(pos) % N) + N) % N;
+            if (idx !== ci) { ci = idx; cap.querySelector('b').textContent = items[idx].title || ''; cap.querySelector('span').textContent = items[idx].cat || ''; [].forEach.call(dots.children, function (d, k) { d.className = k === idx ? 'on' : ''; }); }
+            requestAnimationFrame(loop);
+        })(0);
+        return sec;
+    }
+    function c3d_old(items) {
         var sec = h('<div class="c3d" style="padding:20px 0 30px"><div class="c3d-stage"><div class="c3d-ring"></div></div><div class="c3d-cap"><b></b><span></span></div><div class="c3d-nav"><button aria-label="Précédent">‹</button><button aria-label="Suivant">›</button></div></div>');
         var ring = sec.querySelector('.c3d-ring'), stage = sec.querySelector('.c3d-stage'), cap = sec.querySelector('.c3d-cap'), N = items.length, step = 360 / N, cards = [], R = 0;
         items.forEach(function (d) { var a = document.createElement('a'); a.href = d.href || 'portfolio.html'; a.className = 'c3d-card'; a.style.backgroundImage = "url('" + d.img + "')"; a.draggable = false; ring.appendChild(a); cards.push(a); });
@@ -328,6 +361,7 @@
         return sec;
     }
 
+    window.__c3d = c3d;
     // AJAX FormSubmit avec repli sur l'envoi classique
     function ajax(f) {
         var btn = f.querySelector('button[type=submit],.valider-btn,.cta-button');
@@ -383,30 +417,60 @@
             pg.parentNode.insertBefore(c3d(pi), pg); pg.style.display = 'none';
         }
 
-        // Contact de l'accueil : même mise en page que la page contact
+        // Portfolio : un seul carrousel
+        var cfw = function () { var x = document.createElement('section'); x.className = 'cf-sec'; return x; };
+        var H5 = [['img/chene.png','Le Chêne Doré','Webdesign'],['img/tout.png','Novaflow Advisory','Branding'],['img/sport.png','Application Mobile','UX / UI design'],['img/japan.png','Japan and Friends','Identité visuelle'],['img/foodweb.png','Food Burger','Webdesign']].map(function (d) { return { img: d[0], title: d[1], cat: d[2], href: 'portfolio.html' }; });
+        var pf = document.getElementById('portfolio');
+        if (pf && document.getElementById('hero')) {
+            var ttl = pf.querySelector('.section-title'); pf.id = 'portfolio-classic'; pf.style.display = 'none';
+            var ns = cfw(); ns.id = 'portfolio'; if (ttl) ns.appendChild(ttl); ns.appendChild(c3d(H5)); pf.parentNode.insertBefore(ns, pf);
+        }
+        var ph = document.querySelector('.portfolio-header');
+        if (ph) { var p2 = cfw(); p2.appendChild(c3d(H5.concat([{ img: 'img/alpharun.png', title: 'AlphaRun', cat: 'Mockup UI', href: 'portfolio.html' }, { img: 'img/flyers-alpharun.png', title: 'Flyers AlphaRun', cat: 'Print', href: 'portfolio.html' }, { img: 'img/carte.png', title: 'Cartes de visite', cat: 'Print', href: 'portfolio.html' }]))); ph.after(p2); }
+
+        // Contact de l'accueil : formulaire classique dans une carte 3D
         var hf = document.querySelector('section#contact form.contact-form');
         if (hf) {
             hf.classList.add('hf');
-            var g = h('<div class="cgrid"></div>'); hf.parentNode.insertBefore(g, hf);
-            g.appendChild(h('<aside class="glass cside"><h2>Dites bonjour 👋</h2><p>Un projet de logo, de site, de print ou d\'application ? Écrivez-moi.</p><a class="ml" href="mailto:uipact@gmail.com">uipact@gmail.com</a><div class="st"><i></i>Disponible pour de nouveaux projets</div></aside>'));
-            g.appendChild(hf);
+            var sc = h('<div class="hc-scene"><div class="hc-card"></div></div>'), cd = sc.firstChild; hf.parentNode.insertBefore(sc, hf); cd.appendChild(hf);
+            sc.addEventListener('mousemove', function (e) { var r = sc.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; cd.style.transform = 'rotateY(' + (x * 9) + 'deg) rotateX(' + (-y * 9) + 'deg)'; });
+            sc.addEventListener('mouseleave', function () { cd.style.transform = ''; });
         }
+        // Bouton haut : anneau de progression
+        var tb = document.getElementById('scrollTopBtn');
+        if (tb) {
+            tb.innerHTML = '<svg viewBox="0 0 48 48"><circle class="tr" cx="24" cy="24" r="21"/><circle class="pr" cx="24" cy="24" r="21"/></svg><span class="ar">↑</span>';
+            var C = 2 * Math.PI * 21, pr = tb.querySelector('.pr'); pr.style.strokeDasharray = C;
+            var upd = function () { var p = scrollY / ((document.documentElement.scrollHeight - innerHeight) || 1); pr.style.strokeDashoffset = C * (1 - Math.min(1, p)); };
+            addEventListener('scroll', upd, { passive: true }); upd();
+        }
+        // Grosses zones pleines → fond transparent avec filet doré
+        setTimeout(function () {
+            [].forEach.call(document.querySelectorAll('section,main>div,body>div,div[class*="header"],div[class*="gallery"],div[class*="cta"],div[class*="banner"]'), function (e) {
+                if (e.id === 'hero' || e.closest('header,footer,nav,.kf,.glass,.cf,.contact-form,.hc-card,.popup-overlay')) return;
+                var bg = getComputedStyle(e).backgroundColor, m = bg.match(/[\d.]+/g);
+                if (m && (m.length === 3 || +m[3] > .5) && e.offsetWidth > innerWidth * .6 && e.offsetHeight > 120) e.classList.add('exb');
+            });
+        }, 500);
         document.querySelectorAll('form.contact-form').forEach(ajax);
 
         // Footer refait (mêmes liens)
         var ft = document.querySelector('footer.site-footer');
         if (ft) {
             var ig = ft.querySelector('.social-links a'), igh = ig ? ig.outerHTML : '';
-            ft.innerHTML = '<div class="kf"><div class="kf-l"><div class="kf-logo"><img src="logo.png" alt="UIPACT"><b>UIPACT</b></div><p class="kf-tag">Agence de conception visuelle &amp; web.<br><span>Identité de marque, print et sites internet pensés pour convertir.</span></p><div class="kf-soc"><em>Suivez-nous !</em><div class="social-links">' + igh + '</div></div></div>' +
-                '<div class="kf-r"><a class="kf-lucky" href="contact.html"><span>UIP</span><em>Un projet ?</em></a><div class="kf-cols">' +
+            ft.innerHTML = '<div class="kf"><div class="kf-l"><div class="kf-logo"><img src="logo.png" alt="UIPACT"><b>UIPACT</b></div><p class="kf-tag">Agence de conception visuelle &amp; web.<br><span>Identité de marque, print et sites internet pensés pour convertir.</span></p><div class="kf-soc"><a class="kf-follow" href="https://www.instagram.com/uipact/" target="_blank" rel="noopener noreferrer">Suivez-nous !</a><div class="social-links">' + igh + '</div></div></div>' +
+                '<div class="kf-r"><a class="kf-lucky" href="contact.html"><span><img src="logo.png" alt="UIPACT"></span><em>Un projet ?</em></a><div class="kf-cols">' +
                 '<div><h4>Navigation</h4><a href="index.html">Accueil</a><a href="portfolio.html">Portfolio</a><a href="a-propos.html">À propos</a><a href="contact.html">Contact</a></div>' +
                 '<div><h4>Savoir-faire</h4><a href="creation-graphique.html">Création graphique</a><a href="creation-print.html">Création Print</a><a href="sites-web.html">Sites internet</a><a href="identite-visuelle.html">Identité visuelle</a><a href="ux-ui.html">UX / UI Design</a></div>' +
                 '<div><h4>Informations</h4><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">CGU</a><a href="politique-confidentialite.html">Politique de confidentialité</a></div></div>' +
                 '<div class="kf-bot"><p>© 2026 UIPACT — Tous droits réservés.</p><p>Conçu et développé par Barrot Léo</p></div></div></div>' +
-                '<div class="kf-wm" aria-hidden="true"><svg viewBox="0 0 900 200"><text x="450" y="170" text-anchor="middle" font-size="230">UIPACT</text></svg></div>';
-            var wm = ft.querySelector('.kf-wm svg'), tx = wm.querySelector('text');
-            var fit = function () { try { var b = tx.getBBox(); wm.setAttribute('viewBox', b.x + ' ' + b.y + ' ' + b.width + ' ' + b.height); } catch (e) {} };
-            (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(fit); addEventListener('resize', fit);
+                '';
+            
         }
     });
 })();
+
+/* ===== V6 : boutons des cartes de services ===== */
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.service-btn,.btn-portfolio').forEach(function (b) { b.classList.add('cta-button'); });
+});
