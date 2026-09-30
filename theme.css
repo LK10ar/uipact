@@ -496,3 +496,81 @@ html[data-theme="dark"] #services,html[data-theme="dark"] .services-divider-wrap
 .cta-float .ar{position:relative;margin-left:16px;width:46px;height:46px;border-radius:50%;background:#101B3D;color:#E4C77A;display:grid;place-items:center;font-size:1.2rem;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
 .cta-float:hover .ar{transform:rotate(45deg) scale(1.08)}
 @media(max-width:600px){.cta-float{padding:0 6px}.cta-float .t{display:none}.cta-float .ar{margin:0}}
+
+/* ==========================================================================
+   V4 — carrousel 3D, sections landing, contact refait, mobile, boutons
+   ========================================================================== */
+/* Bouton ↑ au-dessus de « Démarrer un projet » (plus de chevauchement) */
+#scrollTopBtn{ bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important; right:24px!important; width:46px!important; height:46px!important; z-index:1001!important; }
+.cta-float{ z-index:1000; }
+/* Verre liquide */
+.glass{ position:relative; overflow:hidden; background:rgba(255,255,255,.03); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); box-shadow:inset 0 1px 1px rgba(255,255,255,.1); border-radius:24px; }
+.glass::before{ content:''; position:absolute; inset:0; border-radius:inherit; padding:1.4px; pointer-events:none;
+ background:linear-gradient(180deg,rgba(228,199,122,.6),rgba(228,199,122,.12) 25%,transparent 45%,transparent 60%,rgba(228,199,122,.15) 80%,rgba(228,199,122,.6));
+ -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite:xor; mask-composite:exclude; }
+.eb{ font-size:.72rem; letter-spacing:.3em; text-transform:uppercase; color:#9A9CAA; display:flex; align-items:center; justify-content:center; gap:12px; }
+.eb::before,.eb::after{ content:''; width:32px; height:1px; background:rgba(201,162,75,.4); }
+.lp-t{ font-family:'Instrument Serif',serif; font-weight:400; font-size:clamp(2.2rem,5vw,3.6rem); line-height:1.05; margin:14px 0 40px; color:var(--color-gold-light); text-align:center; }
+.lp-t i{ color:#F3EFE4; }
+.lp{ max-width:1200px; margin:0 auto; padding:80px 24px; }
+.lp-g{ display:grid; gap:20px; grid-template-columns:repeat(3,1fr); }
+.lp-g.f{ grid-template-columns:repeat(5,1fr); gap:14px; }
+.lp-c{ padding:28px 24px; min-height:250px; display:flex; flex-direction:column; color:#F3EFE4; text-decoration:none; transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .4s; }
+.lp-c:hover{ transform:translateY(-8px); box-shadow:0 20px 44px rgba(201,162,75,.22); }
+.lp-c .n{ font-family:'Instrument Serif',serif; font-style:italic; font-size:2.6rem; color:var(--color-gold); line-height:1; }
+.lp-c h3{ font-size:1.05rem; font-weight:600; margin:14px 0 8px; color:#F3EFE4!important; }
+.lp-c p{ font-size:.88rem; color:#B9B6AC!important; line-height:1.55; }
+.lp-c .tg{ margin-top:auto; padding-top:16px; display:flex; flex-wrap:wrap; gap:6px; }
+.lp-c .tg span{ font-size:.68rem; padding:4px 10px; border-radius:99px; background:rgba(201,162,75,.12); color:var(--color-gold-light); }
+.lp-cta{ text-align:center; padding:70px 24px; margin:0 auto 60px; max-width:1000px; }
+.lp-cta .bt{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:26px; }
+.lp-cta a{ padding:14px 28px; border-radius:99px; text-decoration:none; font-weight:600; font-size:.9rem; transition:.3s; }
+.lp-cta a.p{ background:linear-gradient(90deg,#E4C77A,#C9A24B); color:#101B3D; }
+.lp-cta a.o{ border:1px solid rgba(228,199,122,.6); color:#F3EFE4; }
+.lp-cta a:hover{ transform:translateY(-3px); box-shadow:0 8px 24px rgba(201,162,75,.4); }
+/* Carrousel 3D */
+.c3d{ position:relative; z-index:1; padding:80px 0 60px; text-align:center; overflow:hidden; }
+.c3d-stage{ height:clamp(300px,50vw,440px); perspective:1500px; margin-top:10px; cursor:grab; touch-action:pan-y; user-select:none; }
+.c3d-stage:active{ cursor:grabbing; }
+.c3d-ring{ position:absolute; left:50%; top:50%; width:0; height:0; transform-style:preserve-3d; }
+.c3d-card{ position:absolute; display:block; border-radius:20px; overflow:hidden; background:#fff center/cover no-repeat; border:1px solid rgba(228,199,122,.5); box-shadow:0 24px 60px rgba(0,0,0,.55); backface-visibility:hidden; -webkit-backface-visibility:hidden; }
+.c3d-card::after{ content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,.18),transparent 40%,rgba(0,0,0,.25)); pointer-events:none; }
+.c3d-cap{ margin-top:6px; min-height:70px; }
+.c3d-cap b{ display:block; font-family:'Instrument Serif',serif; font-style:italic; font-weight:400; font-size:clamp(1.5rem,3.4vw,2.3rem); color:var(--color-gold-light); }
+.c3d-cap span{ font-size:.72rem; letter-spacing:.24em; text-transform:uppercase; color:#9A9CAA; }
+.c3d-nav{ display:flex; gap:14px; justify-content:center; margin-top:14px; }
+.c3d-nav button{ width:52px; height:52px; border-radius:50%; border:1px solid rgba(228,199,122,.6); background:rgba(17,26,56,.6); color:#F3EFE4; font-size:1.3rem; cursor:pointer; transition:.3s; }
+.c3d-nav button:hover{ background:var(--color-gold); color:#101B3D; transform:scale(1.1); }
+/* Contact refait (formulaire d'origine conservé) */
+.contact-section{ max-width:1200px!important; margin:0 auto; padding:120px 20px 80px!important; }
+.contact-title{ text-align:center; margin-bottom:36px; }
+.cgrid{ display:grid; grid-template-columns:.8fr 1.2fr; gap:28px; align-items:start; }
+.cside{ padding:32px 28px; position:sticky; top:110px; color:#F3EFE4; }
+.cside h2{ font-family:'Instrument Serif',serif; font-weight:400; font-size:2.2rem; margin-bottom:10px; color:var(--color-gold-light); }
+.cside p{ color:#B9B6AC; font-size:.92rem; margin-bottom:18px; }
+.cside .ml{ display:block; background:rgba(255,255,255,.05); border-radius:16px; padding:12px 16px; color:var(--color-gold-light); font-weight:600; text-decoration:none; word-break:break-all; margin-bottom:18px; }
+.cside .st{ font-size:.82rem; color:#B9B6AC; display:flex; align-items:center; gap:8px; }
+.cside .st i{ width:8px; height:8px; border-radius:50%; background:#4ADE80; animation:pu 1.6s infinite; }
+@keyframes pu{ 50%{ opacity:.3; } }
+.cgrid .contact-form{ max-width:none!important; margin:0!important; padding:28px!important; background:rgba(255,255,255,.03); backdrop-filter:blur(10px); border:1px solid var(--border-color); border-radius:24px; }
+.cgrid .form-input,.cgrid .form-select,.cgrid .form-textarea{ transition:border-color .3s,box-shadow .3s,transform .3s; }
+.cgrid .form-input:focus,.cgrid .form-select:focus,.cgrid .form-textarea:focus{ border-color:var(--color-gold)!important; box-shadow:0 0 0 3px rgba(201,162,75,.25); outline:none; }
+.chips{ display:flex; flex-wrap:wrap; gap:8px; }
+.chip{ font:inherit; font-size:.8rem; padding:9px 14px; border-radius:10px; border:1px solid rgba(255,255,255,.18); background:transparent; color:inherit; cursor:pointer; transition:.25s; }
+.chip:hover{ border-color:var(--color-gold); }
+.chip.on{ background:var(--color-gold); color:#101B3D; border-color:var(--color-gold); font-weight:600; }
+.valider-btn:disabled{ opacity:.6; cursor:wait; }
+/* Mobile */
+@media(max-width:900px){ .lp-g,.lp-g.f{ grid-template-columns:1fr 1fr; } .cgrid{ grid-template-columns:1fr; } .cside{ position:static; } }
+@media(max-width:768px){
+  html,body{ overflow-x:hidden; max-width:100vw; }
+  .lp{ padding:56px 16px; } .lp-g,.lp-g.f{ grid-template-columns:1fr; } .lp-c{ min-height:0; }
+  .portfolio-grid,.project-grid,.services-grid{ grid-template-columns:minmax(0,1fr)!important; padding-left:16px!important; padding-right:16px!important; }
+  .portfolio-item,.service-card,.project-card{ max-width:100%; margin-left:0!important; margin-right:0!important; }
+  section{ padding-left:16px; padding-right:16px; }
+  .hero-title{ font-size:clamp(2.2rem,11.5vw,3.4rem)!important; }
+  header nav{ width:calc(100% - 16px); padding:6px 8px 6px 12px; }
+  .contact-section{ padding:100px 14px 60px!important; } .cgrid .contact-form{ padding:18px!important; }
+  .mq-band div{ font-size:2.6rem; } .c3d{ padding:56px 0 40px; }
+}
+@media(hover:none){ .tilt>*{ transform:none!important; } .tilt{ transform:none!important; } }
