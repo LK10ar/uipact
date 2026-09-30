@@ -646,3 +646,92 @@ footer.site-footer{ background:transparent!important; border:0!important; paddin
 .kf-wm text{ font-family:'Instrument Serif',serif; font-style:italic; fill:rgba(201,162,75,.09); }
 @media(max-width:860px){ .kf{ grid-template-columns:1fr; } .kf-l{ min-height:auto; gap:36px; } }
 @media(max-width:560px){ .kf-r{ padding:26px 22px; } .kf-cols{ gap:34px; } .kf-lucky{ right:16px; top:-28px; } .kf-lucky span{ width:64px; height:64px; } }
+
+/* ==========================================================================
+   V6 — thème clair lisible, coverflow compact, contact 3D, footer, bouton haut
+   ========================================================================== */
+:root{ --mut:#4a5170; --fg:#101B3D; --gold-t:#8f6d22; }
+html[data-theme="dark"]{ --mut:#B9B6AC; --fg:#F3EFE4; --gold-t:#E4C77A; }
+.eb{ color:var(--mut); } .lp-t{ color:var(--gold-t); } .lp-t i{ color:var(--fg); }
+.lp-c{ color:var(--fg); } .lp-c h3{ color:var(--fg)!important; } .lp-c p{ color:var(--mut)!important; } .lp-c .tg span{ color:var(--gold-t); }
+.role-line{ color:var(--mut); } .role-line b{ color:var(--gold-t); }
+html:not([data-theme="dark"]) .hero-subtitle{ color:#4a5170!important; }
+html:not([data-theme="dark"]) .glass{ background:rgba(255,255,255,.7); box-shadow:0 10px 30px rgba(16,27,61,.08); }
+html:not([data-theme="dark"]) body::before{ background:radial-gradient(circle at 15% 20%,rgba(201,162,75,.2),transparent 40%),radial-gradient(circle at 85% 75%,rgba(120,140,220,.16),transparent 50%),repeating-linear-gradient(135deg,rgba(16,27,61,.04) 0 1px,transparent 1px 56px); }
+html:not([data-theme="dark"]) #aurora i:nth-child(2){ background:rgba(120,140,220,.22); }
+html:not([data-theme="dark"]) #aurora i:nth-child(1){ background:rgba(201,162,75,.2); }
+.mq-band div{ -webkit-text-stroke:1px rgba(143,109,34,.55); }
+html[data-theme="dark"] .mq-band div{ -webkit-text-stroke:1px rgba(201,162,75,.6); }
+.cside,.ok p{ color:var(--fg); } .cside h2,.ok h3{ color:var(--gold-t); } .cside p,.cside .st{ color:var(--mut); } .cside .ml{ color:var(--gold-t); background:rgba(128,128,128,.14); }
+.cgrid label,.contact-form label{ color:var(--mut)!important; }
+.cgrid .contact-input,.cgrid .contact-textarea,.hc-card .contact-input,.hc-card .contact-textarea{ background:rgba(128,128,128,.1)!important; color:var(--fg)!important; border:1px solid rgba(128,128,128,.35)!important; border-radius:14px!important; padding:14px 16px; width:100%; font:inherit; transition:border-color .3s,box-shadow .3s; }
+.hc-card .contact-input:focus,.hc-card .contact-textarea:focus{ border-color:#C9A24B!important; box-shadow:0 0 0 3px rgba(201,162,75,.25); outline:none; }
+/* Zones pleines remplacées par un filet doré */
+.exb{ background:transparent!important; border:0!important; border-radius:0!important; box-shadow:none!important; position:relative; }
+.exb::after{ content:''; position:absolute; left:8%; right:8%; bottom:0; height:1px; background:linear-gradient(90deg,transparent,rgba(201,162,75,.5),transparent); pointer-events:none; }
+/* Carrousel coverflow compact */
+.cf-sec{ position:relative; z-index:1; padding:70px 0 30px; }
+.cf{ position:relative; padding:6px 0 20px; text-align:center; overflow:hidden; }
+.cf-stage{ position:relative; perspective:1300px; transform-style:preserve-3d; margin:0 auto; max-width:1100px; touch-action:pan-y; cursor:grab; user-select:none; }
+.cf-stage:active{ cursor:grabbing; }
+.cf-card{ position:absolute; left:50%; top:50%; border-radius:18px; background:#fff center/cover no-repeat; border:1px solid rgba(228,199,122,.55); box-shadow:0 30px 60px -22px rgba(0,0,0,.55); transition:box-shadow .3s; will-change:transform; }
+.cf-card.on{ box-shadow:0 40px 80px -22px rgba(201,162,75,.5); }
+.cf-card i{ position:absolute; inset:0; border-radius:inherit; background:linear-gradient(120deg,rgba(255,255,255,.22),transparent 40%); pointer-events:none; }
+.cf-cap{ min-height:62px; margin-top:4px; }
+.cf-cap b{ display:block; font-family:'Instrument Serif',serif; font-style:italic; font-weight:400; font-size:clamp(1.4rem,3vw,2rem); color:var(--gold-t); }
+.cf-cap span{ font-size:.72rem; letter-spacing:.24em; text-transform:uppercase; color:var(--mut); }
+.cf-nav{ display:flex; align-items:center; justify-content:center; gap:16px; margin-top:6px; }
+.cf-nav button{ width:44px; height:44px; border-radius:50%; border:1px solid rgba(201,162,75,.6); background:transparent; color:var(--fg); font-size:1.2rem; cursor:pointer; transition:.3s; }
+.cf-nav button:hover{ background:#C9A24B; color:#101B3D; transform:scale(1.1); }
+.cf-dots{ display:flex; gap:8px; }
+.cf-dots i{ width:8px; height:8px; border-radius:50%; background:rgba(201,162,75,.3); cursor:pointer; transition:.3s; }
+.cf-dots i.on{ width:26px; border-radius:99px; background:#C9A24B; }
+/* Contact accueil : carte 3D classique */
+.hc-scene{ max-width:640px; margin:0 auto; perspective:1200px; }
+.hc-card{ position:relative; padding:34px; border-radius:26px; background:rgba(128,128,128,.07); backdrop-filter:blur(12px); transform-style:preserve-3d; transition:transform .25s ease-out; box-shadow:0 30px 60px -28px rgba(0,0,0,.5); }
+.hc-card::before{ content:''; position:absolute; inset:0; border-radius:inherit; padding:1.5px; pointer-events:none; background:conic-gradient(from var(--a),#E4C77A,transparent 30%,#C9A24B 60%,transparent 80%,#E4C77A); -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite:xor; mask-composite:exclude; animation:ring 6s linear infinite; }
+.hc-card .contact-form{ max-width:none!important; margin:0!important; padding:0!important; background:none!important; border:0!important; box-shadow:none!important; display:flex; flex-direction:column; gap:14px; transform:translateZ(30px); }
+.hc-card .contact-textarea{ min-height:140px; resize:none; }
+/* Footer */
+.kf{ max-width:1320px; }
+.kf-cols h4,.kf-lucky em,.kf-bot{ color:var(--mut); } .kf-cols a{ color:var(--fg); } .kf-cols a:hover{ color:var(--gold-t); }
+.kf-r{ background:rgba(128,128,128,.07); }
+.kf-lucky span{ width:96px; height:96px; background:linear-gradient(135deg,#1C2C5C,#101B3D); border:2px solid #E4C77A; box-shadow:0 12px 28px rgba(16,27,61,.4); }
+.kf-lucky span img{ width:52px; height:auto; filter:brightness(0) invert(1); }
+.kf-follow{ font-family:'Caveat',cursive; font-size:1.35rem; color:#fff; text-decoration:none; border-bottom:1px dashed rgba(255,255,255,.5); transition:color .25s; }
+.kf-follow:hover{ color:#E4C77A; }
+.kf-wm{ display:none; }
+/* Bouton haut : anneau de progression */
+#scrollTopBtn{ background:rgba(17,26,56,.75)!important; backdrop-filter:blur(12px); border:0!important; padding:0; color:#E4C77A!important; box-shadow:0 8px 24px rgba(0,0,0,.35)!important; overflow:visible; }
+#scrollTopBtn svg{ position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg); }
+#scrollTopBtn circle{ fill:none; stroke-width:2.5; }
+#scrollTopBtn .tr{ stroke:rgba(228,199,122,.22); }
+#scrollTopBtn .pr{ stroke:#E4C77A; stroke-linecap:round; transition:stroke-dashoffset .15s; }
+#scrollTopBtn .ar{ position:absolute; inset:0; display:grid; place-items:center; font-size:1.2rem; transition:transform .3s; }
+#scrollTopBtn:hover .ar{ transform:translateY(-3px); }
+@media(max-width:768px){ .cf-sec{ padding:50px 0 20px; } .hc-card{ padding:22px; } .kf-lucky span{ width:70px; height:70px; } .kf-lucky span img{ width:38px; } }
+
+/* ==========================================================================
+   V6 — cohérence, mode clair, carrousel allégé, blocs remplacés, footer, bouton ↑
+   ========================================================================== */
+.cta-button{ width:auto; } .contact-form .cta-button,.valider-btn{ width:100%; }
+.kf-wm{ display:none!important; }
+.kf{ max-width:1280px; grid-template-columns:380px 1fr; }
+.kf-follow{ font-family:'Caveat',cursive; font-size:1.35rem; color:#fff; text-decoration:none; border-bottom:1px solid rgba(255,255,255,.4); transition:.25s; }
+.kf-follow:hover{ color:#E4C77A; border-color:#E4C77A; }
+.kf-lucky span{ width:auto!important; height:auto!important; border-radius:22px!important; padding:14px 30px!important; background:#101B3D!important; border:1px solid rgba(228,199,122,.7); }
+.kf-lucky span img{ height:34px; width:auto; display:block; filter:brightness(0) invert(1); }
+/* MODE CLAIR : textes lisibles */
+html:not([data-theme="dark"]) #aurora{ opacity:.3; } html:not([data-theme="dark"]) #dust{ opacity:.5; } html:not([data-theme="dark"]) body::after{ opacity:.12; }
+html:not([data-theme="dark"]) .hero-subtitle,html:not([data-theme="dark"]) .role-line,html:not([data-theme="dark"]) .eb{ color:#4a5070!important; }
+html:not([data-theme="dark"]) .role-line b,html:not([data-theme="dark"]) .lp-t,html:not([data-theme="dark"]) .cside h2,html:not([data-theme="dark"]) .ok h3{ color:#101B3D!important; }
+html:not([data-theme="dark"]) .lp-t i{ color:#9a7420; }
+html:not([data-theme="dark"]) .glass,html:not([data-theme="dark"]) .c3card,html:not([data-theme="dark"]) .kf-r,html:not([data-theme="dark"]) .cgrid .contact-form,html:not([data-theme="dark"]) .cta-final,html:not([data-theme="dark"]) .cta-portfolio,html:not([data-theme="dark"]) .about-cta{ background:rgba(255,255,255,.7)!important; color:#101B3D; }
+html:not([data-theme="dark"]) .lp-c,html:not([data-theme="dark"]) .lp-c h3{ color:#101B3D!important; }
+html:not([data-theme="dark"]) .lp-c p,html:not([data-theme="dark"]) .cside p,html:not([data-theme="dark"]) .cside .st,html:not([data-theme="dark"]) .ok p,html:not([data-theme="dark"]) .kf-bot,html:not([data-theme="dark"]) .kf-cols h4,html:not([data-theme="dark"]) .kf-lucky em,html:not([data-theme="dark"]) .c3d-cap span{ color:#4a5070!important; }
+html:not([data-theme="dark"]) .cside .ml{ background:rgba(16,27,61,.07); color:#101B3D; }
+html:not([data-theme="dark"]) .kf-cols a,html:not([data-theme="dark"]) .c3d-cap b{ color:#101B3D!important; }
+html:not([data-theme="dark"]) .c3d-nav button{ background:#fff; color:#101B3D; }
+html:not([data-theme="dark"]) .cgrid label,html:not([data-theme="dark"]) .contact-form label{ color:#4a5070!important; }
+html:not([data-theme="dark"]) .cgrid .contact-input,html:not([data-theme="dark"]) .cgrid .contact-textarea,html:not([data-theme="dark"]) .c3card .contact-input,html:not([data-theme="dark"]) .c3card .contact-textarea{ background:#fff!important; color:#101B3D!important; border-color:rgba(16,27,61,.2)!important; }
+html:not([data-theme="dark"]) .chip{ color:#101B3D; border-color:rgba(16,27,61,.25); }
