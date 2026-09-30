@@ -386,7 +386,7 @@
         body.insertBefore(h('<div id="aurora"><i></i><i></i><i></i></div>'), body.firstChild);
         var cv = document.createElement('canvas'); cv.id = 'dust'; body.insertBefore(cv, body.firstChild);
         var cx = cv.getContext('2d'), W, H, P = [], mx = -999, my = -999;
-        function rs() { W = cv.width = innerWidth; H = cv.height = innerHeight; } rs(); addEventListener('resize', rs);
+        function rs() { W = cv.width = innerWidth; H = cv.height = innerHeight; P.forEach(function (p) { p.x = Math.random() * W; p.y = Math.random() * H; }); } rs(); addEventListener('resize', rs);
         for (var i = 0; i < (innerWidth < 700 ? 34 : 72); i++) P.push({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35, r: Math.random() * 1.6 + .6 });
         addEventListener('mousemove', function (e) { mx = e.clientX; my = e.clientY; }, { passive: true });
         (function dl() {
@@ -474,3 +474,54 @@
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.service-btn,.btn-portfolio').forEach(function (b) { b.classList.add('cta-button'); });
 });
+
+/* ===== V7 : contraste automatique du mode sombre + bouton caché près du footer ===== */
+(function () {
+    var root = document.documentElement;
+    function lum(c) {
+        var m = c.match(/[\d.]+/g); if (!m) return null; if (m.length > 3 && +m[3] < .05) return null;
+        var r = [+m[0], +m[1], +m[2]].map(function (v) { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); });
+        return .2126 * r[0] + .7152 * r[1] + .0722 * r[2];
+    }
+    function bgLum(el) { while (el && el !== root) { var l = lum(getComputedStyle(el).backgroundColor); if (l !== null) return l; el = el.parentElement; } return .02; }
+    function fix() {
+        var dark = root.getAttribute('data-theme') === 'dark';
+        if (!dark) { [].forEach.call(document.querySelectorAll('[data-cf]'), function (e) { e.style.removeProperty('color'); e.removeAttribute('data-cf'); }); return; }
+        [].forEach.call(document.querySelectorAll('body *'), function (e) {
+            if (e.closest('a,button,.cta-button,[class*="btn"],svg,.chip,.kf-lucky')) return;
+            if (![].some.call(e.childNodes, function (n) { return n.nodeType === 3 && n.textContent.trim(); })) return;
+            var l = lum(getComputedStyle(e).color);
+            if (l !== null && l < .25 && bgLum(e) < .25) { e.style.setProperty('color', '#D9D5C8', 'important'); e.setAttribute('data-cf', '1'); }
+        });
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(fix, 600); setTimeout(fix, 2500);
+        var t = document.getElementById('themeToggle'); if (t) t.addEventListener('click', function () { setTimeout(fix, 80); });
+        var ft = document.querySelector('footer.site-footer'), cta = document.querySelector('.cta-float');
+        if (ft && cta && 'IntersectionObserver' in window) new IntersectionObserver(function (es) { cta.classList.toggle('nf', es[0].isIntersecting); }).observe(ft);
+    });
+})();
+
+/* ===== V7 : relève les gris trop sombres en mode sombre + masque le bouton flottant sur le footer ===== */
+(function () {
+    function lum(c) { var m = c.match(/[\d.]+/g); if (!m) return 1; return (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255; }
+    function opaque(e) { while (e && e !== document.documentElement) { var b = getComputedStyle(e).backgroundColor, m = b.match(/[\d.]+/g); if (m && (m.length === 3 || +m[3] > .6)) return b; e = e.parentElement; } return null; }
+    function fix() {
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        document.querySelectorAll('main *,section *,.container *,body > div *').forEach(function (e) {
+            if (e.closest('header,footer,nav,button,a.cta-button,.cta-float,#scrollTopBtn,.kf')) return;
+            var has = false; for (var i = 0; i < e.childNodes.length; i++) if (e.childNodes[i].nodeType === 3 && e.childNodes[i].textContent.trim()) { has = true; break; }
+            if (!has) return;
+            if (!dark) { e.classList.remove('lift'); return; }
+            var cs = getComputedStyle(e).color, m = cs.match(/[\d.]+/g); if (!m) return;
+            var bg = opaque(e);
+            if (lum(cs) < .55 && (!bg || lum(bg) < .4)) e.classList.add('lift'); else e.classList.remove('lift');
+        });
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(fix, 700);
+        var t = document.getElementById('themeToggle'); if (t) t.addEventListener('click', function () { setTimeout(fix, 60); });
+        var ft = document.querySelector('footer');
+        if (ft && 'IntersectionObserver' in window) new IntersectionObserver(function (es) { document.body.classList.toggle('at-footer', es[0].isIntersecting); }, { threshold: .05 }).observe(ft);
+    });
+})();
