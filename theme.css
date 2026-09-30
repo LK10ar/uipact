@@ -735,3 +735,79 @@ html:not([data-theme="dark"]) .c3d-nav button{ background:#fff; color:#101B3D; }
 html:not([data-theme="dark"]) .cgrid label,html:not([data-theme="dark"]) .contact-form label{ color:#4a5070!important; }
 html:not([data-theme="dark"]) .cgrid .contact-input,html:not([data-theme="dark"]) .cgrid .contact-textarea,html:not([data-theme="dark"]) .c3card .contact-input,html:not([data-theme="dark"]) .c3card .contact-textarea{ background:#fff!important; color:#101B3D!important; border-color:rgba(16,27,61,.2)!important; }
 html:not([data-theme="dark"]) .chip{ color:#101B3D; border-color:rgba(16,27,61,.25); }
+
+/* ==========================================================================
+   V7 — contraste des tarifs, mobile recentré, footer mobile refait
+   ========================================================================== */
+html[data-theme="dark"] .tarif-item span,html[data-theme="dark"] .tarif-price{ color:#F3EFE4!important; font-weight:600; }
+.cta-float.nf{ opacity:0!important; transform:translateY(30px)!important; pointer-events:none!important; }
+@media(max-width:860px){
+  footer.site-footer{ padding:40px 14px 30px!important; }
+  .kf{ grid-template-columns:minmax(0,1fr)!important; gap:14px; }
+  .kf-l{ min-height:0; padding:28px 22px; gap:22px; align-items:center; text-align:center; }
+  .kf-l::before{ display:none; }
+  .kf-logo{ justify-content:center; } .kf-tag{ margin:0; text-align:center; }
+  .kf-soc{ flex-direction:column; gap:12px; }
+  .kf-r{ padding:26px 20px 24px; text-align:center; }
+  .kf-lucky{ position:static; flex-direction:row; justify-content:center; gap:12px; margin:0 0 22px; }
+  .kf-cols{ display:grid; grid-template-columns:1fr 1fr; gap:24px 14px; justify-items:center; }
+  .kf-cols>div:last-child{ grid-column:1/-1; }
+  .kf-cols a{ overflow-wrap:anywhere; }
+  .kf-bot{ flex-direction:column; align-items:center; text-align:center; gap:8px; margin-top:28px; }
+}
+@media(max-width:768px){
+  *,*::before,*::after{ box-sizing:border-box; }
+  html,body{ overflow-x:hidden; width:100%; }
+  #hero.hero,.hero{ width:100%!important; max-width:100%!important; margin:0!important; padding:100px 16px 80px!important; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  .hero-content{ width:100%!important; max-width:100%!important; margin:0 auto!important; padding:0!important; left:auto!important; right:auto!important; text-align:center; }
+  .hero-title{ width:100%; margin-left:auto; margin-right:auto; padding:0; }
+  .c3w,.hc-scene{ width:100%; max-width:100%; }
+  .c3card,.hc-card{ padding:22px 16px; }
+  .c3card input,.c3card textarea,.hc-card input,.hc-card textarea{ box-sizing:border-box; width:100%; max-width:100%; }
+  #scrollTopBtn{ width:44px!important; height:44px!important; right:14px!important; bottom:84px!important; }
+  .cta-float{ right:14px!important; }
+}
+
+/* ==========================================================================
+   V7 — gris illisibles (mode sombre), mobile centré et robuste, footer mobile
+   ========================================================================== */
+html[data-theme="dark"] .tarif-item span,html[data-theme="dark"] .tarif-item p,html[data-theme="dark"] .tarif-item div{ color:#ECE8DB!important; font-weight:500; }
+html[data-theme="dark"] .tarif-disclaimer{ color:#B9B6AC!important; }
+html[data-theme="dark"] .lift{ color:#D9D6CB!important; }
+html,body{ overflow-x:clip; }
+input,textarea,select{ box-sizing:border-box; max-width:100%; min-width:0; }
+.mq-band,.ticker-wrap,.c3d,.c3s{ overflow:hidden; contain:paint; }
+body.at-footer .cta-float{ opacity:0!important; pointer-events:none!important; }
+@media(max-width:768px){
+  .hero{ padding-left:0!important; padding-right:0!important; }
+  .hero-content{ width:100%; max-width:100%; box-sizing:border-box; padding:0 16px; margin:0 auto; text-align:center; }
+  section,main{ box-sizing:border-box; max-width:100%; }
+  .hc-card,.c3card{ padding:20px 16px!important; }
+  .hc-card form,.c3card form{ width:100%; min-width:0; }
+  footer.site-footer{ padding:40px 14px 0!important; box-sizing:border-box; width:100%; }
+  .kf{ grid-template-columns:minmax(0,1fr)!important; gap:14px; width:100%; max-width:100%; }
+  .kf-l,.kf-r{ min-width:0; box-sizing:border-box; width:100%; }
+  .kf-l{ min-height:0; align-items:center; text-align:center; gap:22px; padding:28px 20px; }
+  .kf-logo{ justify-content:center; }
+  .kf-tag{ margin:0; text-align:center; }
+  .kf-soc{ flex-direction:column; gap:12px; justify-content:center; }
+  .kf-r{ padding:52px 20px 24px; text-align:center; align-items:center; }
+  .kf-lucky{ left:50%; right:auto; transform:translateX(-50%); top:-30px; }
+  .kf-lucky span{ padding:10px 22px!important; } .kf-lucky span img{ height:26px; }
+  .kf-cols{ flex-direction:column; align-items:center; gap:22px; padding-top:10px; width:100%; }
+  .kf-cols h4{ margin-bottom:8px; }
+  .kf-cols a{ margin-bottom:10px; } .kf-cols a:hover{ padding-left:0; }
+  .kf-bot{ flex-direction:column; align-items:center; text-align:center; gap:6px; margin-top:26px; }
+  #scrollTopBtn{ right:16px!important; } .cta-float{ right:16px!important; }
+}
+
+/* V7b — footer mobile : une seule colonne, badge centré (prend le dessus sur les anciennes règles) */
+@media(max-width:860px){
+  .kf-r{ padding:26px 20px 28px!important; align-items:center; text-align:center; }
+  .kf-lucky{ position:static!important; transform:none!important; flex-direction:column!important; align-items:center!important; justify-content:center; gap:6px!important; margin:0 0 22px!important; }
+  .kf-lucky span{ padding:10px 24px!important; } .kf-lucky span img{ height:28px!important; width:auto!important; }
+  .kf-cols{ display:flex!important; flex-direction:column!important; align-items:center!important; gap:22px!important; width:100%; }
+  .kf-cols>div:last-child{ grid-column:auto; }
+  .kf-cols a{ overflow-wrap:normal; margin-bottom:10px; }
+  #scrollTopBtn{ bottom:calc(env(safe-area-inset-bottom,0px) + 84px)!important; }
+}
