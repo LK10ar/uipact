@@ -89,7 +89,7 @@
             body.insertBefore(sc, body.firstChild);
             var defs = [[6,12,90,26,.5,-80],[84,8,60,20,.9,60],[72,55,130,34,.35,-160],[10,62,70,22,.7,80],[45,30,40,16,1.1,140],
                         [92,80,55,18,.6,-40],[28,92,100,30,.45,-120],[58,75,45,15,1,100],[18,35,35,14,1.2,160],[80,30,80,28,.55,-200]];
-            var ps = defs.map(function (d) {
+            var ps = (innerWidth < 700 ? defs.slice(0, 5) : defs).map(function (d) {
                 var p = document.createElement('div'); p.className = 'p';
                 var c = document.createElement('div'); c.className = 'cube'; c.style.cssText = '--s:' + d[2] + 'px;--d:' + d[3] + 's';
                 for (var k = 0; k < 6; k++) { var f = document.createElement('div'); f.className = 'f'; c.appendChild(f); }
@@ -199,6 +199,93 @@
             addEventListener('scroll', vis, { passive: true }); vis();
             cta.addEventListener('mousemove', function (e) { var r = cta.getBoundingClientRect(); cta.style.transform = 'translate(' + ((e.clientX - r.left - r.width / 2) * .15) + 'px,' + ((e.clientY - r.top - r.height / 2) * .25) + 'px)'; });
             cta.addEventListener('mouseleave', function () { cta.style.transform = ''; });
+        }
+    });
+})();
+
+/* ===== V4 : carrousel 3D, sections landing, contact ===== */
+(function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        var $ = function (s) { return document.querySelector(s); };
+        var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        function html(t) { var d = document.createElement('div'); d.innerHTML = t.trim(); return d.firstChild; }
+
+        // ---- Carrousel 3D (accueil + portfolio) ----
+        var D = [['img/chene.png','Le Chêne Doré','Webdesign'],['img/tout.png','Novaflow Advisory','Branding'],['img/sport.png','Application Mobile','UX / UI Design'],
+                 ['img/japan.png','Japan and Friends','Identité visuelle'],['img/foodweb.png','Food Burger','Webdesign'],['img/alpharun.png','AlphaRun','Mockup UI'],
+                 ['img/flyers-alpharun.png','Flyers AlphaRun','Print'],['img/carte.png','Cartes de visite','Print']];
+        var anchor = $('#portfolio') || (document.querySelector('.portfolio-header') && document.querySelector('.portfolio-header').nextElementSibling);
+        if (anchor && !(location.pathname.indexOf('portfolio') < 0 && !$('#portfolio'))) {
+            var sec = html('<section class="c3d" id="carousel3d"><div class="eb">Réalisations</div><h2 class="lp-t">Le portfolio en <i>3D</i></h2><div class="c3d-stage"><div class="c3d-ring"></div></div>' +
+                '<div class="c3d-cap"><b></b><span></span></div><div class="c3d-nav"><button aria-label="Précédent">‹</button><button aria-label="Suivant">›</button></div></section>');
+            anchor.parentNode.insertBefore(sec, $('#portfolio') ? anchor : anchor);
+            var ring = sec.querySelector('.c3d-ring'), stage = sec.querySelector('.c3d-stage'), cap = sec.querySelector('.c3d-cap'), N = D.length, step = 360 / N, cards = [], R = 0;
+            D.forEach(function (d) {
+                var a = document.createElement('a'); a.href = 'portfolio.html'; a.className = 'c3d-card'; a.style.backgroundImage = "url('" + d[0] + "')"; a.draggable = false;
+                ring.appendChild(a); cards.push(a);
+            });
+            function layout() {
+                var w = innerWidth < 640 ? 170 : innerWidth < 1024 ? 230 : 290, h = Math.round(w * .68);
+                R = Math.round((w / 2) / Math.tan(Math.PI / N) * 1.12);
+                cards.forEach(function (c, i) {
+                    c.style.cssText += ';width:' + w + 'px;height:' + h + 'px;margin:' + (-h / 2) + 'px 0 0 ' + (-w / 2) + 'px;transform:rotateY(' + (i * step) + 'deg) translateZ(' + R + 'px)';
+                });
+            }
+            layout(); addEventListener('resize', layout);
+            var ang = 0, mom = 0, drag = false, lx = 0, moved = 0, snap = null, hover = false, ci = -1;
+            stage.addEventListener('pointerdown', function (e) { drag = true; lx = e.clientX; moved = 0; snap = null; });
+            addEventListener('pointermove', function (e) { if (!drag) return; var dx = e.clientX - lx; lx = e.clientX; moved += Math.abs(dx); mom = dx * .3; ang += mom; });
+            addEventListener('pointerup', function () { drag = false; });
+            stage.addEventListener('mouseenter', function () { hover = true; }); stage.addEventListener('mouseleave', function () { hover = false; });
+            stage.addEventListener('click', function (e) { if (moved > 6) e.preventDefault(); }, true);
+            var b = sec.querySelectorAll('.c3d-nav button');
+            b[0].onclick = function () { snap = (Math.round(ang / step) + 1) * step; };
+            b[1].onclick = function () { snap = (Math.round(ang / step) - 1) * step; };
+            (function loop() {
+                if (!drag) { if (snap !== null) { ang += (snap - ang) * .1; if (Math.abs(snap - ang) < .05) snap = null; } else { ang += mom + (hover || reduce ? 0 : .12); mom *= .94; } }
+                ring.style.transform = 'translateZ(-' + R + 'px) rotateX(-8deg) rotateY(' + ang + 'deg)';
+                cards.forEach(function (c, i) { var f = Math.cos((i * step + ang) * Math.PI / 180); c.style.opacity = (.3 + .7 * (f + 1) / 2).toFixed(2); });
+                var idx = ((Math.round(-ang / step) % N) + N) % N;
+                if (idx !== ci) { ci = idx; cap.querySelector('b').textContent = D[idx][1]; cap.querySelector('span').textContent = D[idx][2]; cap.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 500, easing: 'ease-out' }); }
+                requestAnimationFrame(loop);
+            })();
+        }
+
+        // ---- Sections landing (accueil) ----
+        if ($('#hero') && $('#services')) {
+            var proc = html('<section class="lp" id="process"><div class="eb">Méthode</div><h2 class="lp-t">Trois étapes, <i>un résultat</i></h2><div class="lp-g">' +
+                '<div class="glass lp-c"><div class="n">01</div><h3>Stratégie</h3><p>Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.</p></div>' +
+                '<div class="glass lp-c"><div class="n">02</div><h3>Créativité</h3><p>Concevoir une identité et des interfaces qui vous démarquent et racontent votre histoire.</p></div>' +
+                '<div class="glass lp-c"><div class="n">03</div><h3>Précision</h3><p>Livrer des fichiers et des pages soignés, prêts à être utilisés partout.</p></div></div></section>');
+            $('#services').after(proc);
+            var cap5 = [['creation-graphique.html','Création graphique','Logo · Identité · Supports'],['creation-print.html','Création print','Cartes · Flyers · Affiches'],['sites-web.html','Sites internet','Vitrine · One-page'],
+                        ['identite-visuelle.html','Identité visuelle','Charte · Rédaction'],['ux-ui.html','UX / UI design','Maquettes · Prototypes']];
+            var caps = html('<section class="lp" id="capabilities"><div class="eb">Savoir-faire</div><h2 class="lp-t">Le studio, <i>de A à Z</i></h2><div class="lp-g f">' +
+                cap5.map(function (c, i) { return '<a class="glass lp-c" href="' + c[0] + '"><div class="n">0' + (i + 1) + '</div><h3>' + c[1] + '</h3><div class="tg">' + c[2].split(' · ').map(function (t) { return '<span>' + t + '</span>'; }).join('') + '</div></a>'; }).join('') + '</div></section>');
+            proc.after(caps);
+            var cta = html('<div class="glass lp-cta"><h2 class="lp-t" style="margin-bottom:10px">Votre prochain projet <i>commence ici</i></h2><p style="color:#B9B6AC">Parlons de votre vision : stratégie, créativité et précision au service de votre image.</p>' +
+                '<div class="bt"><a class="p" href="#contact">Démarrer un projet</a><a class="o" href="portfolio.html">Voir le portfolio</a></div></div>');
+            $('#contact').before(cta);
+        }
+
+        // ---- Contact : mise en page refaite, formulaire d'origine conservé ----
+        var f = document.querySelector('form.contact-form');
+        if (f && /contact\.html/.test(location.pathname)) {
+            var grid = html('<div class="cgrid"></div>'); f.parentNode.insertBefore(grid, f);
+            var side = html('<aside class="glass cside"><h2>Dites bonjour 👋</h2><p>Un projet de logo, de site, de print ou d\'application ? Décrivez-le, je reviens vers vous.</p>' +
+                '<a class="ml" href="mailto:uipact@gmail.com">uipact@gmail.com</a><div class="st"><i></i>Disponible pour de nouveaux projets</div></aside>');
+            grid.appendChild(side); grid.appendChild(f);
+            var sv = ['Site internet', 'Identité visuelle', 'Création graphique', 'Création print', 'UX / UI design', 'Autre'];
+            var grp = html('<div class="form-group full-width"><label>Services souhaités</label><div class="chips"></div><input type="hidden" name="services" value=""></div>');
+            var hid = grp.querySelector('input'), sel = [];
+            sv.forEach(function (s) {
+                var c = document.createElement('button'); c.type = 'button'; c.className = 'chip'; c.textContent = s;
+                c.onclick = function () { var k = sel.indexOf(s); if (k < 0) sel.push(s); else sel.splice(k, 1); c.classList.toggle('on', k < 0); hid.value = sel.join(', '); };
+                grp.querySelector('.chips').appendChild(c);
+            });
+            var btn = f.querySelector('.valider-btn'); btn.parentNode.insertBefore(grp, btn);
+            f.appendChild(html('<input type="hidden" name="_subject" value="Nouveau message depuis le site UIPACT !">'));
+            f.addEventListener('submit', function () { setTimeout(function () { btn.disabled = true; btn.textContent = 'Envoi en cours…'; }, 0); });
         }
     });
 })();
