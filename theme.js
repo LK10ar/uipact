@@ -257,7 +257,7 @@
                 '<div class="glass lp-c"><div class="n">01</div><h3>Stratégie</h3><p>Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.</p></div>' +
                 '<div class="glass lp-c"><div class="n">02</div><h3>Créativité</h3><p>Concevoir une identité et des interfaces qui vous démarquent et racontent votre histoire.</p></div>' +
                 '<div class="glass lp-c"><div class="n">03</div><h3>Précision</h3><p>Livrer des fichiers et des pages soignés, prêts à être utilisés partout.</p></div></div></section>');
-            $('#services').after(proc);
+            
             var cap5 = [['creation-graphique.html','Création graphique','Logo · Identité · Supports'],['creation-print.html','Création print','Cartes · Flyers · Affiches'],['sites-web.html','Sites internet','Vitrine · One-page'],
                         ['identite-visuelle.html','Identité visuelle','Charte · Rédaction'],['ux-ui.html','UX / UI design','Maquettes · Prototypes']];
             var caps = html('<section class="lp" id="capabilities"><div class="eb">Savoir-faire</div><h2 class="lp-t">Le studio, <i>de A à Z</i></h2><div class="lp-g f">' +
@@ -544,7 +544,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 d.style.left = c[2]; d.style.right = c[6] || 'auto'; d.style.top = c[3]; d.style.animationDelay = '-' + (i * 1.7) + 's';
                 d.style.transform = 'translateZ(' + c[5] + 'px) rotateY(' + c[4] + 'deg) rotateZ(' + (c[4] / 4) + 'deg)'; d.dataset.sp = (0.06 + i * 0.035); rg.appendChild(d);
             });
-            hero.insertBefore(h3, hero.firstChild);
+            /* cartes flottantes retirées */
             hero.addEventListener('mousemove', function (e) {
                 var r = hero.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
                 rg.style.transform = 'rotateY(' + (x * 14) + 'deg) rotateX(' + (-y * 10) + 'deg)';
@@ -589,11 +589,129 @@ document.addEventListener('DOMContentLoaded', function () {
     function h(t) { var d = document.createElement('div'); d.innerHTML = t.trim(); return d.firstChild; }
     var hero = document.getElementById('hero'), hc = document.querySelector('.hero-content');
     if (!hero || !hc) return;
-    hc.insertBefore(h('<div class="hero-badge"><i></i>Disponible pour de nouveaux projets</div>'), hc.firstChild);
     var main = hc.querySelector('.cta-button'), gh = hc.querySelector('.cta-ghost');
     if (main) {
         var row = h('<div class="hero-ctas"></div>'); main.parentNode.insertBefore(row, main); row.appendChild(main);
         row.appendChild(gh || h('<a class="cta-ghost" href="contact.html">Démarrer un projet</a>'));
     }
     hero.appendChild(h('<a class="hero-scroll" href="#services"><b></b>Découvrir</a>'));
+});
+
+/* ===== V9 : showcase 3D piloté par le scroll (ordinateur qui s'ouvre, sites qui défilent, téléphone) ===== */
+document.addEventListener('DOMContentLoaded', function () {
+    var hero = document.getElementById('hero'); if (!hero || document.getElementById('sc3')) return;
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, mob = matchMedia('(max-width:900px)');
+    var S = [['Stratégie', 'Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.', 'img/tout.png'],
+             ['Créativité', 'Concevoir une identité et des interfaces qui vous démarquent et racontent votre histoire.', 'img/chene.png'],
+             ['Précision', 'Livrer des fichiers et des pages soignés, prêts à être utilisés partout.', 'img/foodweb.png']];
+    var sec = document.createElement('section'); sec.id = 'sc3'; sec.className = 'sc3';
+    sec.innerHTML = '<div class="sc3-stick"><div class="sc3-txt"><div class="eb">Ma méthode</div><div class="sc3-n">01</div><h3 class="sc3-h"></h3><p class="sc3-p"></p><div class="sc3-d"><i></i><i></i><i></i></div><a class="cta-button" href="contact.html">Démarrer un projet</a></div>' +
+        '<div class="sc3-scene"><div class="lap"><div class="lap-lid"><div class="lap-page">' + S.map(function (s) { return '<img src="' + s[2] + '" alt="">'; }).join('') + '</div></div><div class="lap-deck"></div></div><div class="phone"><img src="img/sport.png" alt=""></div></div></div>';
+    (document.querySelector('.ticker-wrap') || hero).after(sec);
+    var q = function (s) { return sec.querySelector(s); }, lap = q('.lap'), lid = q('.lap-lid'), ph = q('.phone'), n = q('.sc3-n'), hh = q('.sc3-h'), pp = q('.sc3-p'), dots = sec.querySelectorAll('.sc3-d i'), imgs = sec.querySelectorAll('.lap-page img'), cur = -1, mx = 0, my = 0;
+    addEventListener('mousemove', function (e) { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; }, { passive: true });
+    function step(i) {
+        if (i === cur) return; cur = i; n.textContent = '0' + (i + 1); hh.textContent = S[i][0]; pp.textContent = S[i][1];
+        [].forEach.call(imgs, function (m, k) { m.classList.toggle('on', k === i); }); [].forEach.call(dots, function (d, k) { d.classList.toggle('on', k <= i); });
+        [n, hh, pp].forEach(function (e) { e.classList.remove('sw3'); void e.offsetWidth; e.classList.add('sw3'); });
+    }
+    var ease = function (t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+    (function frame() {
+        var auto = mob.matches || reduce, p;
+        if (auto) p = .12 + .88 * ((performance.now() / 13500) % 1);
+        else { var r = sec.getBoundingClientRect(), tot = sec.offsetHeight - innerHeight; p = Math.max(0, Math.min(1, -r.top / tot)); }
+        var o = auto ? 1 : ease(Math.min(1, p / .14)), open = -88 * (1 - o) + 6 * o;
+        var k = Math.max(0, (p - .12) / .88), i = Math.min(2, Math.floor(k * 3)), lp = (k * 3) % 1;
+        step(i);
+        lid.style.transform = 'rotateX(' + open + 'deg)';
+        lap.style.transform = 'rotateX(' + (16 - 5 * Math.sin(p * Math.PI) + my * -8) + 'deg) rotateY(' + (-16 + p * 30 + mx * 8) + 'deg) scale(' + (.9 + .12 * o) + ')';
+        imgs[i].style.transform = 'scale(1.28) translateY(' + ((.5 - lp) * 11) + '%)';
+        var pv = Math.max(0, Math.min(1, (p - .1) * 5)); ph.style.opacity = pv; ph.style.transform = 'translateZ(' + (60 + pv * 60) + 'px) rotateY(-22deg) rotateX(6deg) translateY(' + (-p * 40) + 'px)';
+        requestAnimationFrame(frame);
+    })();
+});
+
+/* ===== V9 : phrase révélée au scroll + « du wireframe au site » (3D piloté par le scroll) ===== */
+document.addEventListener('DOMContentLoaded', function () {
+    function h(t) { var d = document.createElement('div'); d.innerHTML = t.trim(); return d.firstChild; }
+    var cl = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+    ['#process', '#capabilities'].forEach(function (s) { var e = document.querySelector(s); if (e) e.remove(); });
+    var hero = document.getElementById('hero'), sv = document.getElementById('services');
+    if (!hero || !sv) return;
+    // 1. Phrase d'engagement qui se révèle mot à mot
+    var T = "La garantie d'un résultat 100% en adéquation avec vos valeurs, les messages et l'image que vous souhaitez véhiculer.";
+    var st = h('<section class="st-sec"><p class="st-txt"></p></section>'), tp = st.firstChild;
+    tp.innerHTML = T.split(' ').map(function (w) { return '<span class="sw2">' + w + '</span>'; }).join(' ');
+    (document.querySelector('.ticker-wrap') || hero).after(st);
+    var ws = [].slice.call(tp.children);
+    // 2. Du wireframe au site : maquette 3D pilotée par le scroll
+    var p3 = h('<section class="p3" id="methode"><div class="p3-in"><div class="p3-txt"><div class="eb">Méthode</div><h2 class="p3-h">Du wireframe au site <i>qui convertit</i></h2><ul class="p3-steps">' +
+        '<li class="on"><b>01 · Stratégie</b><span>Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.</span></li>' +
+        '<li><b>02 · Design</b><span>Wireframes puis maquettes : identité, typographies, couleurs et interface pensées pour votre image.</span></li>' +
+        '<li><b>03 · Développement</b><span>Un site à votre image, responsive et facile à prendre en main.</span></li></ul></div>' +
+        '<div class="p3-stage"><div class="p3-rig" data-s="0"><div class="p3-win">' +
+        '<div class="p3-lay on"><div class="wf"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>' +
+        '<div class="p3-lay"><div class="wf d"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>' +
+        '<div class="p3-lay"><img class="p3-live" src="img/chene.png" alt=""></div></div>' +
+        '<div class="p3-chip c1">Aa<small>Typographie</small></div><div class="p3-chip c2"><u></u><u></u><u></u></div>' +
+        '<div class="p3-chip c3">Bouton</div><div class="p3-chip c4">Responsive<small>mobile · tablette · bureau</small></div></div></div></div></section>');
+    sv.after(p3);
+    var rig = p3.querySelector('.p3-rig'), lays = [].slice.call(p3.querySelectorAll('.p3-lay')), lis = [].slice.call(p3.querySelectorAll('.p3-steps li')), tg = 0, cur = 0, mx = 0, cx = 0, last = -1;
+    addEventListener('mousemove', function (e) { mx = e.clientX / innerWidth - .5; }, { passive: true });
+    (function loop() {
+        var r = tp.getBoundingClientRect(), pr = cl((innerHeight * .88 - r.top) / (innerHeight * .5 + r.height), 0, 1), k = pr * (ws.length + 4);
+        ws.forEach(function (w, i) { w.style.opacity = (.15 + .85 * cl(k - i, 0, 1)).toFixed(2); });
+        var q = p3.getBoundingClientRect(); tg = cl(-q.top / (q.height - innerHeight), 0, 1);
+        cur += (tg - cur) * .1; cx += (mx - cx) * .06;
+        var e = cur < .1 ? 0 : cur;
+        rig.style.transform = 'rotateY(' + (-30 + cur * 42 + cx * 8) + 'deg) rotateX(' + (14 - cur * 12) + 'deg) translateZ(' + (cur * 50) + 'px)';
+        rig.style.setProperty('--p', cur.toFixed(3));
+        var s = tg < .33 ? 0 : tg < .66 ? 1 : 2;
+        if (s !== last) { last = s; rig.dataset.s = s; lays.forEach(function (l, i) { l.classList.toggle('on', i === s); }); lis.forEach(function (l, i) { l.classList.toggle('on', i === s); }); }
+        requestAnimationFrame(loop);
+    })();
+});
+
+/* ===== V9 : vue éclatée d'un site au scroll + services empilés en 3D ===== */
+document.addEventListener('DOMContentLoaded', function () {
+    function h(t) { var d = document.createElement('div'); d.innerHTML = t.trim(); return d.firstChild; }
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var hh = document.querySelector('.h3d'); if (hh) hh.remove();
+    var anchor = document.querySelector('.ticker-wrap');
+    if (false && anchor) {
+        var sec = h('<section class="l3d" id="studio"><div class="l3d-pin"><div class="l3d-head"><div class="eb">Méthode</div><h2 class="lp-t">Du concept au <i>site en ligne</i></h2></div>' +
+            '<div class="l3d-scene"><div class="l3d-stack">' +
+            '<div class="ly ly1"><span>Wireframe</span></div>' +
+            '<div class="ly ly2"><span>Palette</span><i style="background:#101B3D"></i><i style="background:#1C2C5C"></i><i style="background:#C9A24B"></i><i style="background:#E4C77A"></i><i style="background:#FAF7F1"></i></div>' +
+            '<div class="ly ly3"><span>Typographie</span><b>Aa</b><em>Instrument Serif<br>Inter</em></div>' +
+            '<div class="ly ly4"><span>Interface</span><u></u><u></u><u></u><s></s></div>' +
+            '<div class="ly ly5"><div class="bar"><i></i><i></i><i></i><em>● En ligne</em></div><div class="pg"><b>Votre site,<br>prêt à convaincre</b><u></u><s></s></div></div>' +
+            '</div></div><div class="l3d-cap"><div class="n">01</div><div><h3></h3><p></p></div></div><div class="l3d-bar"><i></i></div></div></section>');
+        anchor.after(sec);
+        var steps = [['Wireframe', 'La structure et le parcours de vos visiteurs, posés avant toute décoration.'], ['Design', 'Palette de couleurs, typographies et identité : votre univers visuel prend forme.'],
+                     ['Intégration', 'Interfaces soignées, pensées pour s\'afficher parfaitement sur mobile comme sur ordinateur.'], ['En ligne', 'Toutes les couches s\'assemblent : votre site est prêt à convaincre.']];
+        var stack = sec.querySelector('.l3d-stack'), ly = [].slice.call(sec.querySelectorAll('.ly')), n = sec.querySelector('.l3d-cap .n'), t = sec.querySelector('.l3d-cap h3'), d = sec.querySelector('.l3d-cap p'), bar = sec.querySelector('.l3d-bar i'), cur = -1;
+        function upd() {
+            var r = sec.getBoundingClientRect(), tot = sec.offsetHeight - innerHeight, p = Math.min(1, Math.max(0, -r.top / tot)), e = p * p * (3 - 2 * p);
+            var gap = (innerWidth < 700 ? 62 : 92) * Math.sin(Math.PI * Math.min(1, p));
+            stack.style.transform = 'rotateX(' + (64 - 64 * e) + 'deg) rotateZ(' + (-42 * (1 - e)) + 'deg) scale(' + (.85 + .2 * e) + ')';
+            ly.forEach(function (l, i) { l.style.transform = 'translateZ(' + (i * gap) + 'px)'; });
+            bar.style.width = (p * 100) + '%';
+            var s = Math.min(3, Math.floor(p * 4)); if (s !== cur) { cur = s; n.textContent = '0' + (s + 1); t.textContent = steps[s][0]; d.textContent = steps[s][1]; }
+        }
+        if (!reduce) { addEventListener('scroll', upd, { passive: true }); addEventListener('resize', upd); } upd();
+    }
+    // Services empilés : chaque carte reste collée et se réduit quand la suivante arrive (ordinateur)
+    var cards = [].slice.call(document.querySelectorAll('#services .service-card'));
+    if (cards.length > 1 && innerWidth >= 900 && !reduce) {
+        cards[0].parentNode.classList.add('stk');
+        cards.forEach(function (c, i) { c.style.top = (96 + i * 20) + 'px'; c.classList.remove('rv', 'tilt'); c.style.opacity = 1; });
+        var upd2 = function () {
+            cards.forEach(function (c, i) {
+                var sum = 0; for (var j = i + 1; j < cards.length; j++) { sum += Math.min(1, Math.max(0, 1 - (cards[j].getBoundingClientRect().top - (96 + j * 20)) / (innerHeight * .7))); }
+                c.style.scale = (1 - .04 * sum).toFixed(4); c.style.filter = 'brightness(' + (1 - .1 * sum).toFixed(3) + ')';
+            });
+        };
+        addEventListener('scroll', upd2, { passive: true }); upd2();
+    }
 });
