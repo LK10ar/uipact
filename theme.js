@@ -525,3 +525,75 @@ document.addEventListener('DOMContentLoaded', function () {
         if (ft && 'IntersectionObserver' in window) new IntersectionObserver(function (es) { document.body.classList.toggle('at-footer', es[0].isIntersecting); }, { threshold: .05 }).observe(ft);
     });
 })();
+
+/* ===== V8 : impact visuel et conversion ===== */
+(function () {
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+    function h(t) { var d = document.createElement('div'); d.innerHTML = t.trim(); return d.firstChild; }
+    document.addEventListener('DOMContentLoaded', function () {
+        var body = document.body;
+        // Barre de progression de lecture
+        var sp = h('<div id="sp"></div>'); body.appendChild(sp);
+        addEventListener('scroll', function () { var m = document.documentElement.scrollHeight - innerHeight; sp.style.transform = 'scaleX(' + (m > 0 ? scrollY / m : 0) + ')'; }, { passive: true });
+        // Hero : cartes de réalisations flottantes en 3D + inclinaison + effet de scroll
+        var hero = document.getElementById('hero'), hc = document.querySelector('.hero-content');
+        if (hero && hc && !reduce) {
+            var h3 = h('<div class="h3d"><div class="rg"></div></div>'), rg = h3.firstChild;
+            [['img/japan.png', 'Identité visuelle', '3%', '22%', -16, 60], ['img/chene.png', 'Site web', 'auto', '16%', 14, -40, '3%'], ['img/sport.png', 'UX / UI', '6%', '64%', 12, 90], ['img/tout.png', 'Branding', 'auto', '62%', -12, 30, '5%']].forEach(function (c, i) {
+                var d = document.createElement('div'); d.className = 'h3c'; d.style.backgroundImage = "url('" + c[0] + "')"; d.setAttribute('data-t', c[1]);
+                d.style.left = c[2]; d.style.right = c[6] || 'auto'; d.style.top = c[3]; d.style.animationDelay = '-' + (i * 1.7) + 's';
+                d.style.transform = 'translateZ(' + c[5] + 'px) rotateY(' + c[4] + 'deg) rotateZ(' + (c[4] / 4) + 'deg)'; d.dataset.sp = (0.06 + i * 0.035); rg.appendChild(d);
+            });
+            hero.insertBefore(h3, hero.firstChild);
+            hero.addEventListener('mousemove', function (e) {
+                var r = hero.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+                rg.style.transform = 'rotateY(' + (x * 14) + 'deg) rotateX(' + (-y * 10) + 'deg)';
+                hc.style.setProperty('--ry', (x * 5) + 'deg'); hc.style.setProperty('--rx', (-y * 4) + 'deg');
+            });
+            hero.addEventListener('mouseleave', function () { rg.style.transform = ''; hc.style.setProperty('--ry', '0deg'); hc.style.setProperty('--rx', '0deg'); });
+            addEventListener('scroll', function () {
+                var s = Math.min(1, scrollY / (innerHeight * .75)); hc.style.setProperty('--hs', s);
+                [].forEach.call(rg.children, function (c) { c.style.marginTop = (-scrollY * c.dataset.sp) + 'px'; });
+            }, { passive: true });
+            var b = hc.querySelector('.cta-button');
+            if (b && !hc.querySelector('.cta-ghost')) b.insertAdjacentElement('afterend', h('<a class="cta-ghost bi" href="contact.html" style="--i:9">Me contacter</a>'));
+        }
+        if (fine && !reduce) {
+            // Halo qui suit le curseur + anneau + boutons magnétiques
+            var spot = h('<div id="spot"></div>'), cur = h('<div id="cur"></div>'); body.appendChild(spot); body.appendChild(cur);
+            var tx = 0, ty = 0, cx = 0, cy = 0;
+            addEventListener('mousemove', function (e) { tx = e.clientX; ty = e.clientY; cur.classList.add('on'); spot.style.setProperty('--sx', tx + 'px'); spot.style.setProperty('--sy', ty + 'px'); }, { passive: true });
+            document.addEventListener('mouseleave', function () { cur.classList.remove('on'); });
+            (function lp() { cx += (tx - cx) * .2; cy += (ty - cy) * .2; cur.style.transform = 'translate3d(' + cx + 'px,' + cy + 'px,0)'; requestAnimationFrame(lp); })();
+            document.addEventListener('mouseover', function (e) { cur.classList.toggle('big', !!(e.target.closest && e.target.closest('a,button,.c3d-card,.service-card,.project-card,.chip'))); });
+            document.querySelectorAll('.cta-button,.cta-ghost,.service-btn,.cta-menu-button').forEach(function (m) {
+                m.addEventListener('mousemove', function (e) { var r = m.getBoundingClientRect(); m.style.translate = ((e.clientX - r.left - r.width / 2) * .22) + 'px ' + ((e.clientY - r.top - r.height / 2) * .35) + 'px'; });
+                m.addEventListener('mouseleave', function () { m.style.translate = ''; });
+            });
+        }
+        // Bulle d'accroche vers le contact (une fois par session)
+        if (!/contact\.html/.test(location.pathname) && !sessionStorage.getItem('uipact-bub')) {
+            setTimeout(function () {
+                var cta = document.querySelector('.cta-float.show'); if (!cta || document.body.classList.contains('at-footer')) return;
+                sessionStorage.setItem('uipact-bub', '1');
+                var bub = h('<a class="bub" href="contact.html">Un projet de site ou de logo ? Parlons-en 👋<button aria-label="Fermer">×</button></a>');
+                bub.querySelector('button').onclick = function (e) { e.preventDefault(); e.stopPropagation(); bub.remove(); };
+                body.appendChild(bub); setTimeout(function () { bub.remove(); }, 14000);
+            }, 9000);
+        }
+    });
+})();
+
+/* ===== V8b : badge de disponibilité, boutons du hero regroupés, indicateur de scroll ===== */
+document.addEventListener('DOMContentLoaded', function () {
+    function h(t) { var d = document.createElement('div'); d.innerHTML = t.trim(); return d.firstChild; }
+    var hero = document.getElementById('hero'), hc = document.querySelector('.hero-content');
+    if (!hero || !hc) return;
+    hc.insertBefore(h('<div class="hero-badge"><i></i>Disponible pour de nouveaux projets</div>'), hc.firstChild);
+    var main = hc.querySelector('.cta-button'), gh = hc.querySelector('.cta-ghost');
+    if (main) {
+        var row = h('<div class="hero-ctas"></div>'); main.parentNode.insertBefore(row, main); row.appendChild(main);
+        row.appendChild(gh || h('<a class="cta-ghost" href="contact.html">Démarrer un projet</a>'));
+    }
+    hero.appendChild(h('<a class="hero-scroll" href="#services"><b></b>Découvrir</a>'));
+});
