@@ -300,7 +300,8 @@
     function bgOf(el) { var m = getComputedStyle(el).backgroundImage.match(/url\(["']?([^"')]+)/); return m ? m[1] : ''; }
 
     // Carrousel coverflow 3D compact
-    function c3d(items) {
+    function c3d(items, key) {
+        if (key && window.__cmsCar && window.__cmsCar[key] && window.__cmsCar[key].length) items = window.__cmsCar[key].map(function (x) { return { img: x.image, title: x.title, cat: x.subtitle, href: x.href || 'portfolio.html' }; });
         while (items.length < 8) items = items.concat(items);
         var N = items.length, sec = h('<div class="cf"><div class="cf-stage"></div><div class="cf-cap"><b></b><span></span></div><div class="cf-nav"><button aria-label="Précédent">‹</button><div class="cf-dots"></div><button aria-label="Suivant">›</button></div></div>');
         var st = sec.querySelector('.cf-stage'), dots = sec.querySelector('.cf-dots'), cap = sec.querySelector('.cf-cap'), cs = [], pos = 0, tgt = 0, drag = false, lx = 0, moved = 0, hov = false, t0 = 0, cw = 300, ci = -1;
@@ -368,6 +369,7 @@
         f.addEventListener('submit', function (e) {
             e.preventDefault(); e.stopImmediatePropagation();
             var o = {}; new FormData(f).forEach(function (v, k) { o[k] = v; }); o._captcha = 'false';
+            if (window.UIPACT_API && !/REMPLACER/.test(window.UIPACT_API)) { var nm = ((o.prenom || '') + ' ' + (o.nom || o.name || '')).trim() || 'Visiteur', ms = Object.keys(o).filter(function (k) { return k.charAt(0) !== '_' && o[k]; }).map(function (k) { return k + ' : ' + o[k]; }).join('\n'); fetch(window.UIPACT_API.replace(/\/$/, '') + '/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: nm.slice(0, 80), email: o.email || '', message: ms.slice(0, 3000) }) }).catch(function () {}); }
             var t = btn.textContent; btn.disabled = true; btn.textContent = 'Envoi en cours…';
             fetch('https://formsubmit.co/ajax/uipact@gmail.com', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(o) })
                 .then(function (r) { return r.json(); })
@@ -405,7 +407,7 @@
         if (sl.length) {
             var host = document.querySelector('.carousel-container');
             var it = sl.map(function (s) { var im = s.querySelector('.carousel-image') || s, c = s.querySelector('.carousel-caption') || s.querySelector('p'); return { img: bgOf(im), title: c ? c.textContent.trim() : '', href: (s.querySelector('a') || {}).href }; });
-            host.parentNode.insertBefore(c3d(it), host); host.style.display = 'none'; var dt = document.querySelector('.carousel-dots'); if (dt) dt.style.display = 'none';
+            host.parentNode.insertBefore(c3d(it, window.__cmsPK && window.__cmsPK()), host); host.style.display = 'none'; var dt = document.querySelector('.carousel-dots'); if (dt) dt.style.display = 'none';
         }
         var pg = document.querySelector('.print-grid');
         if (pg) {
@@ -414,7 +416,7 @@
                 if (!img) { var t = c.querySelector('img'); img = t ? t.src : ''; }
                 return { img: img, title: c.textContent.trim().replace(/\s+/g, ' '), href: c.href };
             });
-            pg.parentNode.insertBefore(c3d(pi), pg); pg.style.display = 'none';
+            pg.parentNode.insertBefore(c3d(pi, 'creation-print'), pg); pg.style.display = 'none';
         }
 
         // Portfolio : un seul carrousel
@@ -423,10 +425,10 @@
         var pf = document.getElementById('portfolio');
         if (pf && document.getElementById('hero')) {
             var ttl = pf.querySelector('.section-title'); pf.id = 'portfolio-classic'; pf.style.display = 'none';
-            var ns = cfw(); ns.id = 'portfolio'; if (ttl) ns.appendChild(ttl); ns.appendChild(c3d(H5)); pf.parentNode.insertBefore(ns, pf);
+            var ns = cfw(); ns.id = 'portfolio'; if (ttl) ns.appendChild(ttl); ns.appendChild(c3d(H5, 'home')); pf.parentNode.insertBefore(ns, pf);
         }
         var ph = document.querySelector('.portfolio-header');
-        if (ph) { var p2 = cfw(); p2.appendChild(c3d(H5.concat([{ img: 'img/alpharun.png', title: 'AlphaRun', cat: 'Mockup UI', href: 'portfolio.html' }, { img: 'img/flyers-alpharun.png', title: 'Flyers AlphaRun', cat: 'Print', href: 'portfolio.html' }, { img: 'img/carte.png', title: 'Cartes de visite', cat: 'Print', href: 'portfolio.html' }]))); ph.after(p2); }
+        if (ph) { var p2 = cfw(); p2.appendChild(c3d(H5.concat([{ img: 'img/alpharun.png', title: 'AlphaRun', cat: 'Mockup UI', href: 'portfolio.html' }, { img: 'img/flyers-alpharun.png', title: 'Flyers AlphaRun', cat: 'Print', href: 'portfolio.html' }, { img: 'img/carte.png', title: 'Cartes de visite', cat: 'Print', href: 'portfolio.html' }]), 'portfolio')); ph.after(p2); }
 
         // Contact de l'accueil : formulaire classique dans une carte 3D
         var hf = document.querySelector('section#contact form.contact-form');
@@ -458,14 +460,13 @@
         var ft = document.querySelector('footer.site-footer');
         if (ft) {
             var ig = ft.querySelector('.social-links a'), igh = ig ? ig.outerHTML : '';
-            ft.innerHTML = '<div class="kf"><div class="kf-l"><div class="kf-logo"><img src="logo.png" alt="UIPACT"><b>UIPACT</b></div><p class="kf-tag">Agence de conception visuelle &amp; web.<br><span>Identité de marque, print et sites internet pensés pour convertir.</span></p><div class="kf-soc"><a class="kf-follow" href="https://www.instagram.com/uipact/" target="_blank" rel="noopener noreferrer">Suivez-nous !</a><div class="social-links">' + igh + '</div></div></div>' +
+            ft.innerHTML = window.__cmsFooter ? window.__cmsFooter(igh) : ('<div class="kf"><div class="kf-l"><div class="kf-logo"><img src="logo.png" alt="UIPACT"><b>UIPACT</b></div><p class="kf-tag">Agence de conception visuelle &amp; web.<br><span>Identité de marque, print et sites internet pensés pour convertir.</span></p><div class="kf-soc"><a class="kf-follow" href="https://www.instagram.com/uipact/" target="_blank" rel="noopener noreferrer">Suivez-nous !</a><div class="social-links">' + igh + '</div></div></div>' +
                 '<div class="kf-r"><a class="kf-lucky" href="contact.html"><span><img src="logo.png" alt="UIPACT"></span><em>Un projet ?</em></a><div class="kf-cols">' +
                 '<div><h4>Navigation</h4><a href="index.html">Accueil</a><a href="portfolio.html">Portfolio</a><a href="a-propos.html">À propos</a><a href="contact.html">Contact</a></div>' +
                 '<div><h4>Savoir-faire</h4><a href="creation-graphique.html">Création graphique</a><a href="creation-print.html">Création Print</a><a href="sites-web.html">Sites internet</a><a href="identite-visuelle.html">Identité visuelle</a><a href="ux-ui.html">UX / UI Design</a></div>' +
                 '<div><h4>Informations</h4><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">CGU</a><a href="politique-confidentialite.html">Politique de confidentialité</a></div></div>' +
                 '<div class="kf-bot"><p>© 2026 UIPACT — Tous droits réservés.</p><p>Conçu et développé par Barrot Léo</p></div></div></div>' +
-                '';
-            
+                '');
         }
     });
 })();
