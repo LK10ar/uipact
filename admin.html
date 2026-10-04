@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>Admin — UIPACT</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0A1024;color:#EDEAE0;font:15px/1.5 Inter,system-ui,sans-serif}
+a{color:#E4C77A}input,textarea,select,button{font:inherit;color:inherit}
+input,textarea,select{width:100%;background:#16204A;border:1px solid rgba(201,162,75,.3);border-radius:10px;padding:9px 12px}
+input:focus,textarea:focus,select:focus{outline:none;border-color:#C9A24B}textarea{resize:vertical}input[type=color]{padding:2px;height:42px;width:70px}input[type=checkbox]{width:auto}
+button{cursor:pointer;border:1px solid rgba(201,162,75,.5);background:transparent;border-radius:10px;padding:8px 14px}button:hover{background:rgba(201,162,75,.15)}
+button.gold{background:linear-gradient(135deg,#E4C77A,#C9A24B);color:#101B3D;font-weight:700;border:0}button.del{border-color:#ff7a7a;color:#ff9a9a}button.sm{padding:4px 9px;font-size:.8rem}
+#login{max-width:380px;margin:18vh auto;padding:28px;background:#111A38;border:1px solid rgba(201,162,75,.3);border-radius:20px;display:flex;flex-direction:column;gap:14px}
+#login h1{margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;color:#E4C77A}
+.top{position:sticky;top:0;z-index:20;background:#0d1530;border-bottom:1px solid rgba(201,162,75,.3);padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.top b{color:#E4C77A;font-size:1.05rem}.tabs{display:flex;gap:6px;flex-wrap:wrap;flex:1}.tabs button.on{background:#C9A24B;color:#101B3D;font-weight:700}
+main{max-width:1000px;margin:0 auto;padding:22px 16px 80px}h2{font-family:'Instrument Serif',Georgia,serif;font-weight:400;color:#E4C77A;font-size:1.8rem;margin:0 0 6px}
+.hint{color:#9A9CAA;font-size:.88rem;margin:0 0 16px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1;min-width:120px}.row>button,.row>.fx{flex:0 0 auto;min-width:0}
+.card{background:#111A38;border:1px solid rgba(201,162,75,.22);border-radius:14px;padding:12px 14px;margin-bottom:10px}.card small{color:#9A9CAA}
+.orig{color:#9A9CAA;font-size:.78rem;margin:2px 0 4px;white-space:pre-wrap}.tag{display:inline-block;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-right:8px}
+.thumb{width:84px;height:56px;object-fit:cover;border-radius:8px;background:#0b1330;border:1px solid rgba(201,162,75,.3);flex:0 0 auto}.blk{margin:6px 0 0 18px;padding-left:10px;border-left:2px solid #C9A24B}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#16204A;border:1px solid #C9A24B;border-radius:12px;padding:10px 18px;opacity:0;pointer-events:none;transition:.3s;z-index:50;max-width:90vw}#toast.on{opacity:1}#toast.bad{border-color:#ff7a7a}
+progress{width:100%;height:10px}.sw{width:30px;height:30px;border-radius:8px;border:1px solid #fff4;flex:0 0 auto}.msg.unread{border-color:#C9A24B}
+</style>
+</head>
+<body>
+<form id="login"><h1>Admin UIPACT</h1><input id="pw" type="password" placeholder="Mot de passe" autocomplete="current-password" required><button class="gold">Se connecter</button><small id="lerr" style="color:#ff9a9a"></small></form>
+<div id="app" hidden>
+  <div class="top"><b>UIPACT · Admin</b><div class="tabs" id="tabs"></div><a href="index.html" target="_blank" rel="noopener">Voir le site ↗</a><button class="gold" id="saveBtn">Enregistrer</button><button id="out">Quitter</button></div>
+  <main id="view"></main>
+</div>
+<div id="toast"></div>
+<script>window.CMS_ADMIN = true;</script>
+<script src="config.js"></script><script src="cms.js"></script>
+<script>
+(function () {
+var API = String(window.UIPACT_API || '').replace(/\/$/, ''), C = window.CMS, $ = function (s) { return document.querySelector(s); };
+var tok = sessionStorage.getItem('uipact_tok'), S = {}, tab = 'texts', dirty = false;
+var LABEL = { texts: 'Textes', images: 'Images', carousels: 'Carrousels', header: 'Header', footer: 'Footer', colors: 'Couleurs', langs: 'Langues', msgs: 'Messages' };
+var PAGE_NAMES = { index: 'Accueil', 'a-propos': 'À propos', portfolio: 'Portfolio', 'creation-graphique': 'Création graphique', 'creation-print': 'Création print', 'sites-web': 'Sites internet', 'identite-visuelle': 'Identité visuelle', 'ux-ui': 'UX / UI', contact: 'Contact', 'mentions-legales': 'Mentions légales', cgu: 'CGU', 'politique-confidentialite': 'Politique de confidentialité' };
+var CARS = [['home', 'Accueil — portfolio 3D'], ['portfolio', 'Page Portfolio — carrousel 3D'], ['creation-graphique', 'Création graphique'], ['creation-print', 'Création print'], ['sites-web', 'Sites internet'], ['identite-visuelle', 'Identité visuelle'], ['ux-ui', 'UX / UI']];
+var HOME = [['img/chene.png', 'Le Chêne Doré', 'Webdesign'], ['img/tout.png', 'Novaflow Advisory', 'Branding'], ['img/sport.png', 'Application Mobile', 'UX / UI design'], ['img/japan.png', 'Japan and Friends', 'Identité visuelle'], ['img/foodweb.png', 'Food Burger', 'Webdesign']];
+var PORT = HOME.concat([['img/alpharun.png', 'AlphaRun', 'Mockup UI'], ['img/flyers-alpharun.png', 'Flyers AlphaRun', 'Print'], ['img/carte.png', 'Cartes de visite', 'Print']]);
+function h(t, p) { var e = document.createElement(t); for (var k in p || {}) { if (k === 'class') e.className = p[k]; else if (k.slice(0, 2) === 'on') e[k] = p[k]; else if (k === 'value') e.value = p[k]; else e.setAttribute(k, p[k]); } [].slice.call(arguments, 2).forEach(function (c) { if (c == null) return; e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); }); return e; }
+function toast(m, bad) { var t = $('#toast'); t.textContent = m; t.className = 'on' + (bad ? ' bad' : ''); clearTimeout(toast.t); toast.t = setTimeout(function () { t.className = ''; }, bad ? 6000 : 3200); }
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+function mark() { dirty = true; $('#saveBtn').textContent = 'Enregistrer •'; }
+async function api(path, o) {
+  o = o || {}; o.headers = Object.assign({ Authorization: 'Bearer ' + tok }, o.headers || {});
+  if (o.json) { o.body = JSON.stringify(o.json); o.method = o.method || 'POST'; o.headers['Content-Type'] = 'application/json'; }
+  var r = await fetch(API + path, o), j = await r.json().catch(function () { return {}; });
+  if (r.status === 401) { logout(); throw new Error(j.error || 'Session expirée'); }
+  if (!r.ok) throw new Error(j.error || 'Erreur ' + r.status); return j;
+}
+function logout() { sessionStorage.removeItem('uipact_tok'); tok = null; $('#app').hidden = true; $('#login').hidden = false; }
+$('#out').onclick = logout;
+$('#login').onsubmit = async function (e) {
+  e.preventDefault(); $('#lerr').textContent = '';
+  try { var j = await fetch(API + '/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: $('#pw').value }) }).then(function (r) { return r.json().then(function (b) { if (!r.ok) throw new Error(b.error); return b; }); }); tok = j.token; sessionStorage.setItem('uipact_tok', tok); start(); }
+  catch (x) { $('#lerr').textContent = /fetch/i.test(x.message) ? "Impossible de joindre l'API (vérifiez config.js)." : x.message; }
+};
+async function start() {
+  $('#login').hidden = true; $('#app').hidden = false;
+  try { S = await api('/api/settings'); } catch (e) { toast(e.message, true); return; }
+  ['texts', 'hidden', 'blocks', 'images', 'carousels', 'translations'].forEach(function (k) { S[k] = S[k] || {}; });
+  S.languages = S.languages && S.languages.length ? S.languages : ['fr']; dirty = false; $('#saveBtn').textContent = 'Enregistrer'; drawTabs(); show();
+}
+function drawTabs() { var t = $('#tabs'); t.innerHTML = ''; Object.keys(LABEL).forEach(function (k) { t.appendChild(h('button', { class: k === tab ? 'on' : '', onclick: function () { tab = k; drawTabs(); show(); } }, LABEL[k])); }); }
+$('#saveBtn').onclick = save;
+async function save() {
+  for (var k in S.carousels) if ((S.carousels[k] || []).some(function (x) { return !x.image; })) { toast('Un élément du carrousel « ' + k + ' » n\u2019a pas de photo : cliquez sur « Fichier » ou « URL » pour en choisir une.', true); return; }
+  try { S = await api('/api/settings', { method: 'PUT', json: S }); ['texts', 'hidden', 'blocks', 'images', 'carousels', 'translations'].forEach(function (k) { S[k] = S[k] || {}; }); dirty = false; $('#saveBtn').textContent = 'Enregistrer'; toast('Enregistré ✓ Le site se met à jour au prochain chargement des pages.'); }
+  catch (e) { toast(e.message, true); }
+}
+addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+function show() { var v = $('#view'); v.innerHTML = ''; ({ texts: vTexts, images: vImages, carousels: vCars, header: vHeader, footer: vFooter, colors: vColors, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); }); }
+async function pageDoc(p) { var r = await fetch(p + '.html'); if (!r.ok) throw new Error('Page introuvable : ' + p); return new DOMParser().parseFromString(await r.text(), 'text/html'); }
+function pageSelect(cur, on) { var s = h('select'); C.PAGES.forEach(function (p) { var o = h('option', { value: p }, PAGE_NAMES[p] || p); if (p === cur) o.selected = true; s.appendChild(o); }); s.onchange = function () { on(s.value); }; return s; }
+function uploadFile(cb) {
+  var i = h('input', { type: 'file', accept: 'image/*,video/mp4,video/webm' });
+  i.onchange = async function () { if (!i.files[0]) return; var fd = new FormData(); fd.append('file', i.files[0]); try { toast('Envoi en cours…'); var j = await api('/api/upload', { method: 'POST', body: fd }); cb(j.url); toast('Photo envoyée ✓'); } catch (e) { toast(e.message, true); } };
+  i.click();
+}
+function askUrl(cb) { var u = prompt("Adresse (URL) de l'image — https://… ou img/mon-image.png"); if (u && u.trim()) cb(u.trim()); }
+function imgButtons(cb) { return [h('button', { class: 'sm', onclick: function () { uploadFile(cb); } }, '📁 Fichier'), h('button', { class: 'sm', onclick: function () { askUrl(cb); } }, '🔗 URL')]; }
+function tx(val, on, ph, rows) { var e = rows ? h('textarea', { rows: rows }) : h('input'); e.value = val == null ? '' : val; if (ph) e.placeholder = ph; e.oninput = function () { on(e.value); mark(); }; return e; }
+
+/* ---------------- Textes ---------------- */
+async function vTexts(v) {
+  var p = v.dataset.p || 'index', q = h('input', { placeholder: 'Rechercher un texte…' }), list = h('div');
+  v.appendChild(h('h2', {}, 'Textes des pages')); v.appendChild(h('p', { class: 'hint' }, 'Modifiez n\u2019importe quel texte, masquez-le, ou ajoutez un nouveau texte juste après. Le header et le footer ont leurs propres onglets.'));
+  v.appendChild(h('div', { class: 'row' }, pageSelect(p, function (x) { v.dataset.p = x; show(); }), q)); v.appendChild(list);
+  var doc = await pageDoc(p), sc = C.scan(doc).filter(function (s) { return !s.chrome; }), T = (S.texts[p] = S.texts[p] || {});
+  function draw() {
+    list.innerHTML = ''; var f = q.value.toLowerCase();
+    sc.forEach(function (s) {
+      var shown = s.nodes.some(function (nd) { return (T[s.key + '_' + nd.i] || nd.node.nodeValue).toLowerCase().indexOf(f) > -1; }); if (!shown) return;
+      var card = h('div', { class: 'card' }), hid = (S.hidden[p] || []).indexOf(s.key) > -1;
+      s.nodes.forEach(function (nd) {
+        var k = s.key + '_' + nd.i, orig = nd.node.nodeValue.trim();
+        card.appendChild(h('div', { class: 'orig' }, h('span', { class: 'tag' }, s.el.tagName.toLowerCase()), T[k] != null && T[k] !== orig ? 'Original : ' + orig : ''));
+        card.appendChild(tx(T[k] != null ? T[k] : orig, function (val) { if (val === orig) delete T[k]; else T[k] = val; }, '', orig.length > 80 ? 3 : 1));
+      });
+      var ck = h('input', { type: 'checkbox' }); ck.checked = hid;
+      ck.onchange = function () { var a = S.hidden[p] = S.hidden[p] || []; var i = a.indexOf(s.key); if (ck.checked && i < 0) a.push(s.key); if (!ck.checked && i > -1) a.splice(i, 1); mark(); };
+      card.appendChild(h('div', { class: 'row', style: 'margin-top:6px' }, h('label', { class: 'fx' }, ck, ' Masquer ce texte'), h('button', { class: 'sm', onclick: function () { (S.blocks[p] = S.blocks[p] || []).push({ id: Date.now().toString(36), after: s.key, tag: 'p', text: 'Nouveau texte' }); mark(); draw(); } }, '➕ Ajouter un texte après')));
+      (S.blocks[p] || []).filter(function (b) { return b.after === s.key; }).forEach(function (b) {
+        var tg = h('select'); ['p', 'h2', 'h3', 'h4', 'span'].forEach(function (t) { var o = h('option', { value: t }, t); if (t === b.tag) o.selected = true; tg.appendChild(o); }); tg.onchange = function () { b.tag = tg.value; mark(); };
+        card.appendChild(h('div', { class: 'blk' }, h('div', { class: 'row' }, h('span', { class: 'tag' }, 'nouveau'), tg, h('button', { class: 'sm del', onclick: function () { S.blocks[p] = S.blocks[p].filter(function (x) { return x !== b; }); mark(); draw(); } }, 'Supprimer')), tx(b.text, function (val) { b.text = val; }, '', 2)));
+      });
+      list.appendChild(card);
+    });
+  }
+  q.oninput = draw; draw();
+}
+
+/* ---------------- Images ---------------- */
+async function vImages(v) {
+  var p = v.dataset.p || 'index'; v.appendChild(h('h2', {}, 'Images des pages')); v.appendChild(h('p', { class: 'hint' }, 'Remplacez n\u2019importe quelle image <img> de la page par un fichier ou une URL. Les carrousels ont leur propre onglet.'));
+  v.appendChild(pageSelect(p, function (x) { v.dataset.p = x; show(); }));
+  var doc = await pageDoc(p), imgs = doc.body.querySelectorAll('img'), I = (S.images[p] = S.images[p] || {});
+  [].forEach.call(imgs, function (im, n) {
+    var k = 'i' + n, orig = im.getAttribute('src') || '', th = h('img', { class: 'thumb', src: I[k] || orig });
+    function setUrl(u) { I[k] = u; th.src = u; mark(); }
+    v.appendChild(h('div', { class: 'card row' }, th, h('small', { style: 'flex:1;word-break:break-all' }, (im.getAttribute('alt') || 'image ' + (n + 1)) + ' — ' + (I[k] || orig)), imgButtons(setUrl)[0], imgButtons(setUrl)[1], h('button', { class: 'sm', onclick: function () { delete I[k]; th.src = orig; mark(); show(); } }, '↺')));
+  });
+  if (!imgs.length) v.appendChild(h('p', { class: 'hint' }, 'Aucune image <img> sur cette page.'));
+}
+
+/* ---------------- Carrousels ---------------- */
+function bgFrom(el) { if (!el) return ''; var m = (el.getAttribute('style') || '').match(/url\(['"]?([^'")]+)/); if (m) return m[1]; var i = el.querySelector && el.querySelector('img'); return i ? i.getAttribute('src') : ''; }
+async function importCar(k) {
+  if (k === 'home') return HOME.map(function (x) { return { image: x[0], title: x[1], subtitle: x[2], href: 'portfolio.html' }; });
+  if (k === 'portfolio') return PORT.map(function (x) { return { image: x[0], title: x[1], subtitle: x[2], href: 'portfolio.html' }; });
+  var doc = await pageDoc(k);
+  if (k === 'creation-print') return [].map.call(doc.querySelectorAll('.print-card'), function (c) { return { image: bgFrom(c) || bgFrom(c.querySelector('[style]')), title: c.textContent.trim().replace(/\s+/g, ' '), subtitle: '', href: c.getAttribute('href') || '' }; });
+  return [].map.call(doc.querySelectorAll('.carousel-slide'), function (s) { var cap = s.querySelector('.carousel-caption') || s.querySelector('p'); return { image: bgFrom(s.querySelector('.carousel-image')) || bgFrom(s), title: cap ? cap.textContent.trim() : '', subtitle: '', href: (s.querySelector('a') || { getAttribute: function () { return ''; } }).getAttribute('href') || '' }; });
+}
+async function vCars(v) {
+  var k = v.dataset.k || 'home', list = h('div'), sel = h('select');
+  CARS.forEach(function (c) { var o = h('option', { value: c[0] }, c[1]); if (c[0] === k) o.selected = true; sel.appendChild(o); }); sel.onchange = function () { v.dataset.k = sel.value; show(); };
+  v.appendChild(h('h2', {}, 'Carrousels')); v.appendChild(h('p', { class: 'hint' }, 'Ajoutez, supprimez, remplacez et déplacez les photos (↑ ↓). Tant que vous n\u2019avez rien enregistré ici, le site garde son carrousel d\u2019origine : cliquez « Importer l\u2019existant » pour partir de ce qui est affiché aujourd\u2019hui.'));
+  v.appendChild(h('div', { class: 'row' }, sel, h('button', { onclick: async function () { if (S.carousels[k] && S.carousels[k].length && !confirm('Remplacer la liste actuelle ?')) return; S.carousels[k] = await importCar(k); mark(); draw(); } }, 'Importer l\u2019existant'), h('button', { class: 'del', onclick: function () { if (confirm('Revenir au carrousel d\u2019origine du site ?')) { delete S.carousels[k]; mark(); draw(); } } }, 'Réinitialiser')));
+  v.appendChild(list);
+  v.appendChild(h('div', { class: 'row', style: 'margin-top:10px' }, h('button', { class: 'gold', onclick: function () { uploadFile(function (u) { add(u); }); } }, '+ Ajouter une photo (fichier)'), h('button', { onclick: function () { askUrl(add); } }, '+ Ajouter par URL')));
+  function add(u) { (S.carousels[k] = S.carousels[k] || []).push({ image: u, title: '', subtitle: '', href: 'portfolio.html' }); mark(); draw(); }
+  function draw() {
+    list.innerHTML = ''; var a = S.carousels[k];
+    if (!a || !a.length) { list.appendChild(h('p', { class: 'hint' }, 'Carrousel d\u2019origine (non modifié).')); return; }
+    a.forEach(function (it, i) {
+      var th = h('img', { class: 'thumb', src: it.image || '' });
+      function setImg(u) { it.image = u; th.src = u; mark(); }
+      list.appendChild(h('div', { class: 'card' }, h('div', { class: 'row' }, th, imgButtons(setImg)[0], imgButtons(setImg)[1], h('button', { class: 'sm', onclick: function () { if (i > 0) { a.splice(i - 1, 0, a.splice(i, 1)[0]); mark(); draw(); } } }, '↑'), h('button', { class: 'sm', onclick: function () { if (i < a.length - 1) { a.splice(i + 1, 0, a.splice(i, 1)[0]); mark(); draw(); } } }, '↓'), h('button', { class: 'sm del', onclick: function () { a.splice(i, 1); mark(); draw(); } }, '✕')),
+        h('div', { class: 'row', style: 'margin-top:8px' }, tx(it.title, function (x) { it.title = x; }, 'Titre'), tx(it.subtitle, function (x) { it.subtitle = x; }, 'Sous-titre (catégorie)'), tx(it.href, function (x) { it.href = x; }, 'Lien au clic (ex. portfolio.html)'))));
+    });
+  }
+  draw();
+}
+
+/* ---------------- Header / Footer ---------------- */
+function linkRows(arr, redraw) {
+  return arr.map(function (l, i) { return h('div', { class: 'row', style: 'margin-bottom:6px' }, tx(l.label, function (x) { l.label = x; }, 'Texte'), tx(l.href, function (x) { l.href = x; }, 'Lien'), h('button', { class: 'sm del', onclick: function () { arr.splice(i, 1); mark(); redraw(); } }, '✕')); });
+}
+async function vHeader(v) {
+  var H = S.header || (S.header = clone(C.DEF.header)); H.items = H.items || clone(C.DEF.header.items); H.dropdown = H.dropdown || clone(C.DEF.header.dropdown); H.cta = H.cta || clone(C.DEF.header.cta);
+  v.appendChild(h('h2', {}, 'Header (menu du haut)')); v.appendChild(h('p', { class: 'hint' }, 'S\u2019applique à toutes les pages. Le lien « # » du menu déroulant parent reste un simple titre.'));
+  v.appendChild(h('div', { class: 'card' }, h('small', {}, 'Nom à côté du logo'), tx(H.brand || 'UIPACT', function (x) { H.brand = x; }))); mark.silent = 1;
+  var c1 = h('div', { class: 'card' }, h('b', {}, 'Liens principaux (dans l\u2019ordre)')); H.items.forEach(function (l) { c1.appendChild(h('div', { class: 'row', style: 'margin:6px 0' }, tx(l.label, function (x) { l.label = x; }), tx(l.href, function (x) { l.href = x; }))); }); v.appendChild(c1);
+  var c2 = h('div', { class: 'card' }); function d2() { c2.innerHTML = ''; c2.appendChild(h('b', {}, 'Menu déroulant « Mes savoir-faire »')); linkRows(H.dropdown, d2).forEach(function (r) { c2.appendChild(r); }); c2.appendChild(h('button', { class: 'sm', onclick: function () { H.dropdown.push({ label: 'Nouveau lien', href: 'index.html' }); mark(); d2(); } }, '+ Ajouter un lien')); } d2(); v.appendChild(c2);
+  v.appendChild(h('div', { class: 'card' }, h('b', {}, 'Bouton principal'), h('div', { class: 'row', style: 'margin-top:6px' }, tx(H.cta.label, function (x) { H.cta.label = x; }), tx(H.cta.href, function (x) { H.cta.href = x; }))));
+}
+async function vFooter(v) {
+  var F = S.footer || (S.footer = clone(C.DEF.footer));
+  v.appendChild(h('h2', {}, 'Footer (bas de page)')); v.appendChild(h('p', { class: 'hint' }, 'S\u2019applique à toutes les pages.'));
+  [['brand', 'Nom'], ['tag1', 'Accroche'], ['tag2', 'Sous-accroche'], ['follow', 'Texte « Suivez-nous » (lien Instagram)'], ['instagram', 'Lien Instagram'], ['lucky', 'Texte du badge logo (« Un projet ? »)'], ['luckyHref', 'Lien du badge'], ['copyright', 'Copyright'], ['signature', 'Signature']].forEach(function (f) { v.appendChild(h('div', { class: 'card' }, h('small', {}, f[1]), tx(F[f[0]], function (x) { F[f[0]] = x; }))); });
+  var box = h('div'); v.appendChild(box);
+  function draw() {
+    box.innerHTML = ''; F.columns = F.columns || [];
+    F.columns.forEach(function (c, ci) { var card = h('div', { class: 'card' }); function inner() { card.innerHTML = ''; card.appendChild(h('div', { class: 'row' }, tx(c.title, function (x) { c.title = x; }, 'Titre de colonne'), h('button', { class: 'sm del', onclick: function () { F.columns.splice(ci, 1); mark(); draw(); } }, 'Supprimer la colonne'))); card.appendChild(h('div', { style: 'height:8px' })); c.links = c.links || []; linkRows(c.links, inner).forEach(function (r) { card.appendChild(r); }); card.appendChild(h('button', { class: 'sm', onclick: function () { c.links.push({ label: 'Nouveau lien', href: 'index.html' }); mark(); inner(); } }, '+ Ajouter un lien')); } inner(); box.appendChild(card); });
+    box.appendChild(h('button', { onclick: function () { F.columns.push({ title: 'Nouvelle colonne', links: [] }); mark(); draw(); } }, '+ Ajouter une colonne'));
+  }
+  draw();
+}
+
+/* ---------------- Couleurs ---------------- */
+async function vColors(v) {
+  var T = S.theme || (S.theme = {}), D = C.DEF.theme;
+  var N = { gold: 'Or principal (boutons, titres)', gold2: 'Or clair', navy: 'Bleu nuit (texte sur boutons)', navy2: 'Bleu nuit clair', bg: 'Fond — mode sombre', bgAlt: 'Fond secondaire — mode sombre', card: 'Cartes — mode sombre', text: 'Texte — mode sombre', lightBg: 'Fond — mode clair', lightAlt: 'Fond secondaire — mode clair' };
+  v.appendChild(h('h2', {}, 'Couleurs du site')); v.appendChild(h('p', { class: 'hint' }, 'Les changements s\u2019appliquent à toutes les pages après enregistrement. Certains petits effets animés (poussière d\u2019or du fond) gardent leur teinte d\u2019origine.'));
+  Object.keys(N).forEach(function (k) {
+    var c = h('input', { type: 'color' }); c.value = T[k] || D[k];
+    c.oninput = function () { T[k] = c.value; sw.style.background = c.value; mark(); };
+    var sw = h('div', { class: 'sw' }); sw.style.background = c.value;
+    v.appendChild(h('div', { class: 'card row' }, sw, h('b', { style: 'flex:1' }, N[k]), c, h('button', { class: 'sm', onclick: function () { delete T[k]; mark(); show(); } }, '↺')));
+  });
+  v.appendChild(h('button', { class: 'del', onclick: function () { if (confirm('Remettre toutes les couleurs d\u2019origine ?')) { S.theme = {}; mark(); show(); } } }, 'Tout réinitialiser'));
+}
+
+/* ---------------- Langues ---------------- */
+async function collect() {
+  var map = {}; function add(id, t) { t = (t || '').trim(); if (t && /\p{L}/u.test(t)) map[id] = t; }
+  for (var pi = 0; pi < C.PAGES.length; pi++) {
+    var p = C.PAGES[pi], doc = await pageDoc(p).catch(function () { return null; }); if (!doc) continue; var T = S.texts[p] || {}, hid = S.hidden[p] || [];
+    C.scan(doc).forEach(function (s) { if (s.chrome || hid.indexOf(s.key) > -1) return; s.nodes.forEach(function (nd) { var k = s.key + '_' + nd.i; add(p + '__' + k, T[k] != null ? T[k] : nd.node.nodeValue); }); });
+    (S.blocks[p] || []).forEach(function (b) { add(p + '__b' + b.id, b.text); });
+  }
+  var H = C.merge(C.DEF.header, S.header || {}), F = C.merge(C.DEF.footer, S.footer || {}), cols = (S.footer && S.footer.columns) || C.DEF.footer.columns;
+  (H.items || []).forEach(function (l, i) { add('hdr_i' + i, l.label); }); (H.dropdown || []).forEach(function (l, i) { add('hdr_d' + i, l.label); }); add('hdr_cta', H.cta.label);
+  add('ftr_tag1', F.tag1); add('ftr_tag2', F.tag2); add('ftr_follow', F.follow); add('ftr_lucky', F.lucky); add('ftr_copy', F.copyright); add('ftr_sig', F.signature);
+  cols.forEach(function (c, i) { add('ftr_c' + i + '_t', c.title); (c.links || []).forEach(function (l, j) { add('ftr_c' + i + '_l' + j, l.label); }); });
+  Object.keys(S.carousels).forEach(function (k) { (S.carousels[k] || []).forEach(function (x, i) { add('car_' + k + '_' + i + '_t', x.title); add('car_' + k + '_' + i + '_s', x.subtitle); }); });
+  return map;
+}
+async function vLangs(v) {
+  v.appendChild(h('h2', {}, 'Langues du site')); v.appendChild(h('p', { class: 'hint' }, 'Cochez les langues proposées aux visiteurs (le français reste la langue d\u2019origine). « Traduire » traduit automatiquement tous les textes (DeepL si la clé est sur Render, sinon Google puis MyMemory). Relancez la traduction après avoir modifié des textes.'));
+  Object.keys(C.LANGS).forEach(function (l) {
+    if (l === 'fr') return;
+    var ck = h('input', { type: 'checkbox' }); ck.checked = S.languages.indexOf(l) > -1;
+    ck.onchange = function () { var i = S.languages.indexOf(l); if (ck.checked && i < 0) S.languages.push(l); if (!ck.checked && i > -1) S.languages.splice(i, 1); if (S.languages.indexOf('fr') < 0) S.languages.unshift('fr'); mark(); };
+    var n = Object.keys(S.translations[l] || {}).length, pr = h('progress', { value: 0, max: 1, hidden: '' }), log = h('small', {}, n ? n + ' textes traduits' : 'Pas encore traduit');
+    var go = h('button', { class: 'gold', onclick: async function () {
+      go.disabled = true; pr.hidden = false; log.textContent = 'Lecture des pages…';
+      try {
+        var map = await collect(), ids = Object.keys(map), uniq = {}, out = {}; ids.forEach(function (id) { (uniq[map[id]] = uniq[map[id]] || []).push(id); });
+        var texts = Object.keys(uniq), done = 0, batch = [], size = 0, errs = [];
+        async function flush() { if (!batch.length) return; var r = await api('/api/translate', { json: { from: 'fr', to: l, texts: batch } }); if (r.errors && r.errors.length) errs = r.errors; batch.forEach(function (t, i) { uniq[t].forEach(function (id) { out[id] = r.texts[i]; }); }); done += batch.length; pr.value = done / texts.length; log.textContent = done + ' / ' + texts.length + ' textes…'; batch = []; size = 0; }
+        for (var i = 0; i < texts.length; i++) { if (batch.length >= 60 || size + texts[i].length > 9000) await flush(); batch.push(texts[i]); size += texts[i].length; } await flush();
+        S.translations[l] = out; if (S.languages.indexOf(l) < 0) { S.languages.push(l); ck.checked = true; } mark(); await save(); log.textContent = Object.keys(out).length + ' textes traduits ✓' + (errs.length ? ' — ' + errs.join(' · ') : '');
+      } catch (e) { log.textContent = '⚠ ' + e.message; toast(e.message, true); }
+      go.disabled = false;
+    } }, 'Traduire');
+    v.appendChild(h('div', { class: 'card' }, h('div', { class: 'row' }, h('label', { class: 'fx' }, ck, ' ' + C.LANGS[l]), go, h('button', { class: 'sm del', onclick: function () { delete S.translations[l]; mark(); show(); } }, 'Effacer')), pr, log));
+  });
+}
+
+/* ---------------- Messages ---------------- */
+async function vMsgs(v) {
+  v.appendChild(h('h2', {}, 'Messages reçus')); var list = h('div'); v.appendChild(list);
+  var ms = await api('/api/messages'); if (!ms.length) list.appendChild(h('p', { class: 'hint' }, 'Aucun message pour l\u2019instant.'));
+  ms.forEach(function (m) {
+    list.appendChild(h('div', { class: 'card msg' + (m.read ? '' : ' unread') }, h('div', { class: 'row' }, h('b', {}, m.name), h('a', { href: 'mailto:' + m.email }, m.email), h('small', {}, new Date(m.createdAt).toLocaleString('fr-FR')), h('button', { class: 'sm', onclick: async function () { await api('/api/messages/' + m._id, { method: 'PUT', json: { read: !m.read } }); show(); } }, m.read ? 'Marquer non lu' : 'Marquer lu'), h('button', { class: 'sm del', onclick: async function () { if (confirm('Supprimer ce message ?')) { await api('/api/messages/' + m._id, { method: 'DELETE' }); show(); } } }, 'Supprimer')), h('p', { style: 'white-space:pre-wrap;margin:8px 0 0' }, m.message)));
+  });
+}
+if (tok) start();
+})();
+</script>
+</body>
+</html>
