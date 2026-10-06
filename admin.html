@@ -3,48 +3,82 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow">
 <title>Admin — UIPACT</title>
+<link rel="icon" href="logo.png">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0A1024;color:#EDEAE0;font:15px/1.5 Inter,system-ui,sans-serif}
-a{color:#E4C77A}input,textarea,select,button{font:inherit;color:inherit}
-input,textarea,select{width:100%;background:#16204A;border:1px solid rgba(201,162,75,.3);border-radius:10px;padding:9px 12px}
-input:focus,textarea:focus,select:focus{outline:none;border-color:#C9A24B}textarea{resize:vertical}input[type=color]{padding:2px;height:42px;width:70px}input[type=checkbox]{width:auto}
-button{cursor:pointer;border:1px solid rgba(201,162,75,.5);background:transparent;border-radius:10px;padding:8px 14px}button:hover{background:rgba(201,162,75,.15)}
-button.gold{background:linear-gradient(135deg,#E4C77A,#C9A24B);color:#101B3D;font-weight:700;border:0}button.del{border-color:#ff7a7a;color:#ff9a9a}button.sm{padding:4px 9px;font-size:.8rem}
-#login{max-width:380px;margin:18vh auto;padding:28px;background:#111A38;border:1px solid rgba(201,162,75,.3);border-radius:20px;display:flex;flex-direction:column;gap:14px}
-#login h1{margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;color:#E4C77A}
-.top{position:sticky;top:0;z-index:20;background:#0d1530;border-bottom:1px solid rgba(201,162,75,.3);padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.top b{color:#E4C77A;font-size:1.05rem}.tabs{display:flex;gap:6px;flex-wrap:wrap;flex:1}.tabs button.on{background:#C9A24B;color:#101B3D;font-weight:700}
-main{max-width:1000px;margin:0 auto;padding:22px 16px 80px}h2{font-family:'Instrument Serif',Georgia,serif;font-weight:400;color:#E4C77A;font-size:1.8rem;margin:0 0 6px}
-.hint{color:#9A9CAA;font-size:.88rem;margin:0 0 16px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1;min-width:120px}.row>button,.row>.fx{flex:0 0 auto;min-width:0}
-.card{background:#111A38;border:1px solid rgba(201,162,75,.22);border-radius:14px;padding:12px 14px;margin-bottom:10px}.card small{color:#9A9CAA}
-.orig{color:#9A9CAA;font-size:.78rem;margin:2px 0 4px;white-space:pre-wrap}.tag{display:inline-block;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-right:8px}
-.thumb{width:84px;height:56px;object-fit:cover;border-radius:8px;background:#0b1330;border:1px solid rgba(201,162,75,.3);flex:0 0 auto}.blk{margin:6px 0 0 18px;padding-left:10px;border-left:2px solid #C9A24B}
-#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#16204A;border:1px solid #C9A24B;border-radius:12px;padding:10px 18px;opacity:0;pointer-events:none;transition:.3s;z-index:50;max-width:90vw}#toast.on{opacity:1}#toast.bad{border-color:#ff7a7a}
-progress{width:100%;height:10px}.sw{width:30px;height:30px;border-radius:8px;border:1px solid #fff4;flex:0 0 auto}.msg.unread{border-color:#C9A24B}
+:root{--gold:#C9A24B;--gold2:#E4C77A;--navy:#101B3D;--bg:#0A1024;--panel:#111A38;--panel2:#16204A;--line:rgba(201,162,75,.25);--mut:#9A9CAA}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:radial-gradient(circle at 12% -5%,rgba(201,162,75,.13),transparent 42%),var(--bg);color:#EDEAE0;font:15px/1.55 Inter,system-ui,sans-serif}
+a{color:var(--gold2)}input,textarea,select,button{font:inherit;color:inherit}
+input,textarea,select{width:100%;background:var(--panel2);border:1px solid rgba(201,162,75,.3);border-radius:12px;padding:10px 13px;transition:border-color .2s,box-shadow .2s}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,75,.2)}textarea{resize:vertical}
+input[type=color]{padding:2px;height:42px;width:70px}input[type=checkbox]{width:auto;accent-color:var(--gold)}
+button{cursor:pointer;border:1px solid rgba(201,162,75,.5);background:transparent;border-radius:12px;padding:9px 15px;transition:.2s}button:hover{background:rgba(201,162,75,.15)}
+button.gold{background:linear-gradient(135deg,#E4C77A,#C9A24B);color:var(--navy);font-weight:700;border:0}button.gold:hover{filter:brightness(1.08);background:linear-gradient(135deg,#E4C77A,#C9A24B)}
+button.del{border-color:#ff7a7a;color:#ff9a9a}button.sm{padding:5px 11px;font-size:.82rem;border-radius:9px}button:disabled{opacity:.5;cursor:wait}
+#login{max-width:380px;margin:14vh auto;padding:30px;background:var(--panel);border:1px solid var(--line);border-radius:22px;display:flex;flex-direction:column;gap:14px;text-align:center;box-shadow:0 30px 70px rgba(0,0,0,.4)}
+#login .lg{height:44px;margin:0 auto;object-fit:contain}#login h1{margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;color:var(--gold2);font-size:2rem}#login #lerr{color:#ff9a9a;min-height:1em}
+.shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;overflow:auto;padding:20px 14px;background:rgba(11,19,48,.92);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 12px;border-bottom:1px solid var(--line)}.brand img{height:30px}.brand b{color:var(--gold2);font-size:1.15rem;letter-spacing:.06em}.brand small{color:var(--mut);margin-left:auto;font-size:.7rem;text-transform:uppercase;letter-spacing:.14em}
+#tabs{display:flex;flex-direction:column;gap:3px}.nv{display:flex;align-items:center;gap:11px;width:100%;text-align:left;border:0;border-radius:12px;padding:10px 12px}
+.nv .ic{width:26px;text-align:center;font-size:1.1rem}.nv.on{background:linear-gradient(135deg,#E4C77A,#C9A24B);color:var(--navy);font-weight:700}
+.sfoot{margin-top:auto;display:flex;flex-direction:column;gap:8px;font-size:.88rem}
+.stage{min-width:0}.hd{padding:28px 34px 6px;max-width:1080px;margin:0 auto}.hd h1{margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;color:var(--gold2);font-size:2.3rem;line-height:1.1}.hd p{margin:4px 0 0;color:var(--mut)}
+main{max-width:1080px;margin:0 auto;padding:16px 34px 120px}
+h3{margin:18px 0 8px;color:var(--gold2);font-weight:600}
+.hint{color:var(--mut);font-size:.9rem;margin:0 0 14px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1;min-width:120px}.row>button,.row>.fx{flex:0 0 auto;min-width:0}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px}.card small{color:var(--mut)}
+.orig{color:var(--mut);font-size:.78rem;margin:2px 0 4px;white-space:pre-wrap}.tag{display:inline-block;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-right:8px}
+.thumb{width:84px;height:56px;object-fit:cover;border-radius:8px;background:#0b1330;border:1px solid var(--line);flex:0 0 auto}.blk{margin:8px 0 0 18px;padding-left:12px;border-left:2px solid var(--gold)}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}.pill{border-radius:99px;padding:6px 13px;font-size:.84rem}.pill.on{background:var(--gold);color:var(--navy);font-weight:700;border-color:var(--gold)}
+.note{color:var(--mut);font-size:.9rem;flex:1}
+.cgrid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}.ci{display:flex;flex-direction:column;gap:9px;margin:0;cursor:grab}.ci.drag{opacity:.4}
+.ciimg{position:relative}.big{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:12px;background:#0b1330;border:1px solid var(--line);display:block}.badge{position:absolute;left:8px;top:8px;background:var(--gold);color:var(--navy);font-weight:800;border-radius:99px;min-width:26px;height:26px;display:grid;place-items:center;font-size:.8rem}
+.addtile{min-height:200px;border:2px dashed rgba(201,162,75,.5);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--gold2)}.addtile b{font-size:2.4rem;line-height:1;font-weight:400}
+#modal{position:fixed;inset:0;background:rgba(5,9,22,.78);backdrop-filter:blur(4px);z-index:60;display:grid;place-items:center;padding:20px}.mbox{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;width:min(860px,100%);max-height:88vh;overflow:auto}
+.pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}.pick .pk{padding:0;border-radius:12px;overflow:hidden;aspect-ratio:3/2}.pick .pk img{width:100%;height:100%;object-fit:cover;display:block}.pick.big{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}.mi{display:flex;flex-direction:column;gap:8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:6px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px}.stat b{display:block;font-size:1.2rem}.stat .ok{color:#4ADE80}.stat .ko{color:#ff9a9a}.stat small{color:var(--mut)}
+.scs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.sc{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;padding:16px;border-radius:16px;background:var(--panel)}.sc .ic{font-size:1.6rem}.sc:hover{transform:translateY(-3px);border-color:var(--gold)}
+.fld{margin-bottom:12px}.fld label{display:block;font-weight:600;margin-bottom:5px}.fld small{display:block;color:var(--mut);margin-top:4px}.cnt.ok{color:#4ADE80!important}.cnt.warn{color:#ffb86b!important}
+.gprev{background:#fff;border-radius:12px;padding:14px 16px;margin:6px 0 12px;font-family:Arial,sans-serif}.gt{color:#1a0dab;font-size:1.15rem;line-height:1.3}.gu{color:#006621;font-size:.8rem;margin:2px 0}.gd{color:#4d5156;font-size:.85rem}
+.sbar{position:fixed;left:260px;right:0;bottom:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 34px;background:rgba(13,21,48,.96);border-top:1px solid var(--gold);transform:translateY(110%);transition:transform .3s;backdrop-filter:blur(8px)}.sbar.on{transform:none}.sbar span{color:var(--gold2)}.sbar div{display:flex;gap:10px}
+#toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--gold);border-radius:12px;padding:10px 18px;opacity:0;pointer-events:none;transition:.3s;z-index:70;max-width:90vw}#toast.on{opacity:1}#toast.bad{border-color:#ff7a7a}
+progress{width:100%;height:10px}.sw{width:30px;height:30px;border-radius:8px;border:1px solid #fff4;flex:0 0 auto}.msg.unread{border-color:var(--gold)}
+@media(max-width:860px){.shell{grid-template-columns:1fr}.side{position:sticky;height:auto;flex-direction:row;align-items:center;padding:8px 10px;z-index:25;overflow-x:auto}.brand,.sfoot{display:none}#tabs{flex-direction:row;gap:4px}.nv{white-space:nowrap;padding:8px 11px}.hd{padding:18px 16px 4px}.hd h1{font-size:1.8rem}main{padding:12px 16px 120px}.sbar{left:0;padding:10px 16px}}
+
+#view>h2{display:none}
 </style>
 </head>
 <body>
-<form id="login"><h1>Admin UIPACT</h1><input id="pw" type="password" placeholder="Mot de passe" autocomplete="current-password" required><button class="gold">Se connecter</button><small id="lerr" style="color:#ff9a9a"></small></form>
+<form id="login"><img class="lg" src="logo.png" alt=""><h1>Admin UIPACT</h1><small style="color:#9A9CAA">Connectez-vous pour modifier votre site.</small><input id="pw" type="password" placeholder="Mot de passe" autocomplete="current-password" required><button class="gold">Se connecter</button><small id="lerr"></small></form>
 <div id="app" hidden>
-  <div class="top"><b>UIPACT · Admin</b><div class="tabs" id="tabs"></div><a href="index.html" target="_blank" rel="noopener">Voir le site ↗</a><button class="gold" id="saveBtn">Enregistrer</button><button id="out">Quitter</button></div>
-  <main id="view"></main>
+  <div class="shell">
+    <aside class="side"><div class="brand"><img src="logo.png" alt=""><b>UIPACT</b><small>Admin</small></div><nav id="tabs"></nav><div class="sfoot"><a href="index.html" target="_blank" rel="noopener">Voir le site ↗</a><button id="out">Se déconnecter</button></div></aside>
+    <section class="stage"><header class="hd"><h1 id="vt"></h1><p id="vd"></p></header><main id="view"></main></section>
+  </div>
+  <div class="sbar" id="sbar"><span>● Modifications non enregistrées</span><div><button id="undo">Annuler</button><button class="gold" id="saveBtn">Enregistrer</button></div></div>
 </div>
-<div id="toast"></div>
+<div id="modal" hidden></div><div id="toast"></div>
 <script>window.CMS_ADMIN = true;</script>
 <script src="config.js"></script><script src="cms.js"></script>
 <script>
 (function () {
 var API = String(window.UIPACT_API || '').replace(/\/$/, ''), C = window.CMS, $ = function (s) { return document.querySelector(s); };
-var tok = sessionStorage.getItem('uipact_tok'), S = {}, tab = 'texts', dirty = false;
-var LABEL = { texts: 'Textes', images: 'Images', carousels: 'Carrousels', header: 'Header', footer: 'Footer', colors: 'Couleurs', langs: 'Langues', msgs: 'Messages' };
+var tok = sessionStorage.getItem('uipact_tok'), S = {}, tab = 'home', dirty = false;
+var TABS = [['home', '🏠', 'Accueil', 'Vue d\u2019ensemble et raccourcis'], ['texts', '✏️', 'Textes', 'Modifier, masquer ou ajouter des textes'], ['images', '🖼️', 'Photos des pages', 'Remplacer les photos fixes de chaque page'],
+  ['carousels', '🎠', 'Carrousels', 'Ajouter, supprimer et déplacer les photos des carrousels 3D'], ['media', '📁', 'Bibliothèque', 'Toutes vos photos envoyées'], ['colors', '🎨', 'Couleurs', 'La palette du site'],
+  ['header', '🔝', 'Header', 'Le menu en haut des pages'], ['footer', '🔚', 'Footer', 'Le bas des pages'], ['seo', '🔍', 'SEO', 'Ce que Google et les réseaux sociaux affichent'],
+  ['langs', '🌍', 'Langues', 'Traduire le site et ajouter des langues'], ['msgs', '✉️', 'Messages', 'Les messages du formulaire de contact']];
+var LABEL = {}; TABS.forEach(function (t) { LABEL[t[0]] = t; });
 var PAGE_NAMES = { index: 'Accueil', 'a-propos': 'À propos', portfolio: 'Portfolio', 'creation-graphique': 'Création graphique', 'creation-print': 'Création print', 'sites-web': 'Sites internet', 'identite-visuelle': 'Identité visuelle', 'ux-ui': 'UX / UI', contact: 'Contact', 'mentions-legales': 'Mentions légales', cgu: 'CGU', 'politique-confidentialite': 'Politique de confidentialité' };
-var CARS = [['home', 'Accueil — portfolio 3D'], ['portfolio', 'Page Portfolio — carrousel 3D'], ['creation-graphique', 'Création graphique'], ['creation-print', 'Création print'], ['sites-web', 'Sites internet'], ['identite-visuelle', 'Identité visuelle'], ['ux-ui', 'UX / UI']];
+var CARS = [['home', 'Accueil'], ['portfolio', 'Page Portfolio'], ['creation-graphique', 'Création graphique'], ['creation-print', 'Création print'], ['sites-web', 'Sites internet'], ['identite-visuelle', 'Identité visuelle'], ['ux-ui', 'UX / UI']];
 var HOME = [['img/chene.png', 'Le Chêne Doré', 'Webdesign'], ['img/tout.png', 'Novaflow Advisory', 'Branding'], ['img/sport.png', 'Application Mobile', 'UX / UI design'], ['img/japan.png', 'Japan and Friends', 'Identité visuelle'], ['img/foodweb.png', 'Food Burger', 'Webdesign']];
 var PORT = HOME.concat([['img/alpharun.png', 'AlphaRun', 'Mockup UI'], ['img/flyers-alpharun.png', 'Flyers AlphaRun', 'Print'], ['img/carte.png', 'Cartes de visite', 'Print']]);
 function h(t, p) { var e = document.createElement(t); for (var k in p || {}) { if (k === 'class') e.className = p[k]; else if (k.slice(0, 2) === 'on') e[k] = p[k]; else if (k === 'value') e.value = p[k]; else e.setAttribute(k, p[k]); } [].slice.call(arguments, 2).forEach(function (c) { if (c == null) return; e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); }); return e; }
 function toast(m, bad) { var t = $('#toast'); t.textContent = m; t.className = 'on' + (bad ? ' bad' : ''); clearTimeout(toast.t); toast.t = setTimeout(function () { t.className = ''; }, bad ? 6000 : 3200); }
 function clone(o) { return JSON.parse(JSON.stringify(o)); }
-function mark() { dirty = true; $('#saveBtn').textContent = 'Enregistrer •'; }
+function bar() { $('#sbar').classList.toggle('on', dirty); }
+function mark() { dirty = true; bar(); if (mark.pend) mark.pend(); }
 async function api(path, o) {
   o = o || {}; o.headers = Object.assign({ Authorization: 'Bearer ' + tok }, o.headers || {});
   if (o.json) { o.body = JSON.stringify(o.json); o.method = o.method || 'POST'; o.headers['Content-Type'] = 'application/json'; }
@@ -57,33 +91,160 @@ $('#out').onclick = logout;
 $('#login').onsubmit = async function (e) {
   e.preventDefault(); $('#lerr').textContent = '';
   try { var j = await fetch(API + '/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: $('#pw').value }) }).then(function (r) { return r.json().then(function (b) { if (!r.ok) throw new Error(b.error); return b; }); }); tok = j.token; sessionStorage.setItem('uipact_tok', tok); start(); }
-  catch (x) { $('#lerr').textContent = /fetch/i.test(x.message) ? "Impossible de joindre l'API (vérifiez config.js)." : x.message; }
+  catch (x) { $('#lerr').textContent = /fetch/i.test(x.message) ? "Impossible de joindre l'API (vérifiez config.js, ou patientez 1 minute : le serveur se réveille)." : x.message; }
 };
+function norm() {
+  ['texts', 'hidden', 'blocks', 'images', 'carousels', 'translations', 'langNames'].forEach(function (k) { S[k] = S[k] || {}; });
+  S.seo = S.seo || {}; S.seo.site = S.seo.site || {}; S.seo.pages = S.seo.pages || {}; S.seo.schema = S.seo.schema || {};
+  S.languages = S.languages && S.languages.length ? S.languages : ['fr'];
+}
 async function start() {
   $('#login').hidden = true; $('#app').hidden = false;
   try { S = await api('/api/settings'); } catch (e) { toast(e.message, true); return; }
-  ['texts', 'hidden', 'blocks', 'images', 'carousels', 'translations'].forEach(function (k) { S[k] = S[k] || {}; });
-  S.languages = S.languages && S.languages.length ? S.languages : ['fr']; dirty = false; $('#saveBtn').textContent = 'Enregistrer'; drawTabs(); show();
+  norm(); dirty = false; bar(); drawTabs(); show();
 }
-function drawTabs() { var t = $('#tabs'); t.innerHTML = ''; Object.keys(LABEL).forEach(function (k) { t.appendChild(h('button', { class: k === tab ? 'on' : '', onclick: function () { tab = k; drawTabs(); show(); } }, LABEL[k])); }); }
+function go(k) { tab = k; drawTabs(); show(); }
+function drawTabs() { var t = $('#tabs'); t.innerHTML = ''; TABS.forEach(function (x) { t.appendChild(h('button', { class: 'nv' + (x[0] === tab ? ' on' : ''), title: x[3], onclick: function () { go(x[0]); } }, h('span', { class: 'ic' }, x[1]), x[2])); }); }
 $('#saveBtn').onclick = save;
+$('#undo').onclick = function () { if (confirm('Annuler toutes les modifications non enregistrées ?')) start(); };
 async function save() {
-  for (var k in S.carousels) if ((S.carousels[k] || []).some(function (x) { return !x.image; })) { toast('Un élément du carrousel « ' + k + ' » n\u2019a pas de photo : cliquez sur « Fichier » ou « URL » pour en choisir une.', true); return; }
-  try { S = await api('/api/settings', { method: 'PUT', json: S }); ['texts', 'hidden', 'blocks', 'images', 'carousels', 'translations'].forEach(function (k) { S[k] = S[k] || {}; }); dirty = false; $('#saveBtn').textContent = 'Enregistrer'; toast('Enregistré ✓ Le site se met à jour au prochain chargement des pages.'); }
+  for (var k in S.carousels) { if (!(S.carousels[k] || []).length) delete S.carousels[k]; }
+  for (var k2 in S.carousels) if (S.carousels[k2].some(function (x) { return !x.image; })) { toast('Une photo du carrousel « ' + k2 + ' » est vide : cliquez sur « Changer la photo ».', true); return; }
+  var b = $('#saveBtn'); b.disabled = true;
+  try { S = await api('/api/settings', { method: 'PUT', json: S }); norm(); dirty = false; bar(); toast('Enregistré ✓ Le site se met à jour au prochain chargement des pages.'); }
   catch (e) { toast(e.message, true); }
+  b.disabled = false;
 }
 addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
-function show() { var v = $('#view'); v.innerHTML = ''; ({ texts: vTexts, images: vImages, carousels: vCars, header: vHeader, footer: vFooter, colors: vColors, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); }); }
+function show() {
+  var v = $('#view'); v.innerHTML = ''; mark.pend = null; var t = LABEL[tab]; $('#vt').textContent = t[1] + '  ' + t[2]; $('#vd').textContent = t[3];
+  ({ home: vHome, texts: vTexts, images: vImages, carousels: vCars, media: vMedia, colors: vColors, header: vHeader, footer: vFooter, seo: vSeo, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); });
+  window.scrollTo(0, 0);
+}
 async function pageDoc(p) { var r = await fetch(p + '.html'); if (!r.ok) throw new Error('Page introuvable : ' + p); return new DOMParser().parseFromString(await r.text(), 'text/html'); }
-function pageSelect(cur, on) { var s = h('select'); C.PAGES.forEach(function (p) { var o = h('option', { value: p }, PAGE_NAMES[p] || p); if (p === cur) o.selected = true; s.appendChild(o); }); s.onchange = function () { on(s.value); }; return s; }
+function pageSelect(cur, on) { var d = h('div', { class: 'pills' }); C.PAGES.forEach(function (p) { d.appendChild(h('button', { class: 'pill' + (p === cur ? ' on' : ''), onclick: function () { on(p); } }, PAGE_NAMES[p] || p)); }); return d; }
+function tx(val, on, ph, rows) { var e = rows ? h('textarea', { rows: rows }) : h('input'); e.value = val == null ? '' : val; if (ph) e.placeholder = ph; e.oninput = function () { on(e.value); mark(); }; return e; }
+function fld(label, el, help) { return h('div', { class: 'fld' }, h('label', {}, label), el, help ? h('small', {}, help) : null); }
+function askUrl(cb) { var u = prompt("Adresse (URL) de l'image — https://… ou img/mon-image.png"); if (u && u.trim()) cb(u.trim()); }
+
+/* ---------------- Envoi et choix de photos ---------------- */
+async function shrink(f) {
+  if (!/^image\/(jpeg|png|webp)$/.test(f.type) || f.size < 500 * 1024) return f;
+  try {
+    var bm = await createImageBitmap(f), s = Math.min(1, 1800 / Math.max(bm.width, bm.height)), c = document.createElement('canvas'); c.width = Math.round(bm.width * s); c.height = Math.round(bm.height * s); c.getContext('2d').drawImage(bm, 0, 0, c.width, c.height);
+    var b = await new Promise(function (r) { c.toBlob(r, 'image/webp', .86); });
+    return b && b.size < f.size ? new File([b], f.name.replace(/\.\w+$/, '') + '.webp', { type: 'image/webp' }) : f;
+  } catch (e) { return f; }
+}
+async function sendFile(f) { f = await shrink(f); var fd = new FormData(); fd.append('file', f); return (await api('/api/upload', { method: 'POST', body: fd })).url; }
 function uploadFile(cb) {
   var i = h('input', { type: 'file', accept: 'image/*,video/mp4,video/webm' });
-  i.onchange = async function () { if (!i.files[0]) return; var fd = new FormData(); fd.append('file', i.files[0]); try { toast('Envoi en cours…'); var j = await api('/api/upload', { method: 'POST', body: fd }); cb(j.url); toast('Photo envoyée ✓'); } catch (e) { toast(e.message, true); } };
+  i.onchange = async function () { if (!i.files[0]) return; try { toast('Envoi en cours…'); var u = await sendFile(i.files[0]); cb(u); toast('Photo envoyée ✓'); } catch (e) { toast(e.message, true); } };
   i.click();
 }
-function askUrl(cb) { var u = prompt("Adresse (URL) de l'image — https://… ou img/mon-image.png"); if (u && u.trim()) cb(u.trim()); }
-function imgButtons(cb) { return [h('button', { class: 'sm', onclick: function () { uploadFile(cb); } }, '📁 Fichier'), h('button', { class: 'sm', onclick: function () { askUrl(cb); } }, '🔗 URL')]; }
-function tx(val, on, ph, rows) { var e = rows ? h('textarea', { rows: rows }) : h('input'); e.value = val == null ? '' : val; if (ph) e.placeholder = ph; e.oninput = function () { on(e.value); mark(); }; return e; }
+function closeModal() { var m = $('#modal'); m.hidden = true; m.innerHTML = ''; }
+async function pickImage(cb) {
+  var m = $('#modal'); m.hidden = false; m.innerHTML = ''; var box = h('div', { class: 'mbox' }); m.appendChild(box); m.onclick = function (e) { if (e.target === m) closeModal(); };
+  var seen = {}, mine = h('div', { class: 'pick' }), site = h('div', { class: 'pick' });
+  function add(g, url) { if (!url || seen[url]) return; seen[url] = 1; g.appendChild(h('button', { class: 'pk', onclick: function () { closeModal(); cb(url); } }, h('img', { src: url, loading: 'lazy', alt: '' }))); }
+  var u = h('input', { placeholder: '… ou collez une adresse (https://… ou img/photo.png)' });
+  box.appendChild(h('div', { class: 'row', style: 'margin-bottom:12px' }, h('b', { style: 'flex:1;font-size:1.15rem' }, 'Choisir une image'), h('button', { onclick: closeModal }, 'Fermer')));
+  box.appendChild(h('div', { class: 'row' }, h('button', { class: 'gold', onclick: function () { uploadFile(function (x) { closeModal(); cb(x); }); } }, '📁 Envoyer depuis mon ordinateur'), u, h('button', { onclick: function () { var x = u.value.trim(); if (x) { closeModal(); cb(x); } } }, 'Utiliser cette adresse')));
+  box.appendChild(h('h3', {}, 'Mes photos envoyées')); box.appendChild(mine); box.appendChild(h('h3', {}, 'Photos du site')); box.appendChild(site);
+  PORT.forEach(function (x) { add(site, x[0]); }); add(site, 'logo.png'); Object.keys(S.carousels).forEach(function (k) { (S.carousels[k] || []).forEach(function (x) { add(site, x.image); }); });
+  try { (await api('/api/media')).forEach(function (x) { add(mine, x.url); }); } catch (e) { /* pas de base : on garde seulement les photos du site */ }
+  if (!mine.children.length) mine.appendChild(h('p', { class: 'hint' }, 'Rien d\u2019envoyé pour l\u2019instant.'));
+}
+function imgButtons(cb) { return [h('button', { class: 'sm gold', onclick: function () { pickImage(cb); } }, '🖼️ Changer la photo'), null]; }
+
+/* ---------------- Accueil ---------------- */
+async function vHome(v) {
+  var st = h('div', { class: 'stats' }), s1 = h('div', { class: 'stat' }, h('small', {}, 'Serveur et base de données'), h('b', {}, 'Vérification…')), s2 = h('div', { class: 'stat' }, h('small', {}, 'Messages non lus'), h('b', {}, '…'));
+  st.appendChild(s1); st.appendChild(s2);
+  st.appendChild(h('div', { class: 'stat' }, h('small', {}, 'Langues proposées'), h('b', {}, String(S.languages.length) + (S.languages.length > 1 ? ' langues' : ' langue'))));
+  v.appendChild(st);
+  fetch(API + '/api/health').then(function (r) { return r.json(); }).then(function (j) { s1.lastChild.className = j.db ? 'ok' : 'ko'; s1.lastChild.textContent = j.db ? '● En ligne' : '● Base injoignable'; if (!j.db) s1.appendChild(h('small', {}, j.dbError || '')); }).catch(function () { s1.lastChild.className = 'ko'; s1.lastChild.textContent = '● Serveur injoignable'; });
+  api('/api/messages').then(function (m) { var n = m.filter(function (x) { return !x.read; }).length; s2.lastChild.textContent = String(n); if (n) s2.lastChild.className = 'ok'; }).catch(function () { s2.lastChild.textContent = '—'; });
+  v.appendChild(h('h3', {}, 'Que voulez-vous faire ?'));
+  var sc = h('div', { class: 'scs' }); v.appendChild(sc);
+  [['texts', 'Modifier un texte', 'Changez un titre, un paragraphe, un prix…'], ['carousels', 'Changer les photos d\u2019un carrousel', 'Ajoutez, supprimez, déplacez vos réalisations'], ['colors', 'Changer les couleurs', 'Or, bleu nuit, fonds : tout le site suit'], ['langs', 'Traduire le site', 'Anglais, espagnol, arabe… ou la langue de votre choix'], ['seo', 'Améliorer le référencement', 'Titre et description sur Google'], ['msgs', 'Lire mes messages', 'Les demandes reçues par le formulaire']]
+    .forEach(function (x) { sc.appendChild(h('button', { class: 'sc', onclick: function () { go(x[0]); } }, h('span', { class: 'ic' }, LABEL[x[0]][1]), h('b', {}, x[1]), h('small', { style: 'color:#9A9CAA' }, x[2]))); });
+  v.appendChild(h('p', { class: 'hint', style: 'margin-top:18px' }, 'Astuce : après « Enregistrer », rechargez une page du site (Ctrl + F5) pour voir le résultat.'));
+}
+
+/* ---------------- Bibliothèque ---------------- */
+async function vMedia(v) {
+  var grid = h('div', { class: 'pick big' }), inp = h('input', { type: 'file', accept: 'image/*', multiple: '', hidden: '' });
+  async function load() {
+    grid.innerHTML = '';
+    var list = await api('/api/media');
+    if (!list.length) grid.appendChild(h('p', { class: 'hint' }, 'Aucune photo envoyée. Cliquez sur « Envoyer des photos ».'));
+    list.forEach(function (m) {
+      grid.appendChild(h('div', { class: 'card mi' }, h('img', { class: 'big', src: m.url, alt: '' }), h('small', {}, (m.name || 'photo') + ' · ' + Math.round(m.size / 1024) + ' Ko'),
+        h('div', { class: 'row' }, h('button', { class: 'sm', onclick: function () { (navigator.clipboard ? navigator.clipboard.writeText(m.url) : Promise.reject()).then(function () { toast('Lien copié ✓'); }, function () { prompt('Copiez ce lien :', m.url); }); } }, 'Copier le lien'),
+          h('button', { class: 'sm del', onclick: async function () { if (!confirm('Supprimer cette photo ? Si elle est utilisée sur le site, elle disparaîtra.')) return; try { await api('/api/media/' + m.id, { method: 'DELETE' }); load(); } catch (e) { toast(e.message, true); } } }, 'Supprimer'))));
+    });
+  }
+  inp.onchange = async function () { var fs = [].slice.call(inp.files), ok = 0; for (var i = 0; i < fs.length; i++) { try { toast('Envoi ' + (i + 1) + ' / ' + fs.length + '…'); await sendFile(fs[i]); ok++; } catch (e) { toast(e.message, true); break; } } if (ok) toast(ok + ' photo(s) envoyée(s) ✓'); load().catch(function (e) { toast(e.message, true); }); };
+  v.appendChild(h('p', { class: 'hint' }, 'Vos photos sont réduites automatiquement avant l\u2019envoi. Pour les utiliser : onglet « Carrousels » ou « Photos des pages » → « Changer la photo ».'));
+  v.appendChild(h('div', { class: 'row', style: 'margin-bottom:14px' }, h('button', { class: 'gold', onclick: function () { inp.click(); } }, '📁 Envoyer des photos'), inp)); v.appendChild(grid);
+  await load();
+}
+
+/* ---------------- Photos des pages ---------------- */
+function bgList(doc) { return [].filter.call(doc.body.querySelectorAll('[style*="background"]'), function (e) { return /url\(/.test(e.getAttribute('style') || ''); }); }
+async function vImages(v) {
+  var p = v.dataset.p || 'index'; v.appendChild(h('p', { class: 'hint' }, 'Les photos fixes de la page. Celles des carrousels 3D se gèrent dans l\u2019onglet « Carrousels ».'));
+  v.appendChild(pageSelect(p, function (x) { v.dataset.p = x; show(); }));
+  var doc = await pageDoc(p), I = (S.images[p] = S.images[p] || {}), n = 0;
+  function row(k, orig, label) {
+    n++; var cur = I[k] || orig, th = h('img', { class: 'thumb', src: cur, alt: '' });
+    function setUrl(u) { I[k] = u; th.src = u; mark(); }
+    v.appendChild(h('div', { class: 'card row' }, th, h('small', { style: 'flex:1;word-break:break-all' }, label + ' — ' + cur), imgButtons(setUrl)[0], h('button', { class: 'sm', title: 'Remettre l\u2019originale', onclick: function () { delete I[k]; mark(); show(); } }, '↺')));
+  }
+  [].forEach.call(doc.body.querySelectorAll('img'), function (im, i) { row('i' + i, im.getAttribute('src') || '', im.getAttribute('alt') || 'Image ' + (i + 1)); });
+  bgList(doc).forEach(function (el, i) { row('b' + i, bgFrom(el), 'Image de fond ' + (i + 1)); });
+  if (!n) v.appendChild(h('p', { class: 'hint' }, 'Cette page n\u2019a pas de photo fixe : ses images sont dans les carrousels.'));
+}
+
+/* ---------------- Carrousels ---------------- */
+function bgFrom(el) { if (!el) return ''; var m = (el.getAttribute('style') || '').match(/url\(['"]?([^'")]+)/); if (m) return m[1]; var i = el.querySelector && el.querySelector('img'); return i ? i.getAttribute('src') : ''; }
+async function importCar(k) {
+  if (k === 'home') return HOME.map(function (x) { return { image: x[0], title: x[1], subtitle: x[2], href: 'portfolio.html' }; });
+  if (k === 'portfolio') return PORT.map(function (x) { return { image: x[0], title: x[1], subtitle: x[2], href: 'portfolio.html' }; });
+  var doc = await pageDoc(k);
+  if (k === 'creation-print') return [].map.call(doc.querySelectorAll('.print-card'), function (c) { return { image: bgFrom(c) || bgFrom(c.querySelector('[style]')), title: c.textContent.trim().replace(/\s+/g, ' '), subtitle: '', href: c.getAttribute('href') || '' }; });
+  return [].map.call(doc.querySelectorAll('.carousel-slide'), function (s) { var cap = s.querySelector('.carousel-caption') || s.querySelector('p'); return { image: bgFrom(s.querySelector('.carousel-image')) || bgFrom(s), title: cap ? cap.textContent.trim() : '', subtitle: '', href: (s.querySelector('a') || { getAttribute: function () { return ''; } }).getAttribute('href') || '' }; });
+}
+async function vCars(v) {
+  var k = v.dataset.k || 'home', saved = S.carousels[k], custom = !!(saved && saved.length), a = custom ? saved : await importCar(k).catch(function () { return []; }), drag = null;
+  v.appendChild(h('p', { class: 'hint' }, 'Choisissez un carrousel, puis ajoutez, remplacez, supprimez ou déplacez les photos : glissez une carte, ou utilisez les flèches.'));
+  var pl = h('div', { class: 'pills' }); CARS.forEach(function (c) { pl.appendChild(h('button', { class: 'pill' + (c[0] === k ? ' on' : ''), onclick: function () { v.dataset.k = c[0]; show(); } }, c[1])); }); v.appendChild(pl);
+  v.appendChild(h('div', { class: 'row', style: 'margin-bottom:14px' }, h('span', { class: 'note' }, custom ? 'Carrousel personnalisé : vos changements sont enregistrés pour ce carrousel.' : 'Voici les photos actuelles du site. Modifiez-en une pour personnaliser ce carrousel.'),
+    h('button', { class: 'sm del', onclick: function () { if (confirm('Revenir au carrousel d\u2019origine du site ?')) { delete S.carousels[k]; mark(); show(); } } }, 'Revenir à l\u2019origine')));
+  mark.pend = function () { S.carousels[k] = a; };
+  var grid = h('div', { class: 'cgrid2' }); v.appendChild(grid);
+  function draw() {
+    grid.innerHTML = '';
+    a.forEach(function (it, i) {
+      var th = h('img', { class: 'big', src: it.image || '', alt: '' });
+      function setImg(u) { it.image = u; th.src = u; mark(); }
+      var card = h('div', { class: 'card ci', draggable: 'true' }, h('div', { class: 'ciimg' }, th, h('span', { class: 'badge' }, String(i + 1))),
+        h('div', { class: 'row' }, imgButtons(setImg)[0],
+          h('button', { class: 'sm', title: 'Avancer', onclick: function () { if (i > 0) { a.splice(i - 1, 0, a.splice(i, 1)[0]); mark(); draw(); } } }, '←'),
+          h('button', { class: 'sm', title: 'Reculer', onclick: function () { if (i < a.length - 1) { a.splice(i + 1, 0, a.splice(i, 1)[0]); mark(); draw(); } } }, '→'),
+          h('button', { class: 'sm del', title: 'Supprimer', onclick: function () { if (confirm('Retirer cette photo du carrousel ?')) { a.splice(i, 1); mark(); draw(); } } }, '✕')),
+        tx(it.title, function (x) { it.title = x; }, 'Titre'), tx(it.subtitle, function (x) { it.subtitle = x; }, 'Catégorie (sous-titre)'), tx(it.href, function (x) { it.href = x; }, 'Lien au clic (ex. portfolio.html)'));
+      card.ondragstart = function (e) { drag = i; card.classList.add('drag'); e.dataTransfer.effectAllowed = 'move'; };
+      card.ondragend = function () { card.classList.remove('drag'); };
+      card.ondragover = function (e) { e.preventDefault(); };
+      card.ondrop = function (e) { e.preventDefault(); if (drag == null || drag === i) return; a.splice(i, 0, a.splice(drag, 1)[0]); drag = null; mark(); draw(); };
+      grid.appendChild(card);
+    });
+    grid.appendChild(h('button', { class: 'addtile', onclick: function () { pickImage(function (u) { a.push({ image: u, title: '', subtitle: '', href: 'portfolio.html' }); mark(); draw(); }); } }, h('b', {}, '+'), 'Ajouter une photo'));
+  }
+  draw();
+}
 
 /* ---------------- Textes ---------------- */
 async function vTexts(v) {
@@ -112,49 +273,6 @@ async function vTexts(v) {
     });
   }
   q.oninput = draw; draw();
-}
-
-/* ---------------- Images ---------------- */
-async function vImages(v) {
-  var p = v.dataset.p || 'index'; v.appendChild(h('h2', {}, 'Images des pages')); v.appendChild(h('p', { class: 'hint' }, 'Remplacez n\u2019importe quelle image <img> de la page par un fichier ou une URL. Les carrousels ont leur propre onglet.'));
-  v.appendChild(pageSelect(p, function (x) { v.dataset.p = x; show(); }));
-  var doc = await pageDoc(p), imgs = doc.body.querySelectorAll('img'), I = (S.images[p] = S.images[p] || {});
-  [].forEach.call(imgs, function (im, n) {
-    var k = 'i' + n, orig = im.getAttribute('src') || '', th = h('img', { class: 'thumb', src: I[k] || orig });
-    function setUrl(u) { I[k] = u; th.src = u; mark(); }
-    v.appendChild(h('div', { class: 'card row' }, th, h('small', { style: 'flex:1;word-break:break-all' }, (im.getAttribute('alt') || 'image ' + (n + 1)) + ' — ' + (I[k] || orig)), imgButtons(setUrl)[0], imgButtons(setUrl)[1], h('button', { class: 'sm', onclick: function () { delete I[k]; th.src = orig; mark(); show(); } }, '↺')));
-  });
-  if (!imgs.length) v.appendChild(h('p', { class: 'hint' }, 'Aucune image <img> sur cette page.'));
-}
-
-/* ---------------- Carrousels ---------------- */
-function bgFrom(el) { if (!el) return ''; var m = (el.getAttribute('style') || '').match(/url\(['"]?([^'")]+)/); if (m) return m[1]; var i = el.querySelector && el.querySelector('img'); return i ? i.getAttribute('src') : ''; }
-async function importCar(k) {
-  if (k === 'home') return HOME.map(function (x) { return { image: x[0], title: x[1], subtitle: x[2], href: 'portfolio.html' }; });
-  if (k === 'portfolio') return PORT.map(function (x) { return { image: x[0], title: x[1], subtitle: x[2], href: 'portfolio.html' }; });
-  var doc = await pageDoc(k);
-  if (k === 'creation-print') return [].map.call(doc.querySelectorAll('.print-card'), function (c) { return { image: bgFrom(c) || bgFrom(c.querySelector('[style]')), title: c.textContent.trim().replace(/\s+/g, ' '), subtitle: '', href: c.getAttribute('href') || '' }; });
-  return [].map.call(doc.querySelectorAll('.carousel-slide'), function (s) { var cap = s.querySelector('.carousel-caption') || s.querySelector('p'); return { image: bgFrom(s.querySelector('.carousel-image')) || bgFrom(s), title: cap ? cap.textContent.trim() : '', subtitle: '', href: (s.querySelector('a') || { getAttribute: function () { return ''; } }).getAttribute('href') || '' }; });
-}
-async function vCars(v) {
-  var k = v.dataset.k || 'home', list = h('div'), sel = h('select');
-  CARS.forEach(function (c) { var o = h('option', { value: c[0] }, c[1]); if (c[0] === k) o.selected = true; sel.appendChild(o); }); sel.onchange = function () { v.dataset.k = sel.value; show(); };
-  v.appendChild(h('h2', {}, 'Carrousels')); v.appendChild(h('p', { class: 'hint' }, 'Ajoutez, supprimez, remplacez et déplacez les photos (↑ ↓). Tant que vous n\u2019avez rien enregistré ici, le site garde son carrousel d\u2019origine : cliquez « Importer l\u2019existant » pour partir de ce qui est affiché aujourd\u2019hui.'));
-  v.appendChild(h('div', { class: 'row' }, sel, h('button', { onclick: async function () { if (S.carousels[k] && S.carousels[k].length && !confirm('Remplacer la liste actuelle ?')) return; S.carousels[k] = await importCar(k); mark(); draw(); } }, 'Importer l\u2019existant'), h('button', { class: 'del', onclick: function () { if (confirm('Revenir au carrousel d\u2019origine du site ?')) { delete S.carousels[k]; mark(); draw(); } } }, 'Réinitialiser')));
-  v.appendChild(list);
-  v.appendChild(h('div', { class: 'row', style: 'margin-top:10px' }, h('button', { class: 'gold', onclick: function () { uploadFile(function (u) { add(u); }); } }, '+ Ajouter une photo (fichier)'), h('button', { onclick: function () { askUrl(add); } }, '+ Ajouter par URL')));
-  function add(u) { (S.carousels[k] = S.carousels[k] || []).push({ image: u, title: '', subtitle: '', href: 'portfolio.html' }); mark(); draw(); }
-  function draw() {
-    list.innerHTML = ''; var a = S.carousels[k];
-    if (!a || !a.length) { list.appendChild(h('p', { class: 'hint' }, 'Carrousel d\u2019origine (non modifié).')); return; }
-    a.forEach(function (it, i) {
-      var th = h('img', { class: 'thumb', src: it.image || '' });
-      function setImg(u) { it.image = u; th.src = u; mark(); }
-      list.appendChild(h('div', { class: 'card' }, h('div', { class: 'row' }, th, imgButtons(setImg)[0], imgButtons(setImg)[1], h('button', { class: 'sm', onclick: function () { if (i > 0) { a.splice(i - 1, 0, a.splice(i, 1)[0]); mark(); draw(); } } }, '↑'), h('button', { class: 'sm', onclick: function () { if (i < a.length - 1) { a.splice(i + 1, 0, a.splice(i, 1)[0]); mark(); draw(); } } }, '↓'), h('button', { class: 'sm del', onclick: function () { a.splice(i, 1); mark(); draw(); } }, '✕')),
-        h('div', { class: 'row', style: 'margin-top:8px' }, tx(it.title, function (x) { it.title = x; }, 'Titre'), tx(it.subtitle, function (x) { it.subtitle = x; }, 'Sous-titre (catégorie)'), tx(it.href, function (x) { it.href = x; }, 'Lien au clic (ex. portfolio.html)'))));
-    });
-  }
-  draw();
 }
 
 /* ---------------- Header / Footer ---------------- */
@@ -196,30 +314,71 @@ async function vColors(v) {
   v.appendChild(h('button', { class: 'del', onclick: function () { if (confirm('Remettre toutes les couleurs d\u2019origine ?')) { S.theme = {}; mark(); show(); } } }, 'Tout réinitialiser'));
 }
 
-/* ---------------- Langues ---------------- */
-async function collect() {
-  var map = {}; function add(id, t) { t = (t || '').trim(); if (t && /\p{L}/u.test(t)) map[id] = t; }
-  for (var pi = 0; pi < C.PAGES.length; pi++) {
-    var p = C.PAGES[pi], doc = await pageDoc(p).catch(function () { return null; }); if (!doc) continue; var T = S.texts[p] || {}, hid = S.hidden[p] || [];
-    C.scan(doc).forEach(function (s) { if (s.chrome || hid.indexOf(s.key) > -1) return; s.nodes.forEach(function (nd) { var k = s.key + '_' + nd.i; add(p + '__' + k, T[k] != null ? T[k] : nd.node.nodeValue); }); });
-    (S.blocks[p] || []).forEach(function (b) { add(p + '__b' + b.id, b.text); });
-  }
-  var H = C.merge(C.DEF.header, S.header || {}), F = C.merge(C.DEF.footer, S.footer || {}), cols = (S.footer && S.footer.columns) || C.DEF.footer.columns;
-  (H.items || []).forEach(function (l, i) { add('hdr_i' + i, l.label); }); (H.dropdown || []).forEach(function (l, i) { add('hdr_d' + i, l.label); }); add('hdr_cta', H.cta.label);
-  add('ftr_tag1', F.tag1); add('ftr_tag2', F.tag2); add('ftr_follow', F.follow); add('ftr_lucky', F.lucky); add('ftr_copy', F.copyright); add('ftr_sig', F.signature);
-  cols.forEach(function (c, i) { add('ftr_c' + i + '_t', c.title); (c.links || []).forEach(function (l, j) { add('ftr_c' + i + '_l' + j, l.label); }); });
-  Object.keys(S.carousels).forEach(function (k) { (S.carousels[k] || []).forEach(function (x, i) { add('car_' + k + '_' + i + '_t', x.title); add('car_' + k + '_' + i + '_s', x.subtitle); }); });
-  return map;
+/* ---------------- SEO ---------------- */
+function counter(el, ideal, max) {
+  var c = h('small', { class: 'cnt' }); function up() { var n = el.value.length; c.textContent = n + ' caractères (idéal : ' + ideal + ', maximum : ' + max + ')'; c.className = 'cnt ' + (n && n <= max && n >= ideal * .6 ? 'ok' : n > max ? 'warn' : ''); } el.addEventListener('input', up); up(); return c;
 }
+async function vSeo(v) {
+  var G = S.seo.site, P = S.seo.pages, SC = S.seo.schema, p = v.dataset.p || 'index';
+  v.appendChild(h('p', { class: 'hint' }, 'Ce que Google et les réseaux sociaux affichent pour votre site. Laissez un champ vide pour garder la valeur d\u2019origine de la page.'));
+  var cg = h('div', { class: 'card' }); cg.appendChild(h('b', {}, 'Réglages pour tout le site'));
+  var gd = tx(G.description, function (x) { G.description = x; }, 'Une phrase qui décrit votre activité (utilisée si une page n\u2019a pas de description)', 3);
+  cg.appendChild(fld('Nom du site', tx(G.name, function (x) { G.name = x; }, 'UIPACT')));
+  cg.appendChild(fld('Description par défaut', gd, 'Environ 150 caractères.'));
+  var gimg = h('img', { class: 'thumb', src: G.image || 'logo.png', alt: '' });
+  cg.appendChild(fld('Image affichée quand on partage le site', h('div', { class: 'row' }, gimg, imgButtons(function (u) { G.image = u; gimg.src = u; mark(); })[0], h('button', { class: 'sm', onclick: function () { delete G.image; mark(); show(); } }, '↺')), 'Format paysage conseillé (1200 × 630).'));
+  var ni = h('input', { type: 'checkbox' }); ni.checked = !!G.noindex; ni.onchange = function () { G.noindex = ni.checked; mark(); };
+  cg.appendChild(h('label', { class: 'fx', style: 'color:#ff9a9a' }, ni, ' Demander à Google de ne PAS afficher le site (à éviter)')); v.appendChild(cg);
+
+  v.appendChild(h('h3', {}, 'Réglages page par page')); v.appendChild(pageSelect(p, function (x) { v.dataset.p = x; show(); }));
+  var doc = await pageDoc(p), X = (P[p] = P[p] || {}), oT = doc.title || '', oD = (doc.querySelector('meta[name="description"]') || {}).content || '';
+  var prev = h('div', { class: 'gprev' }), gt = h('div', { class: 'gt' }), gu = h('div', { class: 'gu' }), gdsc = h('div', { class: 'gd' }); prev.appendChild(gt); prev.appendChild(gu); prev.appendChild(gdsc);
+  function up() { gt.textContent = X.title || oT || 'Titre de la page'; gu.textContent = location.host + location.pathname.replace(/[^/]*$/, '') + (p === 'index' ? '' : p + '.html'); gdsc.textContent = X.description || oD || G.description || 'Description de la page.'; }
+  var ti = tx(X.title, function (x) { X.title = x; up(); }, oT), de = tx(X.description, function (x) { X.description = x; up(); }, oD, 3);
+  var cp = h('div', { class: 'card' }); cp.appendChild(h('b', {}, 'Aperçu dans Google')); cp.appendChild(prev);
+  cp.appendChild(fld('Titre de la page', ti)); cp.appendChild(counter(ti, 55, 60)); cp.appendChild(h('div', { style: 'height:10px' }));
+  cp.appendChild(fld('Description', de)); cp.appendChild(counter(de, 140, 160));
+  var pimg = h('img', { class: 'thumb', src: X.image || G.image || 'logo.png', alt: '' });
+  cp.appendChild(fld('Image de partage de cette page', h('div', { class: 'row' }, pimg, imgButtons(function (u) { X.image = u; pimg.src = u; mark(); })[0], h('button', { class: 'sm', onclick: function () { delete X.image; mark(); show(); } }, '↺'))));
+  var pn = h('input', { type: 'checkbox' }); pn.checked = !!X.noindex; pn.onchange = function () { X.noindex = pn.checked; mark(); };
+  cp.appendChild(h('label', { class: 'fx' }, pn, ' Ne pas afficher cette page sur Google')); up(); v.appendChild(cp);
+
+  v.appendChild(h('h3', {}, 'Fiche entreprise (aide Google à vous comprendre)'));
+  var cs = h('div', { class: 'card' }), en = h('input', { type: 'checkbox' }); en.checked = !!SC.enabled; en.onchange = function () { SC.enabled = en.checked; mark(); };
+  cs.appendChild(h('label', { class: 'fx' }, en, ' Activer les données structurées (recommandé)'));
+  cs.appendChild(h('div', { style: 'height:8px' }));
+  cs.appendChild(fld('Nom de l\u2019entreprise', tx(SC.name, function (x) { SC.name = x; }, 'UIPACT')));
+  cs.appendChild(fld('Adresse du site', tx(SC.url, function (x) { SC.url = x; }, 'https://lk10ar.github.io/uipact/')));
+  cs.appendChild(fld('Logo (adresse)', tx(SC.logo, function (x) { SC.logo = x; }, 'logo.png')));
+  cs.appendChild(fld('E-mail public (facultatif)', tx(SC.email, function (x) { SC.email = x; }, 'contact@…')));
+  cs.appendChild(fld('Téléphone public (facultatif)', tx(SC.phone, function (x) { SC.phone = x; }, '+33 …')));
+  cs.appendChild(fld('Vos réseaux sociaux (un lien par ligne)', tx((SC.sameAs || []).join('\n'), function (x) { SC.sameAs = x.split('\n').map(function (s) { return s.trim(); }).filter(Boolean); }, 'https://www.instagram.com/uipact/', 3)));
+  v.appendChild(cs);
+  v.appendChild(h('p', { class: 'hint' }, 'Bon à savoir : Google lit ces réglages. WhatsApp, Facebook ou LinkedIn lisent seulement le code de la page : pour eux, les titres, descriptions et images par défaut sont déjà intégrés à chaque page.'));
+}
+
+/* ---------------- Langues ---------------- */
+var PRESET = { en: 'English', es: 'Español', de: 'Deutsch', it: 'Italiano', pt: 'Português', nl: 'Nederlands', ar: 'العربية', zh: '中文', ja: '日本語', ko: '한국어', ru: 'Русский', pl: 'Polski', tr: 'Türkçe', ro: 'Română', el: 'Ελληνικά', sv: 'Svenska', da: 'Dansk', no: 'Norsk', fi: 'Suomi', cs: 'Čeština', hu: 'Magyar', uk: 'Українська', he: 'עברית', hi: 'हिन्दी', id: 'Bahasa Indonesia', vi: 'Tiếng Việt', th: 'ไทย', bg: 'Български', hr: 'Hrvatski', sk: 'Slovenčina', ca: 'Català' };
+function lname(l) { return S.langNames[l] || C.LANGS[l] || PRESET[l] || l.toUpperCase(); }
 async function vLangs(v) {
-  v.appendChild(h('h2', {}, 'Langues du site')); v.appendChild(h('p', { class: 'hint' }, 'Cochez les langues proposées aux visiteurs (le français reste la langue d\u2019origine). « Traduire » traduit automatiquement tous les textes (DeepL si la clé est sur Render, sinon Google puis MyMemory). Relancez la traduction après avoir modifié des textes.'));
-  Object.keys(C.LANGS).forEach(function (l) {
-    if (l === 'fr') return;
+  v.appendChild(h('p', { class: 'hint' }, 'Le français est la langue d\u2019origine. Ajoutez une langue, cliquez sur « Traduire » (traduction automatique de tous les textes), puis « Enregistrer ». Relancez « Traduire » après avoir modifié des textes. Les visiteurs voient un sélecteur de langue dans le menu.'));
+  var present = S.languages.filter(function (l) { return l !== 'fr'; }); Object.keys(S.translations).forEach(function (l) { if (present.indexOf(l) < 0 && l !== 'fr') present.push(l); });
+  var sel = h('select'), codeI = h('input', { placeholder: 'Code (ex. ar, ja, pt-br)', maxlength: '8' }), nameI = h('input', { placeholder: 'Nom affiché (ex. Japonais)' }), custom = h('div', { class: 'row', hidden: '' }, codeI, nameI);
+  Object.keys(PRESET).forEach(function (l) { if (present.indexOf(l) < 0) sel.appendChild(h('option', { value: l }, PRESET[l] + ' (' + l + ')')); });
+  sel.appendChild(h('option', { value: '__other' }, 'Autre langue (saisir le code)…')); sel.onchange = function () { custom.hidden = sel.value !== '__other'; };
+  v.appendChild(h('div', { class: 'card' }, h('b', {}, '➕ Ajouter une langue'), h('div', { class: 'row', style: 'margin-top:8px' }, sel, h('button', { class: 'gold', onclick: function () {
+    var l = sel.value, nm = '';
+    if (l === '__other') { l = codeI.value.trim().toLowerCase(); nm = nameI.value.trim(); if (!/^[a-z]{2,3}(-[a-z]{2,4})?$/.test(l)) { toast('Code de langue invalide (exemples : ar, ja, pt-br).', true); return; } if (!nm) { toast('Indiquez le nom affiché de la langue.', true); return; } }
+    if (l === 'fr' || S.languages.indexOf(l) > -1) { toast('Cette langue est déjà ajoutée.', true); return; }
+    S.languages.push(l); if (nm) S.langNames[l] = nm; else if (!C.LANGS[l]) S.langNames[l] = PRESET[l] || l; mark(); show();
+  } }, 'Ajouter')), custom));
+  if (!present.length) v.appendChild(h('p', { class: 'hint' }, 'Aucune langue ajoutée pour le moment.'));
+  present.forEach(function (l) {
     var ck = h('input', { type: 'checkbox' }); ck.checked = S.languages.indexOf(l) > -1;
     ck.onchange = function () { var i = S.languages.indexOf(l); if (ck.checked && i < 0) S.languages.push(l); if (!ck.checked && i > -1) S.languages.splice(i, 1); if (S.languages.indexOf('fr') < 0) S.languages.unshift('fr'); mark(); };
     var n = Object.keys(S.translations[l] || {}).length, pr = h('progress', { value: 0, max: 1, hidden: '' }), log = h('small', {}, n ? n + ' textes traduits' : 'Pas encore traduit');
-    var go = h('button', { class: 'gold', onclick: async function () {
-      go.disabled = true; pr.hidden = false; log.textContent = 'Lecture des pages…';
+    var go2 = h('button', { class: 'gold', onclick: async function () {
+      go2.disabled = true; pr.hidden = false; log.textContent = 'Lecture des pages…';
       try {
         var map = await collect(), ids = Object.keys(map), uniq = {}, out = {}; ids.forEach(function (id) { (uniq[map[id]] = uniq[map[id]] || []).push(id); });
         var texts = Object.keys(uniq), done = 0, batch = [], size = 0, errs = [];
@@ -227,12 +386,31 @@ async function vLangs(v) {
         for (var i = 0; i < texts.length; i++) { if (batch.length >= 60 || size + texts[i].length > 9000) await flush(); batch.push(texts[i]); size += texts[i].length; } await flush();
         S.translations[l] = out; if (S.languages.indexOf(l) < 0) { S.languages.push(l); ck.checked = true; } mark(); await save(); log.textContent = Object.keys(out).length + ' textes traduits ✓' + (errs.length ? ' — ' + errs.join(' · ') : '');
       } catch (e) { log.textContent = '⚠ ' + e.message; toast(e.message, true); }
-      go.disabled = false;
+      go2.disabled = false;
     } }, 'Traduire');
-    v.appendChild(h('div', { class: 'card' }, h('div', { class: 'row' }, h('label', { class: 'fx' }, ck, ' ' + C.LANGS[l]), go, h('button', { class: 'sm del', onclick: function () { delete S.translations[l]; mark(); show(); } }, 'Effacer')), pr, log));
+    v.appendChild(h('div', { class: 'card' }, h('div', { class: 'row' }, h('label', { class: 'fx', style: 'font-weight:600' }, ck, ' ' + lname(l) + ' (' + l + ')'), go2,
+      h('a', { href: 'index.html?lang=' + l, target: '_blank', rel: 'noopener', style: 'flex:0 0 auto' }, 'Voir le site ↗'),
+      h('button', { class: 'sm', onclick: function () { delete S.translations[l]; mark(); show(); } }, 'Effacer la traduction'),
+      h('button', { class: 'sm del', onclick: function () { if (!confirm('Retirer cette langue du site ?')) return; S.languages = S.languages.filter(function (x) { return x !== l; }); delete S.translations[l]; delete S.langNames[l]; mark(); show(); } }, 'Retirer')), pr, log));
   });
 }
 
+async function collect() {
+  var map = {}; function add(id, t) { t = (t || '').trim(); if (t && /\p{L}/u.test(t)) map[id] = t; }
+  for (var pi = 0; pi < C.PAGES.length; pi++) {
+    var p = C.PAGES[pi], doc = await pageDoc(p).catch(function () { return null; }); if (!doc) continue; var T = S.texts[p] || {}, hid = S.hidden[p] || [];
+    C.scan(doc).forEach(function (s) { if (s.chrome || hid.indexOf(s.key) > -1) return; s.nodes.forEach(function (nd) { var k = s.key + '_' + nd.i; add(p + '__' + k, T[k] != null ? T[k] : nd.node.nodeValue); }); });
+    (S.blocks[p] || []).forEach(function (b) { add(p + '__b' + b.id, b.text); });
+    add('seo_' + p + '_t', (S.seo.pages[p] || {}).title || doc.title); add('seo_' + p + '_d', (S.seo.pages[p] || {}).description || (doc.querySelector('meta[name="description"]') || {}).content);
+  }
+  add('seo_site_d', S.seo.site.description);
+  var H = C.merge(C.DEF.header, S.header || {}), F = C.merge(C.DEF.footer, S.footer || {}), cols = (S.footer && S.footer.columns) || C.DEF.footer.columns;
+  (H.items || []).forEach(function (l, i) { add('hdr_i' + i, l.label); }); (H.dropdown || []).forEach(function (l, i) { add('hdr_d' + i, l.label); }); add('hdr_cta', H.cta.label);
+  add('ftr_tag1', F.tag1); add('ftr_tag2', F.tag2); add('ftr_follow', F.follow); add('ftr_lucky', F.lucky); add('ftr_copy', F.copyright); add('ftr_sig', F.signature);
+  cols.forEach(function (c, i) { add('ftr_c' + i + '_t', c.title); (c.links || []).forEach(function (l, j) { add('ftr_c' + i + '_l' + j, l.label); }); });
+  Object.keys(S.carousels).forEach(function (k) { (S.carousels[k] || []).forEach(function (x, i) { add('car_' + k + '_' + i + '_t', x.title); add('car_' + k + '_' + i + '_s', x.subtitle); }); });
+  return map;
+}
 /* ---------------- Messages ---------------- */
 async function vMsgs(v) {
   v.appendChild(h('h2', {}, 'Messages reçus')); var list = h('div'); v.appendChild(list);
@@ -243,6 +421,7 @@ async function vMsgs(v) {
 }
 if (tok) start();
 })();
+
 </script>
 </body>
 </html>
