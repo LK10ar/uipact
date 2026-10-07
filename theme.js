@@ -602,12 +602,15 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
     var hero = document.getElementById('hero'); if (!hero || document.getElementById('sc3')) return;
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, mob = matchMedia('(max-width:900px)');
-    var S = [['Stratégie', 'Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.', 'img/tout.png'],
-             ['Créativité', 'Concevoir une identité et des interfaces qui vous démarquent et racontent votre histoire.', 'img/chene.png'],
-             ['Précision', 'Livrer des fichiers et des pages soignés, prêts à être utilisés partout.', 'img/foodweb.png']];
+    var X = (window.__cmsSec && window.__cmsSec.showcase) || {}, tt = window.__cmsTr || function (i, f) { return f; }, E = (window.CMS && window.CMS.esc) || function (v) { return v; };
+    var D0 = [['Stratégie', 'Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.', 'img/tout.png'],
+              ['Créativité', 'Concevoir une identité et des interfaces qui vous démarquent et racontent votre histoire.', 'img/chene.png'],
+              ['Précision', 'Livrer des fichiers et des pages soignés, prêts à être utilisés partout.', 'img/foodweb.png']];
+    var S = D0.map(function (d, i) { var z = (X.steps || [])[i] || {}; return [tt('sc_' + i + '_t', z.title || d[0]), tt('sc_' + i + '_p', z.text || d[1]), z.image || d[2]]; });
+    var EB = tt('sc_eb', X.eyebrow || 'Ma méthode'), CTA = tt('sc_cta', (X.cta && X.cta.label) || 'Démarrer un projet'), CTAH = (X.cta && X.cta.href) || 'contact.html', PH = X.phone || 'img/sport.png';
     var sec = document.createElement('section'); sec.id = 'sc3'; sec.className = 'sc3';
-    sec.innerHTML = '<div class="sc3-stick"><div class="sc3-txt"><div class="eb">Ma méthode</div><div class="sc3-n">01</div><h3 class="sc3-h"></h3><p class="sc3-p"></p><div class="sc3-d"><i></i><i></i><i></i></div><a class="cta-button" href="contact.html">Démarrer un projet</a></div>' +
-        '<div class="sc3-scene"><div class="lap"><div class="lap-lid"><div class="lap-page">' + S.map(function (s) { return '<img src="' + s[2] + '" alt="">'; }).join('') + '</div></div><div class="lap-deck"></div></div><div class="phone"><img src="img/sport.png" alt=""></div></div></div>';
+    sec.innerHTML = '<div class="sc3-stick"><div class="sc3-txt"><div class="eb">' + E(EB) + '</div><div class="sc3-n">01</div><h3 class="sc3-h"></h3><p class="sc3-p"></p><div class="sc3-d"><i></i><i></i><i></i></div><a class="cta-button" href="' + E(CTAH) + '">' + E(CTA) + '</a></div>' +
+        '<div class="sc3-scene"><div class="lap"><div class="lap-lid"><div class="lap-page">' + S.map(function (s) { return '<img src="' + E(s[2]) + '" alt="">'; }).join('') + '</div></div><div class="lap-deck"></div></div><div class="phone"><img src="' + E(PH) + '" alt=""></div></div></div>';
     (document.querySelector('.ticker-wrap') || hero).after(sec);
     var q = function (s) { return sec.querySelector(s); }, lap = q('.lap'), lid = q('.lap-lid'), ph = q('.phone'), n = q('.sc3-n'), hh = q('.sc3-h'), pp = q('.sc3-p'), dots = sec.querySelectorAll('.sc3-d i'), imgs = sec.querySelectorAll('.lap-page img'), cur = -1, mx = 0, my = 0;
     addEventListener('mousemove', function (e) { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; }, { passive: true });
@@ -640,22 +643,23 @@ document.addEventListener('DOMContentLoaded', function () {
     var hero = document.getElementById('hero'), sv = document.getElementById('services');
     if (!hero || !sv) return;
     // 1. Phrase d'engagement qui se révèle mot à mot
-    var T = "La garantie d'un résultat 100% en adéquation avec vos valeurs, les messages et l'image que vous souhaitez véhiculer.";
+    var XS = window.__cmsSec || {}, tt2 = window.__cmsTr || function (i, f) { return f; };
+    var T = tt2('st_txt', (XS.statement && XS.statement.text) || "La garantie d'un résultat 100% en adéquation avec vos valeurs, les messages et l'image que vous souhaitez véhiculer.");
     var st = h('<section class="st-sec"><p class="st-txt"></p></section>'), tp = st.firstChild;
     tp.innerHTML = T.split(' ').map(function (w) { return '<span class="sw2">' + w + '</span>'; }).join(' ');
     (document.querySelector('.ticker-wrap') || hero).after(st);
     var ws = [].slice.call(tp.children);
     // 2. Du wireframe au site : maquette 3D pilotée par le scroll
-    var p3 = h('<section class="p3" id="methode"><div class="p3-in"><div class="p3-txt"><div class="eb">Méthode</div><h2 class="p3-h">Du wireframe au site <i>qui convertit</i></h2><ul class="p3-steps">' +
-        '<li class="on"><b>01 · Stratégie</b><span>Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.</span></li>' +
-        '<li><b>02 · Design</b><span>Wireframes puis maquettes : identité, typographies, couleurs et interface pensées pour votre image.</span></li>' +
-        '<li><b>03 · Développement</b><span>Un site à votre image, responsive et facile à prendre en main.</span></li></ul></div>' +
+    var M = XS.method || {}, MS = M.steps || [], CH = M.chips || {}, E2 = (window.CMS && window.CMS.esc) || function (v) { return v; };
+    var MD = [['01 · Stratégie', 'Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.'], ['02 · Design', 'Wireframes puis maquettes : identité, typographies, couleurs et interface pensées pour votre image.'], ['03 · Développement', 'Un site à votre image, responsive et facile à prendre en main.']];
+    var li = MD.map(function (d, i) { var z = MS[i] || {}; return '<li' + (i === 0 ? ' class="on"' : '') + '><b>' + E2(tt2('m_' + i + '_t', z.title || d[0])) + '</b><span>' + E2(tt2('m_' + i + '_p', z.text || d[1])) + '</span></li>'; }).join('');
+    var p3 = h('<section class="p3" id="methode"><div class="p3-in"><div class="p3-txt"><div class="eb">' + E2(tt2('m_eb', M.eyebrow || 'Méthode')) + '</div><h2 class="p3-h">' + E2(tt2('m_title', M.title || 'Du wireframe au site')) + ' <i>' + E2(tt2('m_em', M.titleEm || 'qui convertit')) + '</i></h2><ul class="p3-steps">' + li + '</ul></div>' +
         '<div class="p3-stage"><div class="p3-rig" data-s="0"><div class="p3-win">' +
         '<div class="p3-lay on"><div class="wf"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>' +
         '<div class="p3-lay"><div class="wf d"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>' +
-        '<div class="p3-lay"><img class="p3-live" src="img/chene.png" alt=""></div></div>' +
-        '<div class="p3-chip c1">Aa<small>Typographie</small></div><div class="p3-chip c2"><u></u><u></u><u></u></div>' +
-        '<div class="p3-chip c3">Bouton</div><div class="p3-chip c4">Responsive<small>mobile · tablette · bureau</small></div></div></div></div></section>');
+        '<div class="p3-lay"><img class="p3-live" src="' + E2(M.image || 'img/chene.png') + '" alt=""></div></div>' +
+        '<div class="p3-chip c1">Aa<small>' + E2(tt2('m_c1', CH.typo || 'Typographie')) + '</small></div><div class="p3-chip c2"><u></u><u></u><u></u></div>' +
+        '<div class="p3-chip c3">' + E2(tt2('m_c3', CH.button || 'Bouton')) + '</div><div class="p3-chip c4">' + E2(tt2('m_c4', CH.resp || 'Responsive')) + '<small>' + E2(tt2('m_c4s', CH.respSmall || 'mobile · tablette · bureau')) + '</small></div></div></div></div></section>');
     sv.after(p3);
     var rig = p3.querySelector('.p3-rig'), lays = [].slice.call(p3.querySelectorAll('.p3-lay')), lis = [].slice.call(p3.querySelectorAll('.p3-steps li')), tg = 0, cur = 0, mx = 0, cx = 0, last = -1;
     addEventListener('mousemove', function (e) { mx = e.clientX / innerWidth - .5; }, { passive: true });
