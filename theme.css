@@ -976,3 +976,7 @@ html:not([data-theme="dark"]) .p3-steps b{ color:var(--c-navy); } html:not([data
 /* Services empilés en 3D (ordinateur) */
 .stk{ display:block!important; max-width:640px; margin:0 auto!important; padding-bottom:12vh; }
 .stk .service-card{ position:sticky; width:100%; margin:0 0 56px!important; box-shadow:0 -14px 40px rgba(0,0,0,.4); transform-origin:50% 0; will-change:scale; }
+
+/* V10 — le téléphone de « Ma méthode » ne dépasse plus de l'écran (tablette et mobile) */
+@media(max-width:900px){ .phone{ right:7vw!important; width:20vw!important; } }
+@media(max-width:600px){ .phone{ right:6vw!important; width:25vw!important; } }
