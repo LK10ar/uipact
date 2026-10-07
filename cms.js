@@ -128,6 +128,7 @@
   }
   function run(d) {
     D = d; T = (d.translations || {})[lang] || {};
+    window.__cmsSec = d.sections || {}; window.__cmsTr = tr;
     window.__cmsCar = {};
     Object.keys(d.carousels || {}).forEach(function (k) { window.__cmsCar[k] = (d.carousels[k] || []).map(function (x, i) { return { image: x.image, href: x.href, title: tr('car_' + k + '_' + i + '_t', x.title), subtitle: tr('car_' + k + '_' + i + '_s', x.subtitle) }; }); });
     theme(d.theme); pageContent(d); header(d); seo(d);
