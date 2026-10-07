@@ -47,6 +47,18 @@ progress{width:100%;height:10px}.sw{width:30px;height:30px;border-radius:8px;bor
 @media(max-width:860px){.shell{grid-template-columns:1fr}.side{position:sticky;height:auto;flex-direction:row;align-items:center;padding:8px 10px;z-index:25;overflow-x:auto}.brand,.sfoot{display:none}#tabs{flex-direction:row;gap:4px}.nv{white-space:nowrap;padding:8px 11px}.hd{padding:18px 16px 4px}.hd h1{font-size:1.8rem}main{padding:12px 16px 120px}.sbar{left:0;padding:10px 16px}}
 
 #view>h2{display:none}
+
+.pvbox{background:linear-gradient(135deg,#0A1024,#101B3D);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:16px}.pvsticky{position:sticky;top:8px;z-index:12;box-shadow:0 12px 30px rgba(0,0,0,.45)}
+.pvlabel{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+.pvh{display:flex;align-items:center;gap:14px;background:rgba(17,26,56,.9);border:1px solid rgba(201,162,75,.4);border-radius:99px;padding:8px 12px 8px 16px}.pvh .lg{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--gold2);white-space:nowrap}.pvh .lg img{height:22px}
+.pvh nav{display:flex;gap:16px;margin-left:auto;font-size:.82rem;white-space:nowrap;overflow:hidden}.pvh nav span.dd{color:var(--gold2)}
+.pvh .cta{background:linear-gradient(135deg,#E4C77A,#C9A24B);color:#101B3D;font-weight:800;border-radius:99px;padding:7px 16px;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.pvdd{margin:8px 0 0 auto;width:max-content;max-width:100%;background:var(--panel2);border:1px solid var(--line);border-top:2px solid var(--gold);border-radius:10px;padding:6px 14px;font-size:.8rem;display:flex;flex-direction:column;gap:3px}.pvdd small{color:var(--mut);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase}
+.pvf{display:grid;grid-template-columns:.75fr 1.6fr;gap:10px;font-size:.78rem}.pvf .l{border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;background:radial-gradient(circle at 20% 15%,rgba(228,199,122,.55),transparent 55%),#101B3D;color:#fff}.pvf .l b{font-size:1rem;letter-spacing:.05em}.pvf .l em{font-style:normal;color:rgba(255,255,255,.65)}
+.pvf .r{border-radius:16px;padding:16px;background:rgba(255,255,255,.05);border:1px solid var(--line);position:relative;display:flex;flex-direction:column;gap:10px}.pvf .cols{display:flex;gap:22px;flex-wrap:wrap}.pvf .cols div{display:flex;flex-direction:column;gap:3px}.pvf .cols b{color:var(--mut);font-weight:600}.pvf .bot{display:flex;justify-content:space-between;gap:8px;color:var(--mut);font-size:.7rem;border-top:1px solid var(--line);padding-top:8px;flex-wrap:wrap}
+.pvf .badge2{position:absolute;right:14px;top:-12px;background:#101B3D;border:1px solid var(--gold);border-radius:14px;padding:5px 12px;font-size:.72rem;color:var(--gold2)}
+.eng{display:flex;flex-direction:column;gap:5px;margin-top:8px}.eng div{display:flex;gap:8px;align-items:baseline;font-size:.88rem}.eng .ok{color:#4ADE80}.eng .no{color:var(--mut)}.eng small{color:var(--mut)}
+@media(max-width:700px){.pvf{grid-template-columns:1fr}.pvh nav{display:none}}
 </style>
 </head>
 <body>
@@ -66,6 +78,7 @@ progress{width:100%;height:10px}.sw{width:30px;height:30px;border-radius:8px;bor
 var API = String(window.UIPACT_API || '').replace(/\/$/, ''), C = window.CMS, $ = function (s) { return document.querySelector(s); };
 var tok = sessionStorage.getItem('uipact_tok'), S = {}, tab = 'home', dirty = false;
 var TABS = [['home', '🏠', 'Accueil', 'Vue d\u2019ensemble et raccourcis'], ['texts', '✏️', 'Textes', 'Modifier, masquer ou ajouter des textes'], ['images', '🖼️', 'Photos des pages', 'Remplacer les photos fixes de chaque page'],
+  ['anim', '🎬', 'Animations', 'Textes et photos des animations de la page d’accueil'],
   ['carousels', '🎠', 'Carrousels', 'Ajouter, supprimer et déplacer les photos des carrousels 3D'], ['media', '📁', 'Bibliothèque', 'Toutes vos photos envoyées'], ['colors', '🎨', 'Couleurs', 'La palette du site'],
   ['header', '🔝', 'Header', 'Le menu en haut des pages'], ['footer', '🔚', 'Footer', 'Le bas des pages'], ['seo', '🔍', 'SEO', 'Ce que Google et les réseaux sociaux affichent'],
   ['langs', '🌍', 'Langues', 'Traduire le site et ajouter des langues'], ['msgs', '✉️', 'Messages', 'Les messages du formulaire de contact']];
@@ -94,7 +107,7 @@ $('#login').onsubmit = async function (e) {
   catch (x) { $('#lerr').textContent = /fetch/i.test(x.message) ? "Impossible de joindre l'API (vérifiez config.js, ou patientez 1 minute : le serveur se réveille)." : x.message; }
 };
 function norm() {
-  ['texts', 'hidden', 'blocks', 'images', 'carousels', 'translations', 'langNames'].forEach(function (k) { S[k] = S[k] || {}; });
+  ['texts', 'hidden', 'blocks', 'images', 'carousels', 'translations', 'langNames', 'sections'].forEach(function (k) { S[k] = S[k] || {}; });
   S.seo = S.seo || {}; S.seo.site = S.seo.site || {}; S.seo.pages = S.seo.pages || {}; S.seo.schema = S.seo.schema || {};
   S.languages = S.languages && S.languages.length ? S.languages : ['fr'];
 }
@@ -118,7 +131,7 @@ async function save() {
 addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 function show() {
   var v = $('#view'); v.innerHTML = ''; mark.pend = null; var t = LABEL[tab]; $('#vt').textContent = t[1] + '  ' + t[2]; $('#vd').textContent = t[3];
-  ({ home: vHome, texts: vTexts, images: vImages, carousels: vCars, media: vMedia, colors: vColors, header: vHeader, footer: vFooter, seo: vSeo, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); });
+  ({ home: vHome, texts: vTexts, anim: vAnim, images: vImages, carousels: vCars, media: vMedia, colors: vColors, header: vHeader, footer: vFooter, seo: vSeo, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); });
   window.scrollTo(0, 0);
 }
 async function pageDoc(p) { var r = await fetch(p + '.html'); if (!r.ok) throw new Error('Page introuvable : ' + p); return new DOMParser().parseFromString(await r.text(), 'text/html'); }
@@ -193,7 +206,7 @@ async function vMedia(v) {
 
 /* ---------------- Photos des pages ---------------- */
 function bgList(doc) { return [].filter.call(doc.body.querySelectorAll('[style*="background"]'), function (e) { return /url\(/.test(e.getAttribute('style') || ''); }); }
-async function vImages(v) {
+async function vImages0(v) {
   var p = v.dataset.p || 'index'; v.appendChild(h('p', { class: 'hint' }, 'Les photos fixes de la page. Celles des carrousels 3D se gèrent dans l\u2019onglet « Carrousels ».'));
   v.appendChild(pageSelect(p, function (x) { v.dataset.p = x; show(); }));
   var doc = await pageDoc(p), I = (S.images[p] = S.images[p] || {}), n = 0;
@@ -279,7 +292,7 @@ async function vTexts(v) {
 function linkRows(arr, redraw) {
   return arr.map(function (l, i) { return h('div', { class: 'row', style: 'margin-bottom:6px' }, tx(l.label, function (x) { l.label = x; }, 'Texte'), tx(l.href, function (x) { l.href = x; }, 'Lien'), h('button', { class: 'sm del', onclick: function () { arr.splice(i, 1); mark(); redraw(); } }, '✕')); });
 }
-async function vHeader(v) {
+async function vHeader0(v) {
   var H = S.header || (S.header = clone(C.DEF.header)); H.items = H.items || clone(C.DEF.header.items); H.dropdown = H.dropdown || clone(C.DEF.header.dropdown); H.cta = H.cta || clone(C.DEF.header.cta);
   v.appendChild(h('h2', {}, 'Header (menu du haut)')); v.appendChild(h('p', { class: 'hint' }, 'S\u2019applique à toutes les pages. Le lien « # » du menu déroulant parent reste un simple titre.'));
   v.appendChild(h('div', { class: 'card' }, h('small', {}, 'Nom à côté du logo'), tx(H.brand || 'UIPACT', function (x) { H.brand = x; }))); mark.silent = 1;
@@ -287,7 +300,7 @@ async function vHeader(v) {
   var c2 = h('div', { class: 'card' }); function d2() { c2.innerHTML = ''; c2.appendChild(h('b', {}, 'Menu déroulant « Mes savoir-faire »')); linkRows(H.dropdown, d2).forEach(function (r) { c2.appendChild(r); }); c2.appendChild(h('button', { class: 'sm', onclick: function () { H.dropdown.push({ label: 'Nouveau lien', href: 'index.html' }); mark(); d2(); } }, '+ Ajouter un lien')); } d2(); v.appendChild(c2);
   v.appendChild(h('div', { class: 'card' }, h('b', {}, 'Bouton principal'), h('div', { class: 'row', style: 'margin-top:6px' }, tx(H.cta.label, function (x) { H.cta.label = x; }), tx(H.cta.href, function (x) { H.cta.href = x; }))));
 }
-async function vFooter(v) {
+async function vFooter0(v) {
   var F = S.footer || (S.footer = clone(C.DEF.footer));
   v.appendChild(h('h2', {}, 'Footer (bas de page)')); v.appendChild(h('p', { class: 'hint' }, 'S\u2019applique à toutes les pages.'));
   [['brand', 'Nom'], ['tag1', 'Accroche'], ['tag2', 'Sous-accroche'], ['follow', 'Texte « Suivez-nous » (lien Instagram)'], ['instagram', 'Lien Instagram'], ['lucky', 'Texte du badge logo (« Un projet ? »)'], ['luckyHref', 'Lien du badge'], ['copyright', 'Copyright'], ['signature', 'Signature']].forEach(function (f) { v.appendChild(h('div', { class: 'card' }, h('small', {}, f[1]), tx(F[f[0]], function (x) { F[f[0]] = x; }))); });
@@ -360,7 +373,7 @@ async function vSeo(v) {
 /* ---------------- Langues ---------------- */
 var PRESET = { en: 'English', es: 'Español', de: 'Deutsch', it: 'Italiano', pt: 'Português', nl: 'Nederlands', ar: 'العربية', zh: '中文', ja: '日本語', ko: '한국어', ru: 'Русский', pl: 'Polski', tr: 'Türkçe', ro: 'Română', el: 'Ελληνικά', sv: 'Svenska', da: 'Dansk', no: 'Norsk', fi: 'Suomi', cs: 'Čeština', hu: 'Magyar', uk: 'Українська', he: 'עברית', hi: 'हिन्दी', id: 'Bahasa Indonesia', vi: 'Tiếng Việt', th: 'ไทย', bg: 'Български', hr: 'Hrvatski', sk: 'Slovenčina', ca: 'Català' };
 function lname(l) { return S.langNames[l] || C.LANGS[l] || PRESET[l] || l.toUpperCase(); }
-async function vLangs(v) {
+async function vLangs0(v) {
   v.appendChild(h('p', { class: 'hint' }, 'Le français est la langue d\u2019origine. Ajoutez une langue, cliquez sur « Traduire » (traduction automatique de tous les textes), puis « Enregistrer ». Relancez « Traduire » après avoir modifié des textes. Les visiteurs voient un sélecteur de langue dans le menu.'));
   var present = S.languages.filter(function (l) { return l !== 'fr'; }); Object.keys(S.translations).forEach(function (l) { if (present.indexOf(l) < 0 && l !== 'fr') present.push(l); });
   var sel = h('select'), codeI = h('input', { placeholder: 'Code (ex. ar, ja, pt-br)', maxlength: '8' }), nameI = h('input', { placeholder: 'Nom affiché (ex. Japonais)' }), custom = h('div', { class: 'row', hidden: '' }, codeI, nameI);
@@ -385,7 +398,7 @@ async function vLangs(v) {
         async function flush() { if (!batch.length) return; var r = await api('/api/translate', { json: { from: 'fr', to: l, texts: batch } }); if (r.errors && r.errors.length) errs = r.errors; batch.forEach(function (t, i) { uniq[t].forEach(function (id) { out[id] = r.texts[i]; }); }); done += batch.length; pr.value = done / texts.length; log.textContent = done + ' / ' + texts.length + ' textes…'; batch = []; size = 0; }
         for (var i = 0; i < texts.length; i++) { if (batch.length >= 60 || size + texts[i].length > 9000) await flush(); batch.push(texts[i]); size += texts[i].length; } await flush();
         S.translations[l] = out; if (S.languages.indexOf(l) < 0) { S.languages.push(l); ck.checked = true; } mark(); await save(); log.textContent = Object.keys(out).length + ' textes traduits ✓' + (errs.length ? ' — ' + errs.join(' · ') : '');
-      } catch (e) { log.textContent = '⚠ ' + e.message; toast(e.message, true); }
+      } catch (e) { var hint = /429|USED ALL|impossible/i.test(e.message) ? ' → Les moteurs gratuits sont saturés : ajoutez une clé DeepL gratuite (voir l’encadré « Moteurs de traduction » ci-dessus).' : ''; log.textContent = '⚠ ' + e.message + hint; toast(e.message, true); }
       go2.disabled = false;
     } }, 'Traduire');
     v.appendChild(h('div', { class: 'card' }, h('div', { class: 'row' }, h('label', { class: 'fx', style: 'font-weight:600' }, ck, ' ' + lname(l) + ' (' + l + ')'), go2,
@@ -409,8 +422,102 @@ async function collect() {
   add('ftr_tag1', F.tag1); add('ftr_tag2', F.tag2); add('ftr_follow', F.follow); add('ftr_lucky', F.lucky); add('ftr_copy', F.copyright); add('ftr_sig', F.signature);
   cols.forEach(function (c, i) { add('ftr_c' + i + '_t', c.title); (c.links || []).forEach(function (l, j) { add('ftr_c' + i + '_l' + j, l.label); }); });
   Object.keys(S.carousels).forEach(function (k) { (S.carousels[k] || []).forEach(function (x, i) { add('car_' + k + '_' + i + '_t', x.title); add('car_' + k + '_' + i + '_s', x.subtitle); }); });
+  var SH = secW('showcase'), ST = secW('statement'), ME = secW('method');
+  add('sc_eb', SH.eyebrow); add('sc_cta', SH.cta.label); SH.steps.forEach(function (z, i) { add('sc_' + i + '_t', z.title); add('sc_' + i + '_p', z.text); });
+  add('st_txt', ST.text); add('m_eb', ME.eyebrow); add('m_title', ME.title); add('m_em', ME.titleEm); ME.steps.forEach(function (z, i) { add('m_' + i + '_t', z.title); add('m_' + i + '_p', z.text); });
+  add('m_c1', ME.chips.typo); add('m_c3', ME.chips.button); add('m_c4', ME.chips.resp); add('m_c4s', ME.chips.respSmall);
   return map;
 }
+
+/* ---------------- Animations de l'accueil ---------------- */
+var ANIM = {
+  showcase: { eyebrow: 'Ma méthode', phone: 'img/sport.png', cta: { label: 'Démarrer un projet', href: 'contact.html' }, steps: [
+    { title: 'Stratégie', text: 'Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.', image: 'img/tout.png' },
+    { title: 'Créativité', text: 'Concevoir une identité et des interfaces qui vous démarquent et racontent votre histoire.', image: 'img/chene.png' },
+    { title: 'Précision', text: 'Livrer des fichiers et des pages soignés, prêts à être utilisés partout.', image: 'img/foodweb.png' }] },
+  statement: { text: "La garantie d'un résultat 100% en adéquation avec vos valeurs, les messages et l'image que vous souhaitez véhiculer." },
+  method: { eyebrow: 'Méthode', title: 'Du wireframe au site', titleEm: 'qui convertit', image: 'img/chene.png',
+    chips: { typo: 'Typographie', button: 'Bouton', resp: 'Responsive', respSmall: 'mobile · tablette · bureau' }, steps: [
+    { title: '01 · Stratégie', text: 'Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.' },
+    { title: '02 · Design', text: 'Wireframes puis maquettes : identité, typographies, couleurs et interface pensées pour votre image.' },
+    { title: '03 · Développement', text: 'Un site à votre image, responsive et facile à prendre en main.' }] }
+};
+function dm(a, b) { for (var k in b) { if (Array.isArray(b[k]) && Array.isArray(a[k])) { b[k].forEach(function (x, i) { if (x && typeof x === 'object') a[k][i] = dm(a[k][i] || {}, x); else a[k][i] = x; }); } else if (b[k] && typeof b[k] === 'object' && a[k] && typeof a[k] === 'object') dm(a[k], b[k]); else a[k] = b[k]; } return a; }
+function secW(k) { S.sections = S.sections || {}; if (!S.sections[k] || !S.sections[k].__ok) { var w = dm(clone(ANIM[k]), S.sections[k] || {}); Object.defineProperty(w, '__ok', { value: true, enumerable: false }); S.sections[k] = w; } return S.sections[k]; }
+function imgTile(label, get, set, def) {
+  var th = h('img', { class: 'big', src: get(), alt: '', style: 'object-fit:contain;padding:6px' });
+  function put(u) { set(u); th.src = u; mark(); }
+  return h('div', { class: 'card ci', style: 'cursor:default' }, th, h('small', {}, label), h('div', { class: 'row' }, imgButtons(put)[0], h('button', { class: 'sm', onclick: function () { put(def); } }, '↺ Origine')));
+}
+function animImages(v) {
+  var SH = secW('showcase'), ME = secW('method'), g = h('div', { class: 'cgrid2' });
+  v.appendChild(h('h3', {}, '🎬 Animations de l’accueil'));
+  v.appendChild(h('p', { class: 'hint' }, 'Écrans de l’ordinateur et du téléphone (« Ma méthode ») et site final de l’animation « Du wireframe au site ». Les textes se modifient dans l’onglet « Animations ».'));
+  SH.steps.forEach(function (z, i) { g.appendChild(imgTile('Ordinateur — écran ' + (i + 1) + ' (' + z.title + ')', function () { return z.image; }, function (u) { z.image = u; }, ANIM.showcase.steps[i].image)); });
+  g.appendChild(imgTile('Téléphone', function () { return SH.phone; }, function (u) { SH.phone = u; }, ANIM.showcase.phone));
+  g.appendChild(imgTile('Animation wireframe — site final', function () { return ME.image; }, function (u) { ME.image = u; }, ANIM.method.image));
+  v.appendChild(g);
+}
+async function vImages(v) { await vImages0(v); if ((v.dataset.p || 'index') === 'index') animImages(v); }
+async function vAnim(v) {
+  var SH = secW('showcase'), ST = secW('statement'), ME = secW('method');
+  v.appendChild(h('p', { class: 'hint' }, 'Les trois animations de la page d’accueil. Modifiez les textes et les photos, cliquez sur « Enregistrer », puis rechargez le site (Ctrl + F5).'));
+  function card(t) { var c = h('div', { class: 'card' }, h('b', {}, t)); v.appendChild(c); return c; }
+  var c1 = card('1 · « Ma méthode » — l’ordinateur et le téléphone');
+  c1.appendChild(fld('Petit titre', tx(SH.eyebrow, function (x) { SH.eyebrow = x; })));
+  SH.steps.forEach(function (z, i) {
+    var c = h('div', { class: 'card', style: 'margin-top:10px' }, h('b', {}, 'Étape ' + (i + 1)));
+    c.appendChild(fld('Titre', tx(z.title, function (x) { z.title = x; }))); c.appendChild(fld('Texte', tx(z.text, function (x) { z.text = x; }, '', 3)));
+    c.appendChild(imgTile('Écran de l’ordinateur pour cette étape', function () { return z.image; }, function (u) { z.image = u; }, ANIM.showcase.steps[i].image)); c1.appendChild(c);
+  });
+  c1.appendChild(imgTile('Écran du téléphone', function () { return SH.phone; }, function (u) { SH.phone = u; }, ANIM.showcase.phone));
+  c1.appendChild(fld('Bouton — texte', tx(SH.cta.label, function (x) { SH.cta.label = x; }))); c1.appendChild(fld('Bouton — lien', tx(SH.cta.href, function (x) { SH.cta.href = x; })));
+  var c2 = card('2 · Phrase qui apparaît mot par mot'); c2.appendChild(fld('Texte', tx(ST.text, function (x) { ST.text = x; }, '', 3)));
+  var c3 = card('3 · « Du wireframe au site qui convertit »');
+  c3.appendChild(fld('Petit titre', tx(ME.eyebrow, function (x) { ME.eyebrow = x; }))); c3.appendChild(fld('Titre (début)', tx(ME.title, function (x) { ME.title = x; }))); c3.appendChild(fld('Titre (fin, en italique)', tx(ME.titleEm, function (x) { ME.titleEm = x; })));
+  ME.steps.forEach(function (z, i) { var c = h('div', { class: 'card', style: 'margin-top:10px' }, h('b', {}, 'Étape ' + (i + 1))); c.appendChild(fld('Titre', tx(z.title, function (x) { z.title = x; }))); c.appendChild(fld('Texte', tx(z.text, function (x) { z.text = x; }, '', 3))); c3.appendChild(c); });
+  c3.appendChild(imgTile('Site final affiché à la dernière étape', function () { return ME.image; }, function (u) { ME.image = u; }, ANIM.method.image));
+  [['typo', 'Étiquette « Typographie »'], ['button', 'Étiquette « Bouton »'], ['resp', 'Étiquette « Responsive »'], ['respSmall', 'Sous-texte « Responsive »']].forEach(function (f) { c3.appendChild(fld(f[1], tx(ME.chips[f[0]], function (x) { ME.chips[f[0]] = x; }))); });
+  v.appendChild(h('button', { class: 'del', onclick: function () { if (confirm('Remettre les trois animations comme à l’origine ?')) { delete S.sections; mark(); show(); } } }, '↺ Tout remettre à l’origine'));
+}
+
+/* ---------------- Aperçus Header / Footer ---------------- */
+async function vHeader(v) {
+  var pv = h('div', { class: 'pvbox pvsticky' }); v.appendChild(pv); await vHeader0(v);
+  function draw() {
+    var H = S.header, nav = h('nav'); pv.innerHTML = ''; pv.appendChild(h('div', { class: 'pvlabel' }, 'Aperçu en direct du menu'));
+    H.items.forEach(function (l) { nav.appendChild(h('span', { class: l.href === '#' ? 'dd' : '' }, l.label + (l.href === '#' ? ' ▾' : ''))); });
+    pv.appendChild(h('div', { class: 'pvh' }, h('div', { class: 'lg' }, h('img', { src: 'logo.png', alt: '' }), H.brand || 'UIPACT'), nav, h('span', { class: 'cta' }, H.cta.label)));
+    var dd = h('div', { class: 'pvdd' }, h('small', {}, 'Menu déroulant')); H.dropdown.forEach(function (l) { dd.appendChild(h('span', {}, l.label)); }); pv.appendChild(dd);
+  }
+  draw(); mark.pend = draw;
+}
+async function vFooter(v) {
+  var pv = h('div', { class: 'pvbox pvsticky' }); v.appendChild(pv); await vFooter0(v);
+  function draw() {
+    var F = S.footer, cols = h('div', { class: 'cols' }); pv.innerHTML = ''; pv.appendChild(h('div', { class: 'pvlabel' }, 'Aperçu en direct du bas de page'));
+    (F.columns || []).forEach(function (c) { var d = h('div', {}, h('b', {}, c.title)); (c.links || []).forEach(function (l) { d.appendChild(h('span', {}, l.label)); }); cols.appendChild(d); });
+    pv.appendChild(h('div', { class: 'pvf' },
+      h('div', { class: 'l' }, h('b', {}, F.brand || 'UIPACT'), h('span', {}, F.tag1), h('em', {}, F.tag2), h('u', {}, F.follow)),
+      h('div', { class: 'r' }, h('span', { class: 'badge2' }, F.lucky), cols, h('div', { class: 'bot' }, h('span', {}, F.copyright), h('span', {}, F.signature)))));
+  }
+  draw(); mark.pend = draw;
+}
+
+/* ---------------- Moteurs de traduction ---------------- */
+async function vLangs(v) {
+  var box = h('div', { class: 'card' }, h('b', {}, '⚙️ Moteurs de traduction')); v.appendChild(box);
+  var eng = []; try { eng = await api('/api/translate/engines'); } catch (e) {}
+  var list = h('div', { class: 'eng' });
+  eng.forEach(function (x) { list.appendChild(h('div', {}, h('span', { class: x.ok ? 'ok' : 'no' }, x.ok ? '● actif' : '○ non configuré'), h('b', {}, x.name), h('small', {}, '— ' + x.info))); });
+  box.appendChild(list);
+  var paid = eng.some(function (x) { return x.ok && ['deepl', 'azure', 'googlecloud', 'libre'].indexOf(x.id) > -1; });
+  box.appendChild(h('p', { class: 'hint', style: 'margin:10px 0 0' }, paid ? 'Une clé est configurée : elle est utilisée en premier, les moteurs gratuits servent de secours.' :
+    'Aucune clé configurée : seuls les moteurs gratuits sont utilisés, ils sont souvent saturés (erreur 429). Pour une traduction fiable, créez un compte « DeepL API Free » (gratuit, 500 000 caractères/mois), copiez la clé, puis dans Render › Environment ajoutez DEEPL_API_KEY. Microsoft Translator (AZURE_TRANSLATOR_KEY + AZURE_TRANSLATOR_REGION) et Google Cloud (GOOGLE_TRANSLATE_KEY) fonctionnent aussi.'));
+  box.appendChild(h('a', { href: 'https://www.deepl.com/pro-api', target: '_blank', rel: 'noopener' }, 'Créer une clé DeepL gratuite ↗'));
+  await vLangs0(v);
+}
+
 /* ---------------- Messages ---------------- */
 async function vMsgs(v) {
   v.appendChild(h('h2', {}, 'Messages reçus')); var list = h('div'); v.appendChild(list);
