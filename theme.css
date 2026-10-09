@@ -980,3 +980,6 @@ html:not([data-theme="dark"]) .p3-steps b{ color:var(--c-navy); } html:not([data
 /* V10 — le téléphone de « Ma méthode » ne dépasse plus de l'écran (tablette et mobile) */
 @media(max-width:900px){ .phone{ right:7vw!important; width:20vw!important; } }
 @media(max-width:600px){ .phone{ right:6vw!important; width:25vw!important; } }
+
+/* V11 — écrans larges : l'ordinateur et le téléphone de « Ma méthode » ne sont plus coupés au bord du bloc de 1200 px */
+.sc3-stick{ overflow:visible!important; }
