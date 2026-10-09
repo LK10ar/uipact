@@ -109,21 +109,33 @@
   };
   function seo(d) {
     var S = d.seo || {}, g = S.site || {}, pg = pk(), p = (S.pages || {})[pg] || {};
+    if (S.mode === 'off') return; // un autre outil (ex. plugin SEO de WordPress) gère déjà les balises : on n'y touche pas
     function abs(u) { try { return new URL(u, location.href).href; } catch (e) { return u; } }
     function meta(attr, name, val) { if (val == null || val === '') return; var m = document.querySelector('meta[' + attr + '="' + name + '"]'); if (!m) { m = document.createElement('meta'); m.setAttribute(attr, name); document.head.appendChild(m); } m.setAttribute('content', val); }
+    function link(rel, href) { if (!href) return; var l = document.querySelector('link[rel="' + rel + '"]'); if (!l) { l = document.createElement('link'); l.setAttribute('rel', rel); document.head.appendChild(l); } l.setAttribute('href', href); }
     var title = tr('seo_' + pg + '_t', p.title), desc = tr('seo_' + pg + '_d', p.description) || tr('seo_site_d', g.description), img = p.image || g.image;
+    var ogT = tr('seo_' + pg + '_ot', p.ogTitle) || title || document.title, ogD = tr('seo_' + pg + '_od', p.ogDescription) || desc;
+    var url = p.canonical || ((document.querySelector('link[rel="canonical"]') || {}).href) || (location.origin + location.pathname);
     if (title) document.title = title;
-    meta('name', 'description', desc);
-    meta('property', 'og:title', title || document.title); meta('property', 'og:description', desc); meta('property', 'og:site_name', g.name); meta('property', 'og:image', img && abs(img));
-    meta('name', 'twitter:card', img ? 'summary_large_image' : 'summary'); meta('name', 'twitter:title', title || document.title); meta('name', 'twitter:image', img && abs(img));
-    if (p.noindex || g.noindex) meta('name', 'robots', 'noindex,nofollow');
-    var old = document.getElementById('cms-ld'); if (old) old.remove();
+    meta('name', 'description', desc); meta('name', 'keywords', p.keywords || g.keywords); meta('name', 'author', g.author); meta('name', 'theme-color', g.themeColor);
+    meta('name', 'google-site-verification', g.googleVerify); meta('name', 'msvalidate.01', g.bingVerify);
+    if (p.canonical) link('canonical', p.canonical);
+    var rb = []; if (p.noindex || g.noindex) rb.push('noindex'); if (p.nofollow || g.nofollow) rb.push('nofollow'); if (p.noarchive) rb.push('noarchive');
+    if (rb.length) meta('name', 'robots', rb.join(','));
+    meta('property', 'og:type', p.ogType || 'website'); meta('property', 'og:url', url); meta('property', 'og:locale', lang === 'fr' ? 'fr_FR' : lang);
+    meta('property', 'og:title', ogT); meta('property', 'og:description', ogD); meta('property', 'og:site_name', g.name); meta('property', 'og:image', img && abs(img));
+    meta('name', 'twitter:card', img ? 'summary_large_image' : 'summary'); meta('name', 'twitter:title', ogT); meta('name', 'twitter:description', ogD); meta('name', 'twitter:image', img && abs(img)); meta('name', 'twitter:site', g.twitter);
+    ['cms-ld', 'cms-ld2'].forEach(function (id) { var o = document.getElementById(id); if (o) o.remove(); });
     var sc = S.schema;
     if (sc && sc.enabled) {
-      var ld = { '@context': 'https://schema.org', '@type': 'ProfessionalService', name: sc.name || g.name || 'UIPACT', url: sc.url || location.origin + location.pathname.replace(/[^/]*$/, '') };
+      var base = sc.url || location.origin + location.pathname.replace(/[^/]*$/, '');
+      var ld = { '@context': 'https://schema.org', '@type': sc.type || 'ProfessionalService', name: sc.name || g.name || 'UIPACT', url: base };
       if (sc.logo) ld.logo = abs(sc.logo); if (sc.email) ld.email = sc.email; if (sc.phone) ld.telephone = sc.phone; if (sc.description || g.description) ld.description = sc.description || g.description;
+      if (sc.street || sc.city || sc.postalCode) ld.address = { '@type': 'PostalAddress', streetAddress: sc.street, postalCode: sc.postalCode, addressLocality: sc.city, addressCountry: sc.country };
       if (sc.sameAs && sc.sameAs.length) ld.sameAs = sc.sameAs;
-      var el = document.createElement('script'); el.type = 'application/ld+json'; el.id = 'cms-ld'; el.textContent = JSON.stringify(ld); document.head.appendChild(el);
+      var put = function (id, o) { var el = document.createElement('script'); el.type = 'application/ld+json'; el.id = id; el.textContent = JSON.stringify(o); document.head.appendChild(el); };
+      put('cms-ld', ld);
+      if (sc.breadcrumbs !== false && pg !== 'index') put('cms-ld2', { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Accueil', item: base }, { '@type': 'ListItem', position: 2, name: title || document.title, item: url }] });
     }
   }
   function run(d) {
