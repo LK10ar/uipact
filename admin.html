@@ -74,7 +74,7 @@ progress{width:100%;height:10px}.sw{width:30px;height:30px;border-radius:8px;bor
 </div>
 <div id="modal" hidden></div><div id="toast"></div>
 <script>window.CMS_ADMIN = true;</script>
-<script src="config.js"></script><script src="cms.js"></script>
+<script src="config.js"></script><script src="cms.js"></script><script src="projects.js"></script>
 <script>
 (function () {
 var API = String(window.UIPACT_API || '').replace(/\/$/, ''), C = window.CMS, $ = function (s) { return document.querySelector(s); };
@@ -83,6 +83,7 @@ var TABS = [['home', '🏠', 'Accueil', 'Vue d\u2019ensemble et raccourcis'], ['
   ['anim', '🎬', 'Animations', 'Textes et photos des animations de la page d’accueil'],
   ['carousels', '🎠', 'Carrousels', 'Ajouter, supprimer et déplacer les photos des carrousels 3D'], ['media', '📁', 'Bibliothèque', 'Toutes vos photos envoyées'], ['colors', '🎨', 'Couleurs', 'La palette du site'],
   ['header', '🔝', 'Header', 'Le menu en haut des pages'], ['footer', '🔚', 'Footer', 'Le bas des pages'], ['seo', '🔍', 'SEO', 'Ce que Google et les réseaux sociaux affichent'],
+  ['projects', '📂', 'Fiches projets', 'Publier et modifier les fiches du portfolio'],
   ['langs', '🌍', 'Langues', 'Traduire le site et ajouter des langues'], ['msgs', '✉️', 'Messages', 'Les messages du formulaire de contact']];
 var LABEL = {}; TABS.forEach(function (t) { LABEL[t[0]] = t; });
 var PAGE_NAMES = { index: 'Accueil', 'a-propos': 'À propos', portfolio: 'Portfolio', 'creation-graphique': 'Création graphique', 'creation-print': 'Création print', 'sites-web': 'Sites internet', 'identite-visuelle': 'Identité visuelle', 'ux-ui': 'UX / UI', contact: 'Contact', 'mentions-legales': 'Mentions légales', cgu: 'CGU', 'politique-confidentialite': 'Politique de confidentialité' };
@@ -109,7 +110,7 @@ $('#login').onsubmit = async function (e) {
   catch (x) { $('#lerr').textContent = /fetch/i.test(x.message) ? "Impossible de joindre l'API (vérifiez config.js, ou patientez 1 minute : le serveur se réveille)." : x.message; }
 };
 function norm() {
-  ['texts', 'hidden', 'blocks', 'images', 'carousels', 'translations', 'langNames', 'sections', 'trMeta'].forEach(function (k) { S[k] = S[k] || {}; });
+  ['texts', 'hidden', 'blocks', 'images', 'carousels', 'translations', 'langNames', 'sections', 'trMeta', 'projects'].forEach(function (k) { S[k] = S[k] || {}; });
   S.seo = S.seo || {}; S.seo.site = S.seo.site || {}; S.seo.pages = S.seo.pages || {}; S.seo.schema = S.seo.schema || {};
   S.languages = S.languages && S.languages.length ? S.languages : ['fr'];
 }
@@ -133,7 +134,7 @@ async function save() {
 addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 function show() {
   var v = $('#view'); v.innerHTML = ''; mark.pend = null; var t = LABEL[tab]; $('#vt').textContent = t[1] + '  ' + t[2]; $('#vd').textContent = t[3];
-  ({ home: vHome, texts: vTexts, anim: vAnim, images: vImages, carousels: vCars, media: vMedia, colors: vColors, header: vHeader, footer: vFooter, seo: vSeo, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); });
+  ({ home: vHome, texts: vTexts, anim: vAnim, images: vImages, carousels: vCars, media: vMedia, colors: vColors, header: vHeader, footer: vFooter, seo: vSeo, projects: vProjects, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); });
   window.scrollTo(0, 0);
 }
 async function pageDoc(p) { var r = await fetch(p + '.html'); if (!r.ok) throw new Error('Page introuvable : ' + p); return new DOMParser().parseFromString(await r.text(), 'text/html'); }
@@ -505,8 +506,34 @@ async function collect() {
   var SH = secW('showcase'), ST = secW('statement'), ME = secW('method');
   add('sc_eb', SH.eyebrow); add('sc_cta', SH.cta.label); SH.steps.forEach(function (z, i) { add('sc_' + i + '_t', z.title); add('sc_' + i + '_p', z.text); });
   add('st_txt', ST.text); add('m_eb', ME.eyebrow); add('m_title', ME.title); add('m_em', ME.titleEm); ME.steps.forEach(function (z, i) { add('m_' + i + '_t', z.title); add('m_' + i + '_p', z.text); });
+  (C.UI || []).forEach(function (t) { add('ui_' + hsh(t), t); });
+  window.PRJ.order.forEach(function (id) { var p = window.PRJ.P[id], o = S.projects[id] || {};
+    ['name', 'client', 'loc', 'ctx', 'enjeu', 'res'].forEach(function (k) { add('prj_' + id + '_' + k, o[k] || p[k]); }); add('prj_' + id + '_tags', o.tags);
+    [0, 1, 2].forEach(function (i) { add('prj_' + id + '_h' + i + 't', o['h' + i + 't']); add('prj_' + id + '_h' + i + 'p', o['h' + i + 'p']); }); });
   add('m_c1', ME.chips.typo); add('m_c3', ME.chips.button); add('m_c4', ME.chips.resp); add('m_c4s', ME.chips.respSmall);
   return map;
+}
+
+/* ---------------- Fiches projets du portfolio ---------------- */
+async function vProjects(v) {
+  var PR = window.PRJ; S.projects = S.projects || {};
+  function O(id) { return (S.projects[id] = S.projects[id] || {}); }
+  v.appendChild(h('p', { class: 'hint' }, 'Chaque projet du portfolio ouvre une fiche détaillée. Décochez « Publiée » pour que le projet revienne à l\u2019ancien affichage (simple zoom sur l\u2019image ou la vidéo). Un champ vide garde le texte d\u2019origine. Après avoir modifié des textes, relancez « Traduire » dans l\u2019onglet Langues.'));
+  PR.order.forEach(function (id) {
+    var p = PR.P[id], c = PR.CAT[p.cat], o = S.projects[id] || {}, body = h('div', { hidden: '', style: 'margin-top:12px' });
+    var pub = h('input', { type: 'checkbox' }); pub.checked = o.published !== false;
+    var st = h('span', { class: 'note' }); function lab() { st.textContent = pub.checked ? '● Fiche publiée' : '○ Non publiée (zoom simple)'; }
+    pub.onchange = function () { O(id).published = pub.checked; lab(); mark(); }; lab();
+    function f(k, label, rows, def) { return fld(label, tx(o[k], function (x) { O(id)[k] = x; }, def != null ? def : p[k], rows)); }
+    body.appendChild(f('name', 'Nom du projet', 0)); body.appendChild(f('client', 'Client', 0)); body.appendChild(f('loc', 'Localisation', 0, 'France'));
+    body.appendChild(f('site', 'Site web (URL, facultatif)', 0, 'https://…')); body.appendChild(f('video', 'Vidéo YouTube (lien)', 0)); body.appendChild(f('image', 'Image (chemin ou URL)', 0));
+    body.appendChild(f('tags', 'Services fournis (séparés par des virgules)', 0, c.tags.join(', ')));
+    body.appendChild(f('ctx', 'Le contexte', 3)); body.appendChild(f('enjeu', 'L\u2019enjeu', 3));
+    [0, 1, 2].forEach(function (i) { body.appendChild(f('h' + i + 't', 'Approche ' + (i + 1) + ' — titre', 0, c.how[i][0])); body.appendChild(f('h' + i + 'p', 'Approche ' + (i + 1) + ' — texte', 2, c.how[i][1])); });
+    body.appendChild(f('res', 'Le résultat', 3));
+    var tg = h('button', { class: 'sm', onclick: function () { body.hidden = !body.hidden; tg.textContent = body.hidden ? 'Modifier ▾' : 'Réduire ▴'; } }, 'Modifier ▾');
+    v.appendChild(h('div', { class: 'card' }, h('div', { class: 'row' }, h('label', { class: 'fx', style: 'font-weight:600;display:flex;gap:8px;align-items:center' }, pub, p.name), st, h('a', { href: 'portfolio.html#' + id, target: '_blank', rel: 'noopener', style: 'flex:0 0 auto' }, 'Voir ↗'), tg), body));
+  });
 }
 
 /* ---------------- Animations de l'accueil ---------------- */
