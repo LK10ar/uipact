@@ -1,12 +1,8 @@
 :root{ --c-gold:#C9A24B; --c-gold-rgb:201,162,75; --c-gold2:#E4C77A; --c-gold2-rgb:228,199,122; --c-navy:#101B3D; --c-navy2:#1C2C5C; --c-bg:#0A1024; }
-/* ==========================================================================
-   UIPACT — Feuille de style commune
-   Nouvelle charte graphique (navy & or) + mode sombre + footer pro + icônes
-   À charger APRÈS le <style> propre à chaque page.
-   ========================================================================== */
+/* ========== UIPACT — Feuille de style commune ========== */
 
 :root {
-    /* --- Nouvelle charte graphique : Navy & Or --- */
+    /* --- Charte graphique : Navy & Or --- */
     --color-blue-dark: var(--c-navy);
     --color-cyan-vibrant: var(--c-navy);
     --color-purple-dark: var(--c-gold);
@@ -17,7 +13,6 @@
     --color-gold: var(--c-gold);
     --color-gold-light: var(--c-gold2);
 
-    /* Blanc cassé */
     --bg-color: #FAF7F1;
     --bg-alt-color: #F1EAD9;
     --card-bg: #FFFFFF;
@@ -76,7 +71,7 @@ html[data-theme="dark"] .service-title { color: var(--color-gold-light); }
 html[data-theme="dark"] .burger-menu span { background-color: var(--color-gold); }
 html[data-theme="dark"] #scrollTopBtn:hover { background: var(--color-navy-light); }
 
-/* Halos de survol : plus de rose/violet, uniquement de l'or */
+/* Halos de survol */
 .cta-menu-button:hover,
 .cta-button:hover,
 .popup-btn:hover,
@@ -86,7 +81,7 @@ html[data-theme="dark"] #scrollTopBtn:hover { background: var(--color-navy-light
     box-shadow: 0 5px 15px rgba(201, 162, 75, 0.45) !important;
 }
 
-/* --- Compatibilité avec l'ancien système body.dark-mode (ex: ux-ui.html) --- */
+/* --- Mode sombre (body.dark-mode) --- */
 body.dark-mode {
     --text-color: #EDEAE0 !important;
     --text-muted: #B9B6AC !important;
@@ -213,9 +208,7 @@ body { transition: var(--transition-theme); }
 header, .service-card, .portfolio-item, .about-text, .dropdown-content, footer,
 .contact-input, .contact-textarea, .popup-content { transition: var(--transition-theme); }
 
-/* ==========================================================================
-   Bouton mode clair / sombre
-   ========================================================================== */
+/* ========== Bouton mode clair / sombre ========== */
 .theme-toggle {
     position: relative;
     width: 54px;
@@ -251,9 +244,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
     .logo-container { order: 1; }
 }
 
-/* ==========================================================================
-   Icônes de service — remplacement des formes géométriques
-   ========================================================================== */
+/* ========== Icônes de service ========== */
 .service-icon-circle, .service-icon-large {
     background: linear-gradient(135deg, var(--color-navy), var(--color-navy-light)) !important;
     color: var(--color-gold);
@@ -261,9 +252,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
 .service-icon-circle svg { width: 34px; height: 34px; }
 .service-icon-large svg { width: 46px; height: 46px; }
 
-/* ==========================================================================
-   Footer professionnel
-   ========================================================================== */
+/* ========== Footer professionnel ========== */
 footer.site-footer {
     background-color: var(--footer-bg);
     color: #C9C6BC;
@@ -340,10 +329,7 @@ footer.site-footer .social-links svg { width: 18px; height: 18px; }
     .footer-col h4::after { left: 50%; transform: translateX(-50%); }
     .footer-bottom { justify-content: center; text-align: center; }
 }
-/* ==========================================================================
-   REFONTE 2026 — sombre, serif italique, navigation flottante (sans planètes)
-   Ne modifie aucun contenu : uniquement l'apparence.
-   ========================================================================== */
+/* ========== Thème sombre, serif italique, navigation flottante ========== */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap');
 :root{ --font-family:'Inter',system-ui,sans-serif; --font-title:'Instrument Serif',Georgia,serif; --grad-gold:linear-gradient(90deg,var(--c-gold2),var(--c-gold)); }
 html[data-theme="dark"]{ --bg-color:var(--c-bg); --bg-alt-color:#111A38; --card-bg:#111A38; --header-bg:rgba(17,26,56,.75); --footer-bg:#070C1E; --text-color:#F3EFE4; --border-color:rgba(var(--c-gold-rgb),.18); }
@@ -365,7 +351,7 @@ html[data-theme="dark"] header nav{ background:rgba(17,26,56,.78); }
 .nav-links a{ font-size:.88rem; }
 @media(max-width:768px){ .nav-links{ border-radius:20px; margin-top:8px; } }
 
-/* Héros : halo doré + motif, sans astre */
+/* Héros : halo doré + motif */
 .hero{ background-color:var(--bg-color); }
 html[data-theme="dark"] .hero{ background-image:radial-gradient(circle at 20% 25%,rgba(var(--c-gold-rgb),.16),transparent 42%),radial-gradient(circle at 80% 75%,rgba(28,44,92,.7),transparent 50%),repeating-linear-gradient(135deg,rgba(var(--c-gold-rgb),.05) 0 1px,transparent 1px 56px); }
 .hero::before,.hero::after{ display:none; }
@@ -394,10 +380,7 @@ html[data-theme="dark"] .hero{ background-image:radial-gradient(circle at 20% 25
 .bottom-pill b{ font-family:'Instrument Serif',serif; font-weight:400; font-size:1.4rem; }
 .bottom-pill a{ background:var(--c-navy); color:#fff !important; border-radius:99px; padding:9px 20px; font-size:.82rem; text-decoration:none; }
 
-/* ==========================================================================
-   MOTION 3D — perspective, cubes dorés, tilt des cartes, révélation en rotation
-   (formes géométriques uniquement : aucune planète)
-   ========================================================================== */
+/* ========== Motion 3D — perspective, tilt des cartes, révélation en rotation ========== */
 #hero,.page-header,.portfolio-header{ position:relative; overflow:hidden; }
 .scene3d{ position:absolute; inset:0; z-index:1; pointer-events:none; perspective:1000px; overflow:hidden; }
 .scene3d .rig{ position:absolute; inset:0; transform-style:preserve-3d; transition:transform .25s ease-out; will-change:transform; }
@@ -438,9 +421,7 @@ html:not([data-theme="dark"]) .hero-title{ color:var(--c-navy); }
 @media(prefers-reduced-motion:reduce){ .cube,.float3d,.ticker{ animation:none !important; } .rv{ transform:none; opacity:1; } }
 @media(max-width:768px){ .cube.hide-m{ display:none; } }
 
-/* ==========================================================================
-   V3 — fond 3D plein écran (toutes les pages), transitions, animations, CTA
-   ========================================================================== */
+/* ========== Fond 3D plein écran, transitions, animations, CTA ========== */
 body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
  background:radial-gradient(circle at 15% 20%,rgba(var(--c-gold-rgb),.15),transparent 40%),radial-gradient(circle at 85% 75%,rgba(28,44,92,.75),transparent 50%),repeating-linear-gradient(135deg,rgba(var(--c-gold-rgb),.045) 0 1px,transparent 1px 56px);
  background-size:auto,auto,auto;animation:bgd 40s linear infinite}
@@ -487,7 +468,7 @@ html[data-theme="dark"] #services,html[data-theme="dark"] .services-divider-wrap
 .project-card:hover .pv b{transform:none}
 .pv b::before{content:'';position:absolute;inset:-2px;z-index:-1;border-radius:inherit;background:linear-gradient(90deg,var(--c-gold2),var(--c-gold),var(--c-gold2));background-size:200% 100%;animation:gs 3s ease infinite}
 @keyframes gs{50%{background-position:100% 0}}
-/* nouveau bouton « Démarrer un projet » */
+/* bouton « Démarrer un projet » */
 .cta-float{position:fixed;right:22px;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);z-index:900;display:flex;align-items:center;height:58px;padding:0 6px 0 24px;border-radius:99px;background:var(--grad-gold);color:var(--c-navy)!important;font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;overflow:hidden;
  box-shadow:0 10px 30px rgba(var(--c-gold-rgb),.4),inset 0 2px 8px rgba(255,255,255,.5);opacity:0;pointer-events:none;transform:translateY(30px) scale(.9);transition:opacity .4s,transform .45s cubic-bezier(.2,.8,.2,1)}
 .cta-float.show{opacity:1;pointer-events:auto;transform:none;animation:pulse 2.6s infinite}
@@ -498,10 +479,8 @@ html[data-theme="dark"] #services,html[data-theme="dark"] .services-divider-wrap
 .cta-float:hover .ar{transform:rotate(45deg) scale(1.08)}
 @media(max-width:600px){.cta-float{padding:0 6px}.cta-float .t{display:none}.cta-float .ar{margin:0}}
 
-/* ==========================================================================
-   V4 — carrousel 3D, sections landing, contact refait, mobile, boutons
-   ========================================================================== */
-/* Bouton ↑ au-dessus de « Démarrer un projet » (plus de chevauchement) */
+/* ========== Carrousel 3D, sections landing, contact, mobile, boutons ========== */
+/* Bouton ↑ au-dessus de « Démarrer un projet » */
 #scrollTopBtn{ bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important; right:24px!important; width:46px!important; height:46px!important; z-index:1001!important; }
 .cta-float{ z-index:1000; }
 /* Verre liquide */
@@ -542,7 +521,7 @@ html[data-theme="dark"] #services,html[data-theme="dark"] .services-divider-wrap
 .c3d-nav{ display:flex; gap:14px; justify-content:center; margin-top:14px; }
 .c3d-nav button{ width:52px; height:52px; border-radius:50%; border:1px solid rgba(var(--c-gold2-rgb),.6); background:rgba(17,26,56,.6); color:#F3EFE4; font-size:1.3rem; cursor:pointer; transition:.3s; }
 .c3d-nav button:hover{ background:var(--color-gold); color:var(--c-navy); transform:scale(1.1); }
-/* Contact refait (formulaire d'origine conservé) */
+/* Contact */
 .contact-section{ max-width:1200px!important; margin:0 auto; padding:120px 20px 80px!important; }
 .contact-title{ text-align:center; margin-bottom:36px; }
 .cgrid{ display:grid; grid-template-columns:.8fr 1.2fr; gap:28px; align-items:start; }
@@ -576,9 +555,7 @@ html[data-theme="dark"] #services,html[data-theme="dark"] .services-divider-wrap
 }
 @media(hover:none){ .tilt>*{ transform:none!important; } .tilt{ transform:none!important; } }
 
-/* ==========================================================================
-   V5 — fond aurore + poussière d'or (plus de cubes), boutons liquides, footer, contact
-   ========================================================================== */
+/* ========== Fond aurore, boutons liquides, footer, contact ========== */
 #scene3d,.trail{ display:none!important; }
 #aurora{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; filter:blur(80px); }
 #aurora i{ position:absolute; border-radius:50%; animation:aur 26s ease-in-out infinite; }
@@ -648,9 +625,7 @@ footer.site-footer{ background:transparent!important; border:0!important; paddin
 @media(max-width:860px){ .kf{ grid-template-columns:1fr; } .kf-l{ min-height:auto; gap:36px; } }
 @media(max-width:560px){ .kf-r{ padding:26px 22px; } .kf-cols{ gap:34px; } .kf-lucky{ right:16px; top:-28px; } .kf-lucky span{ width:64px; height:64px; } }
 
-/* ==========================================================================
-   V6 — thème clair lisible, coverflow compact, contact 3D, footer, bouton haut
-   ========================================================================== */
+/* ========== Thème clair, carrousel coverflow, contact 3D, footer, bouton haut ========== */
 :root{ --mut:#4a5170; --fg:var(--c-navy); --gold-t:#8f6d22; }
 html[data-theme="dark"]{ --mut:#B9B6AC; --fg:#F3EFE4; --gold-t:var(--c-gold2); }
 .eb{ color:var(--mut); } .lp-t{ color:var(--gold-t); } .lp-t i{ color:var(--fg); }
@@ -667,7 +642,7 @@ html[data-theme="dark"] .mq-band div{ -webkit-text-stroke:1px rgba(var(--c-gold-
 .cgrid label,.contact-form label{ color:var(--mut)!important; }
 .cgrid .contact-input,.cgrid .contact-textarea,.hc-card .contact-input,.hc-card .contact-textarea{ background:rgba(128,128,128,.1)!important; color:var(--fg)!important; border:1px solid rgba(128,128,128,.35)!important; border-radius:14px!important; padding:14px 16px; width:100%; font:inherit; transition:border-color .3s,box-shadow .3s; }
 .hc-card .contact-input:focus,.hc-card .contact-textarea:focus{ border-color:var(--c-gold)!important; box-shadow:0 0 0 3px rgba(var(--c-gold-rgb),.25); outline:none; }
-/* Zones pleines remplacées par un filet doré */
+/* Filet doré */
 .exb{ background:transparent!important; border:0!important; border-radius:0!important; box-shadow:none!important; position:relative; }
 .exb::after{ content:''; position:absolute; left:8%; right:8%; bottom:0; height:1px; background:linear-gradient(90deg,transparent,rgba(var(--c-gold-rgb),.5),transparent); pointer-events:none; }
 /* Carrousel coverflow compact */
@@ -712,9 +687,7 @@ html[data-theme="dark"] .mq-band div{ -webkit-text-stroke:1px rgba(var(--c-gold-
 #scrollTopBtn:hover .ar{ transform:translateY(-3px); }
 @media(max-width:768px){ .cf-sec{ padding:50px 0 20px; } .hc-card{ padding:22px; } .kf-lucky span{ width:70px; height:70px; } .kf-lucky span img{ width:38px; } }
 
-/* ==========================================================================
-   V6 — cohérence, mode clair, carrousel allégé, blocs remplacés, footer, bouton ↑
-   ========================================================================== */
+/* ========== Mode clair, footer, bouton ↑ ========== */
 .cta-button{ width:auto; } .contact-form .cta-button,.valider-btn{ width:100%; }
 .kf-wm{ display:none!important; }
 .kf{ max-width:1280px; grid-template-columns:380px 1fr; }
@@ -737,9 +710,7 @@ html:not([data-theme="dark"]) .cgrid label,html:not([data-theme="dark"]) .contac
 html:not([data-theme="dark"]) .cgrid .contact-input,html:not([data-theme="dark"]) .cgrid .contact-textarea,html:not([data-theme="dark"]) .c3card .contact-input,html:not([data-theme="dark"]) .c3card .contact-textarea{ background:#fff!important; color:var(--c-navy)!important; border-color:rgba(16,27,61,.2)!important; }
 html:not([data-theme="dark"]) .chip{ color:var(--c-navy); border-color:rgba(16,27,61,.25); }
 
-/* ==========================================================================
-   V7 — contraste des tarifs, mobile recentré, footer mobile refait
-   ========================================================================== */
+/* ========== Contraste des tarifs, mobile, footer mobile ========== */
 html[data-theme="dark"] .tarif-item span,html[data-theme="dark"] .tarif-price{ color:#F3EFE4!important; font-weight:600; }
 .cta-float.nf{ opacity:0!important; transform:translateY(30px)!important; pointer-events:none!important; }
 @media(max-width:860px){
@@ -769,9 +740,7 @@ html[data-theme="dark"] .tarif-item span,html[data-theme="dark"] .tarif-price{ c
   .cta-float{ right:14px!important; }
 }
 
-/* ==========================================================================
-   V7 — gris illisibles (mode sombre), mobile centré et robuste, footer mobile
-   ========================================================================== */
+/* ========== Mode sombre : gris lisibles, mobile centré, footer mobile ========== */
 html[data-theme="dark"] .tarif-item span,html[data-theme="dark"] .tarif-item p,html[data-theme="dark"] .tarif-item div{ color:#ECE8DB!important; font-weight:500; }
 html[data-theme="dark"] .tarif-disclaimer{ color:#B9B6AC!important; }
 html[data-theme="dark"] .lift{ color:#D9D6CB!important; }
@@ -802,7 +771,7 @@ body.at-footer .cta-float{ opacity:0!important; pointer-events:none!important; }
   #scrollTopBtn{ right:16px!important; } .cta-float{ right:16px!important; }
 }
 
-/* V7b — footer mobile : une seule colonne, badge centré (prend le dessus sur les anciennes règles) */
+/* Footer mobile : une seule colonne, badge centré */
 @media(max-width:860px){
   .kf-r{ padding:26px 20px 28px!important; align-items:center; text-align:center; }
   .kf-lucky{ position:static!important; transform:none!important; flex-direction:column!important; align-items:center!important; justify-content:center; gap:6px!important; margin:0 0 22px!important; }
@@ -813,9 +782,7 @@ body.at-footer .cta-float{ opacity:0!important; pointer-events:none!important; }
   #scrollTopBtn{ bottom:calc(env(safe-area-inset-bottom,0px) + 84px)!important; }
 }
 
-/* ==========================================================================
-   V8 — impact : cartes 3D flottantes, curseur, boutons magnétiques, progression, bulle contact
-   ========================================================================== */
+/* ========== Cartes 3D, curseur, boutons magnétiques, progression, bulle contact ========== */
 #sp{ position:fixed; top:0; left:0; height:3px; width:100%; transform:scaleX(0); transform-origin:left; background:linear-gradient(90deg,var(--c-gold2),var(--c-gold)); z-index:100001; pointer-events:none; box-shadow:0 0 10px rgba(var(--c-gold-rgb),.6); }
 #spot{ position:fixed; inset:0; z-index:1; pointer-events:none; background:radial-gradient(420px circle at var(--sx,50%) var(--sy,40%),rgba(var(--c-gold2-rgb),.11),transparent 60%); }
 #cur{ position:fixed; left:0; top:0; width:34px; height:34px; margin:-17px 0 0 -17px; border:1.5px solid rgba(var(--c-gold2-rgb),.85); border-radius:50%; z-index:100000; pointer-events:none; opacity:0; transition:width .25s,height .25s,margin .25s,background .25s,opacity .3s; }
@@ -844,10 +811,7 @@ html:not([data-theme="dark"]) .cta-ghost{ color:var(--c-navy); background:rgba(2
 .hero-content .cta-button,.hero-content .cta-ghost{ vertical-align:top; line-height:1.2; }
 .h3c{ background-color:var(--c-navy); }
 
-/* ==========================================================================
-   V8 — effet « waouh » : maquettes 3D flottantes, titre qui brille, projecteur curseur,
-   barre de progression, boutons magnétiques, badge de disponibilité
-   ========================================================================== */
+/* ========== Maquettes 3D, titre brillant, projecteur curseur ========== */
 html:not([data-theme="dark"]) /* Titre du hero : reflet doré qui traverse les lettres */
 .hero-title.sw .w{ background:linear-gradient(100deg,var(--c-gold) 0%,var(--c-gold2) 35%,#fff7d6 50%,var(--c-gold2) 65%,var(--c-gold) 100%)!important; background-size:250% 100%!important; -webkit-background-clip:text!important; background-clip:text!important; -webkit-text-fill-color:transparent!important; color:transparent!important; text-shadow:none!important; animation:wr .9s cubic-bezier(.2,.8,.2,1) backwards paused,tshine 5s linear 1.6s infinite; }
 .hero-title.sw .w{ filter:drop-shadow(0 6px 18px rgba(0,0,0,.45)); }
@@ -870,14 +834,12 @@ html:not([data-theme="dark"]) .cta-ghost{ color:var(--c-navy); border-color:var(
 @keyframes wheel{ 0%{ opacity:0; transform:translateY(0); } 30%{ opacity:1; } 100%{ opacity:0; transform:translateY(14px); } }
 @media(prefers-reduced-motion:reduce){ .hero-badge i,.hero-scroll b::after{ animation:none; } }
 
-/* V8c — mobile : badge compact, indicateur de scroll masqué quand l'écran est petit */
+/* Mobile : badge compact, indicateur de scroll masqué */
 .hero-badge{ width:fit-content; max-width:92%; }
 @media(max-width:768px){ .hero-badge{ font-size:.62rem; letter-spacing:.1em; padding:7px 14px; margin-bottom:16px; text-align:center; } .hero-scroll{ display:none; } .hero-ctas{ flex-direction:column; } }
 @media(max-height:720px){ .hero-scroll{ display:none; } }
 
-/* ==========================================================================
-   V9 — hero épuré + showcase 3D piloté par le scroll (ordinateur qui s'ouvre, sites défilants, téléphone)
-   ========================================================================== */
+/* ========== Hero et showcase 3D piloté par le scroll ========== */
 .h3d,.hero-badge{ display:none!important; }
 .sc3{ position:relative; z-index:1; height:340vh; }
 .sc3-stick{ position:sticky; top:0; height:100vh; display:grid; grid-template-columns:minmax(280px,.75fr) 1.5fr; align-items:center; gap:2vw; padding:90px 5vw 30px; box-sizing:border-box; overflow:hidden; }
@@ -913,9 +875,7 @@ html:not([data-theme="dark"]) .sc3-p{ color:#4a5070; } html:not([data-theme="dar
 .lap-deck{ left:-6%; width:112%; }
 @media(max-width:900px){ .sc3-scene{ padding-left:0; } .lap{ --W:86vw; } }
 
-/* ==========================================================================
-   V9 — site de webdesigner en 3D : phrase qui se révèle au scroll + « du wireframe au site » piloté par le scroll
-   ========================================================================== */
+/* ========== Phrase révélée au scroll et « du wireframe au site » ========== */
 .h3d,.hero-badge{ display:none!important; }
 .st-sec{ position:relative; z-index:1; max-width:1020px; margin:0 auto; padding:140px 24px; }
 .st-txt{ font-family:'Instrument Serif',serif; font-size:clamp(2rem,5.2vw,4rem); line-height:1.12; text-align:center; color:var(--color-gold-light); }
@@ -967,19 +927,41 @@ html:not([data-theme="dark"]) .p3-steps b{ color:var(--c-navy); } html:not([data
   .st-sec{ padding:90px 20px; }
 }
 
-/* ==========================================================================
-   V9 — site de webdesigner : vue éclatée d'un site (couches 3D au scroll),
-   services empilés en 3D, badge et cartes du hero retirés
-   ========================================================================== */
+/* ========== Vue éclatée d'un site, services empilés en 3D ========== */
 .hero-badge,.h3d{ display:none!important; }
 #process{ display:none!important; }
 /* Services empilés en 3D (ordinateur) */
 .stk{ display:block!important; max-width:640px; margin:0 auto!important; padding-bottom:12vh; }
 .stk .service-card{ position:sticky; width:100%; margin:0 0 56px!important; box-shadow:0 -14px 40px rgba(0,0,0,.4); transform-origin:50% 0; will-change:scale; }
 
-/* V10 — le téléphone de « Ma méthode » ne dépasse plus de l'écran (tablette et mobile) */
 @media(max-width:900px){ .phone{ right:7vw!important; width:20vw!important; } }
 @media(max-width:600px){ .phone{ right:6vw!important; width:25vw!important; } }
 
-/* V11 — écrans larges : l'ordinateur et le téléphone de « Ma méthode » ne sont plus coupés au bord du bloc de 1200 px */
 .sc3-stick{ overflow:visible!important; }
+
+/* ========== Menu des langues ========== */
+header select,select[id*="lang" i],select[class*="lang" i]{ color:var(--c-navy); }
+header select option,select[id*="lang" i] option,select[class*="lang" i] option{ background:#fff; color:#101B3D; }
+html[data-theme="dark"] header select,html[data-theme="dark"] select[id*="lang" i],html[data-theme="dark"] select[class*="lang" i]{ color:#F3EFE4; }
+html[data-theme="dark"] header select option,html[data-theme="dark"] select[id*="lang" i] option,html[data-theme="dark"] select[class*="lang" i] option{ background:#16204A; color:#F3EFE4; }
+
+/* ========== Bouton d'envoi du contact ========== */
+.contact-form .cta-button::before,.contact-form .valider-btn::before,.hc-card .cta-button::before,.hc-card .valider-btn::before{ display:none; }
+.contact-form .cta-button:hover,.contact-form .valider-btn:hover,.hc-card .cta-button:hover,.hc-card .valider-btn:hover{
+  background:linear-gradient(135deg,var(--c-navy),var(--c-navy2))!important; color:var(--c-gold2)!important; -webkit-text-fill-color:var(--c-gold2)!important; text-shadow:none!important;
+  box-shadow:0 0 0 1px var(--c-gold),0 8px 22px rgba(var(--c-gold-rgb),.35)!important; }
+
+/* ========== Ordinateur et téléphone de « Ma méthode » ========== */
+.lap-lid{ border:10px solid #07090f; border-bottom-width:14px; border-radius:18px 18px 6px 6px; background:#07090f;
+  box-shadow:0 0 0 2px #b9bfd0,0 0 0 3px rgba(var(--c-gold2-rgb),.45),0 30px 80px rgba(0,0,0,.55),0 0 90px rgba(var(--c-gold-rgb),.2); }
+.lap-lid::before{ right:auto; left:50%; top:-1px; width:17%; height:15px; transform:translateX(-50%); border-radius:0 0 10px 10px;
+  background:radial-gradient(circle at 50% 52%,#24336b 2px,#10162c 3.2px,transparent 3.8px),#07090f; }
+.lap-page{ top:0; border-radius:4px; }
+.lap-deck{ left:-4%; width:108%; border-radius:3px 3px 26px 26px; border-top:1px solid #fff;
+  background:linear-gradient(180deg,#f1f3f8,#bcc2d3 55%,#9ea5ba); box-shadow:inset 0 -3px 0 #878ea4,0 40px 70px rgba(0,0,0,.55); }
+.lap-deck::before{ left:6%; right:6%; top:9%; height:46%; border-radius:6px; opacity:1;
+  background:repeating-linear-gradient(0deg,transparent 0 15%,#a9afc2 15% 19%),repeating-linear-gradient(90deg,#262c48 0 5.6%,#a9afc2 5.6% 6.8%),#262c48; }
+.lap-deck::after{ left:34%; right:34%; bottom:9%; height:26%; border-radius:8px; background:rgba(120,128,160,.16); border:1px solid rgba(80,90,130,.4); }
+.phone{ border:5px solid #12162a; border-radius:30px; box-shadow:0 0 0 2px #8f96ad,0 0 0 3px rgba(var(--c-gold2-rgb),.5),0 30px 60px rgba(0,0,0,.55); }
+.phone::before{ content:''; position:absolute; z-index:3; top:0; left:50%; width:46%; height:4.4%; transform:translateX(-50%); border-radius:0 0 12px 12px;
+  background:radial-gradient(circle at 74% 50%,#24336b 1.6px,#0b0f1f 2.6px,transparent 3.2px),radial-gradient(ellipse at 38% 50%,#2a2f45 0 7%,transparent 8%),#05060c; background-size:100% 100%; }
