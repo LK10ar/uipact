@@ -28,7 +28,7 @@
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function merge(a, b) { var o = JSON.parse(JSON.stringify(a)); Object.keys(b || {}).forEach(function (k) { if (b[k] !== undefined && b[k] !== '') o[k] = b[k]; }); return o; }
 
-  // Découpe stable d'une page en « éléments de texte » (e0, e1…) et « images » (i0, i1…). Utilisé aussi par l'admin.
+  // Découpe stable d'une page en « éléments de texte » (e0, e1…) et « images » (i0, i1…). Utilisé aussi par l'admin..
   function scan(doc) {
     var out = [], n = 0;
     (function walk(el) {
