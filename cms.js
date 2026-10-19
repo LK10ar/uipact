@@ -28,7 +28,7 @@
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function merge(a, b) { var o = JSON.parse(JSON.stringify(a)); Object.keys(b || {}).forEach(function (k) { if (b[k] !== undefined && b[k] !== '') o[k] = b[k]; }); return o; }
 
-  // Découpe stable d'une page en « éléments de texte » (e0, e1…) et « images » (i0, i1…). Utilisé aussi par l'admin..
+  // Découpe stable d'une page en « éléments de texte » (e0, e1…) et « images » (i0, i1…). Utilisé aussi par l'admin.
   function scan(doc) {
     var out = [], n = 0;
     (function walk(el) {
@@ -40,7 +40,9 @@
     })(doc.body);
     return out;
   }
-  window.CMS = { scan: scan, DEF: DEF, PAGES: PAGES, LANGS: LANGS, esc: esc, merge: merge, pk: pk };
+  function hsh(t) { var x = 5381; for (var i = 0; i < t.length; i++) x = ((x << 5) + x + t.charCodeAt(i)) | 0; return (x >>> 0).toString(36); }
+  var UI = ["Un", "Graphiste", "Web designer", "Créatif", "Stratège", "passionné par l'art et la technique.", "Voir —", "Démarrer un projet", "Découvrir", "Voir le portfolio", "Un projet de site ou de logo ? Parlons-en 👋", "Fermer", "Méthode", "Trois étapes,", "un résultat", "Stratégie", "Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.", "Créativité", "Concevoir une identité et des interfaces qui vous démarquent et racontent votre histoire.", "Précision", "Livrer des fichiers et des pages soignés, prêts à être utilisés partout.", "Savoir-faire", "Le studio,", "de A à Z", "Création graphique", "Logo · Identité · Supports", "Création print", "Cartes · Flyers · Affiches", "Sites internet", "Vitrine · One-page", "Identité visuelle", "Charte · Rédaction", "UX / UI design", "Maquettes · Prototypes", "Votre prochain projet", "commence ici", "Parlons de votre vision : stratégie, créativité et précision au service de votre image.", "Dites bonjour 👋", "Un projet de logo, de site, de print ou d'application ? Décrivez-le, je reviens vers vous.", "Disponible pour de nouveaux projets", "Services souhaités", "Site internet", "Autre", "Envoi en cours…", "Message envoyé !", "Merci, je reviens vers vous très vite.", "Du concept au", "site en ligne", "Wireframe", "La structure et le parcours de vos visiteurs, posés avant toute décoration.", "Palette", "Typographie", "Design", "Palette de couleurs, typographies et identité : votre univers visuel prend forme.", "Interface", "Intégration", "Interfaces soignées, pensées pour s'afficher parfaitement sur mobile comme sur ordinateur.", "En ligne", "● En ligne", "Votre site,", "prêt à convaincre", "Toutes les couches s'assemblent : votre site est prêt à convaincre.", "Étude de cas", "Description du projet", "Le contexte", "L'enjeu", "Notre approche", "Le résultat", "Services fournis", "Client", "Localisation", "Site web", "Prestation", "Nous contacter", "Projet suivant", "Un projet similaire ?", "Parlons de votre projet, sans engagement.", "France", "Développement web", "UX / UI Design", "UI", "UX", "SEO", "Branding", "Logo", "Figma", "Prototype", "Print", "Direction artistique", "Mise en page", "Une interface pensée pour convertir.", "Maquettes, hiérarchie visuelle et parcours simplifiés pour guider le visiteur jusqu'à l'action.", "Un site fluide sur tous les écrans.", "Développement responsive, rapide et soigné, du mobile au grand écran.", "Des bases solides pour le référencement.", "Structure propre, balises et contenus pensés pour apparaître sur Google.", "Une idée forte.", "Recherche de territoire de marque, de symboles et de références avant de dessiner.", "Un système cohérent.", "Logo, couleurs et typographies déclinés pour fonctionner partout.", "Des fichiers prêts à l'emploi.", "Livraison des formats utiles pour le web, le print et les réseaux sociaux.", "Comprendre les usages.", "Définition des besoins et des parcours avant toute maquette.", "Des écrans clairs et cohérents.", "Wireframes puis maquettes haute fidélité sur Figma, avec un design system.", "Un prototype testable.", "Parcours interactif pour valider les choix avant le développement.", "Un message lisible en un coup d'œil.", "Hiérarchie visuelle et mise en page travaillées pour capter l'attention.", "Une identité respectée.", "Couleurs, typographies et visuels alignés sur la charte du client.", "Des fichiers prêts à imprimer.", "Export aux bons formats, avec fonds perdus et profils couleur adaptés."];
+  window.CMS = { UI: UI, hsh: hsh, scan: scan, DEF: DEF, PAGES: PAGES, LANGS: LANGS, esc: esc, merge: merge, pk: pk };
   window.__cmsPK = pk;
   if (window.CMS_ADMIN) return;
 
@@ -48,6 +50,33 @@
   var lang = localStorage.getItem('uipact_lang') || 'fr';
   var T = {}, D = {};
   function tr(id, fb) { return T[id] != null && T[id] !== '' ? T[id] : fb; }
+  window.__u = function (s) { var v = T['ui_' + hsh(s)]; return v ? v : s; };
+  window.__cmsTr = tr;
+  window.__cmsPrj = {};
+
+  // Traduit les textes ajoutés par les scripts du site (boutons, mots qui défilent, messages…)
+  function uiNode(n) {
+    var raw = n.nodeValue, t = raw.trim(); if (!t) return;
+    var v = T['ui_' + hsh(t)]; if (!v || v === t) return;
+    var m = raw.match(/^(\s*)[\s\S]*?(\s*)$/); n.nodeValue = m[1] + v + m[2];
+  }
+  function uiWalk(root) {
+    if (root.nodeType === 3) { uiNode(root); return; }
+    if (root.nodeType !== 1 || SKIP.test(root.tagName) || (root.closest && root.closest('.no-cms'))) return;
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), n, list = [];
+    while ((n = w.nextNode())) { if (!SKIP.test(n.parentNode.tagName)) list.push(n); }
+    list.forEach(uiNode);
+  }
+  function startUI() {
+    if (lang === 'fr' || window.__cmsUI) return; window.__cmsUI = true;
+    uiWalk(document.body);
+    new MutationObserver(function (ms) {
+      ms.forEach(function (m) {
+        if (m.type === 'characterData') uiWalk(m.target);
+        else m.addedNodes.forEach(uiWalk);
+      });
+    }).observe(document.body, { childList: true, subtree: true, characterData: true });
+  }
 
   function theme(th) {
     th = merge(DEF.theme, th || {});
@@ -56,7 +85,7 @@
       ';--color-gold:' + th.gold + ';--color-gold-light:' + th.gold2 + ';--color-navy:' + th.navy + ';--color-navy-light:' + th.navy2 + ';--color-purple-dark:' + th.gold + ';--color-fuchsia-vibrant:' + th.gold +
       ';--color-blue-dark:' + th.navy + ';--color-cyan-vibrant:' + th.navy + ';--bg-color:' + th.lightBg + ';--bg-alt-color:' + th.lightAlt + '}' +
       'html[data-theme="dark"]{--bg-color:' + th.bg + ';--bg-alt-color:' + th.bgAlt + ';--card-bg:' + th.card + ';--text-color:' + th.text + '}' +
-      '.cms-lang{background:transparent;color:inherit;border:1px solid rgba(var(--c-gold-rgb),.5);border-radius:99px;padding:6px 10px;font:inherit;font-size:.78rem;cursor:pointer;margin-right:10px}.cms-lang option{color:#101B3D}';
+      '.cms-lang{background:transparent;color:inherit;border:1px solid rgba(var(--c-gold-rgb),.5);border-radius:99px;padding:6px 10px;font:inherit;font-size:.78rem;cursor:pointer;margin-right:10px}';
     var s = document.getElementById('cms-theme') || document.createElement('style'); s.id = 'cms-theme'; s.textContent = css; document.head.appendChild(s);
   }
   function setLabel(a, v) { for (var i = 0; i < a.childNodes.length; i++) { var c = a.childNodes[i]; if (c.nodeType === 3 && c.nodeValue.trim()) { var m = c.nodeValue.match(/^(\s*)[\s\S]*?(\s*)$/); c.nodeValue = m[1] + v + m[2]; return; } } a.insertBefore(document.createTextNode(v), a.firstChild); }
@@ -140,10 +169,10 @@
   }
   function run(d) {
     D = d; T = (d.translations || {})[lang] || {};
-    window.__cmsSec = d.sections || {}; window.__cmsTr = tr;
+    window.__cmsSec = d.sections || {}; window.__cmsTr = tr; window.__cmsPrj = d.projects || {};
     window.__cmsCar = {};
     Object.keys(d.carousels || {}).forEach(function (k) { window.__cmsCar[k] = (d.carousels[k] || []).map(function (x, i) { return { image: x.image, href: x.href, title: tr('car_' + k + '_' + i + '_t', x.title), subtitle: tr('car_' + k + '_' + i + '_s', x.subtitle) }; }); });
-    theme(d.theme); pageContent(d); header(d); seo(d);
+    theme(d.theme); pageContent(d); header(d); seo(d); startUI();
     if (lang !== 'fr') document.documentElement.lang = lang;
     document.documentElement.dir = /^(ar|he|fa|ur)/.test(lang) ? 'rtl' : 'ltr';
   }
