@@ -2,7 +2,7 @@
     var root = document.documentElement;
     var STORAGE_KEY = 'uipact-theme';
 
-    // Thème sombre par défaut (nouvelle charte), sauf choix explicite de l'utilisateur
+    // Thème sombre par défaut
     function getPreferredTheme() {
         var saved = localStorage.getItem(STORAGE_KEY);
         return (saved === 'light' || saved === 'dark') ? saved : 'dark';
@@ -60,7 +60,7 @@
 })();
 
 
-/* ===== V3 : scène 3D plein écran, transitions de page, animations ===== */
+/* ===== Scène 3D plein écran, transitions de page, animations ===== */
 (function () {
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     var $ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
@@ -186,7 +186,7 @@
         });
         cards.forEach(function (c) { mo.observe(c, { attributes: true, attributeFilter: ['style', 'class'] }); });
 
-        // Nouveau bouton flottant « Démarrer un projet » (magnétique)
+        // Bouton flottant « Démarrer un projet » (magnétique)
         if (!/contact\.html/.test(location.pathname)) {
             var cta = document.createElement('a'); cta.className = 'cta-float';
             cta.href = document.querySelector('section#contact') ? '#contact' : 'contact.html';
@@ -203,7 +203,7 @@
     });
 })();
 
-/* ===== V4 : carrousel 3D, sections landing, contact ===== */
+/* ===== Carrousel 3D, sections landing, contact ===== */
 (function () {
     document.addEventListener('DOMContentLoaded', function () {
         var $ = function (s) { return document.querySelector(s); };
@@ -268,7 +268,7 @@
             
         }
 
-        // ---- Contact : mise en page refaite, formulaire d'origine conservé ----
+        // ---- Contact ----
         var f = document.querySelector('form.contact-form');
         if (f && /contact\.html/.test(location.pathname)) {
             var grid = html('<div class="cgrid"></div>'); f.parentNode.insertBefore(grid, f);
@@ -290,7 +290,7 @@
     });
 })();
 
-/* ===== V5 : polices, fond aurore + poussière, carrousels 3D partout, footer, contact ===== */
+/* ===== Polices, fond aurore + poussière, carrousels 3D partout, footer, contact ===== */
 (function () {
     var lk = document.createElement('link'); lk.rel = 'stylesheet';
     lk.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Caveat:wght@500;600&display=swap';
@@ -402,7 +402,7 @@
             requestAnimationFrame(dl);
         })();
 
-        // Carrousels 3D : pages de services (ancien carrousel remplacé) et création print
+        // Carrousels 3D : pages de services et création print
         var sl = [].slice.call(document.querySelectorAll('.carousel-slide'));
         if (sl.length) {
             var host = document.querySelector('.carousel-container');
@@ -456,7 +456,7 @@
         }, 500);
         document.querySelectorAll('form.contact-form').forEach(ajax);
 
-        // Footer refait (mêmes liens)
+        // Footer
         var ft = document.querySelector('footer.site-footer');
         if (ft) {
             var ig = ft.querySelector('.social-links a'), igh = ig ? ig.outerHTML : '';
@@ -471,12 +471,12 @@
     });
 })();
 
-/* ===== V6 : boutons des cartes de services ===== */
+/* ===== Boutons des cartes de services ===== */
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.service-btn,.btn-portfolio').forEach(function (b) { b.classList.add('cta-button'); });
 });
 
-/* ===== V7 : contraste automatique du mode sombre + bouton caché près du footer ===== */
+/* ===== Contraste automatique du mode sombre + bouton caché près du footer ===== */
 (function () {
     var root = document.documentElement;
     function lum(c) {
@@ -503,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 })();
 
-/* ===== V7 : relève les gris trop sombres en mode sombre + masque le bouton flottant sur le footer ===== */
+/* ===== Relève les gris trop sombres en mode sombre + masque le bouton flottant sur le footer ===== */
 (function () {
     function lum(c) { var m = c.match(/[\d.]+/g); if (!m) return 1; return (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255; }
     function opaque(e) { while (e && e !== document.documentElement) { var b = getComputedStyle(e).backgroundColor, m = b.match(/[\d.]+/g); if (m && (m.length === 3 || +m[3] > .6)) return b; e = e.parentElement; } return null; }
@@ -527,7 +527,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 })();
 
-/* ===== V8 : impact visuel et conversion ===== */
+/* ===== Impact visuel et conversion ===== */
 (function () {
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
     function h(t) { var d = document.createElement('div'); d.innerHTML = t.trim(); return d.firstChild; }
@@ -545,7 +545,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 d.style.left = c[2]; d.style.right = c[6] || 'auto'; d.style.top = c[3]; d.style.animationDelay = '-' + (i * 1.7) + 's';
                 d.style.transform = 'translateZ(' + c[5] + 'px) rotateY(' + c[4] + 'deg) rotateZ(' + (c[4] / 4) + 'deg)'; d.dataset.sp = (0.06 + i * 0.035); rg.appendChild(d);
             });
-            /* cartes flottantes retirées */
             hero.addEventListener('mousemove', function (e) {
                 var r = hero.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
                 rg.style.transform = 'rotateY(' + (x * 14) + 'deg) rotateX(' + (-y * 10) + 'deg)';
@@ -585,7 +584,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 })();
 
-/* ===== V8b : badge de disponibilité, boutons du hero regroupés, indicateur de scroll ===== */
+/* ===== Badge de disponibilité, boutons du hero regroupés, indicateur de scroll ===== */
 document.addEventListener('DOMContentLoaded', function () {
     function h(t) { var d = document.createElement('div'); d.innerHTML = t.trim(); return d.firstChild; }
     var hero = document.getElementById('hero'), hc = document.querySelector('.hero-content');
@@ -598,7 +597,7 @@ document.addEventListener('DOMContentLoaded', function () {
     hero.appendChild(h('<a class="hero-scroll" href="#services"><b></b>Découvrir</a>'));
 });
 
-/* ===== V9 : showcase 3D piloté par le scroll (ordinateur qui s'ouvre, sites qui défilent, téléphone) ===== */
+/* ===== Showcase 3D piloté par le scroll (ordinateur qui s'ouvre, sites qui défilent, téléphone) ===== */
 document.addEventListener('DOMContentLoaded', function () {
     var hero = document.getElementById('hero'); if (!hero || document.getElementById('sc3')) return;
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, mob = matchMedia('(max-width:900px)');
@@ -635,7 +634,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })();
 });
 
-/* ===== V9 : phrase révélée au scroll + « du wireframe au site » (3D piloté par le scroll) ===== */
+/* ===== Phrase révélée au scroll + « du wireframe au site » (3D piloté par le scroll) ===== */
 document.addEventListener('DOMContentLoaded', function () {
     function h(t) { var d = document.createElement('div'); d.innerHTML = t.trim(); return d.firstChild; }
     var cl = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
@@ -677,7 +676,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })();
 });
 
-/* ===== V9 : vue éclatée d'un site au scroll + services empilés en 3D ===== */
+/* ===== Vue éclatée d'un site au scroll + services empilés en 3D ===== */
 document.addEventListener('DOMContentLoaded', function () {
     function h(t) { var d = document.createElement('div'); d.innerHTML = t.trim(); return d.firstChild; }
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
