@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - UIPACT</title>
     <style>
-        /* --- CSS : Variables et base --- */
+        /* --- Variables et base --- */
        :root {
             --color-blue-dark: #223773;
             --color-cyan-vibrant: #11C5D9;
@@ -15,8 +15,8 @@
             --bg-color: #fff;
             --bg-alt-color: #f4f7f6;
             --font-family: 'Inter', sans-serif;
-            --font-title: 'Georgia', serif; 
-            --header-height: 80px; 
+            --font-title: 'Georgia', serif;
+            --header-height: 80px;
         }
 
         body {
@@ -95,7 +95,7 @@
         .burger-menu.active span:nth-child(2) { opacity: 0; }
         .burger-menu.active span:nth-child(3) { transform: rotate(45deg) translate(-5px, -6px); }
 
-        /* --- SECTION PORTFOLIO SPÉCIFIQUE --- */
+        /* --- Section portfolio --- */
         .portfolio-header { text-align: center; padding: 80px 20px 40px; background-color: var(--bg-alt-color); }
         .portfolio-header h1 { font-size: 3rem; color: var(--color-blue-dark); margin-bottom: 15px; font-weight: 800; }
         .portfolio-header p { max-width: 600px; margin: 0 auto; color: #666; font-size: 1.1rem; }
@@ -107,7 +107,7 @@
         .portfolio-container { max-width: 1200px; margin: 0 auto 80px; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
         .project-card { background-color: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s; position: relative; cursor: pointer; }
         .project-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        
+
         .project-image { width: 100%; height: 250px; background-color: #f4f7f6; position: relative; overflow: hidden; }
         .project-info { padding: 25px; }
         .project-category { font-size: 0.8rem; text-transform: uppercase; font-weight: 800; color: var(--color-fuchsia-vibrant); margin-bottom: 10px; display: block; }
@@ -115,46 +115,46 @@
 
         /* --- CTA Portfolio --- */
         .cta-portfolio { background-color: var(--footer-bg, #0B1330); color: #fff; text-align: center; padding: 80px 20px; }
-        .cta-portfolio h2 { 
-            font-family: var(--font-title); 
-            font-size: 2.2rem; 
-            color: var(--color-fuchsia-vibrant); 
-            margin-bottom: 20px; 
-            font-style: italic; 
+        .cta-portfolio h2 {
+            font-family: var(--font-title);
+            font-size: 2.2rem;
+            color: var(--color-fuchsia-vibrant);
+            margin-bottom: 20px;
+            font-style: italic;
         }
-        
-        .btn-black { 
-            display: inline-block; 
-            padding: 15px 40px; 
+
+        .btn-black {
+            display: inline-block;
+            padding: 15px 40px;
             background-color: var(--color-gold);
             color: var(--color-navy) !important;
-            text-decoration: none; font-weight: 700; border-radius: 5px; 
-            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s; 
+            text-decoration: none; font-weight: 700; border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
         }
-        .btn-black:hover { background-color: var(--color-gold-light); color: var(--color-navy) !important; 
+        .btn-black:hover { background-color: var(--color-gold-light); color: var(--color-navy) !important;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(201,162,75,0.35);
         }
 
-        /* --- STYLES DE LA MODALE --- */
-        .modal { 
-            display: none; position: fixed; z-index: 2000; padding-top: 50px; left: 0; top: 0; 
-            width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); 
-            overflow: auto; /* Permet le scroll si l'écran est tout petit */
+        /* --- Lightbox --- */
+        .modal {
+            display: none; position: fixed; z-index: 2200; padding-top: 50px; left: 0; top: 0;
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.9);
+            overflow: auto;
         }
-        .modal-content { 
-            margin: auto; display: block; max-width: 90%; max-height: 85vh; 
-            object-fit: contain; border-radius: 5px; animation: zoomIn 0.3s ease; 
+        .modal-content {
+            margin: auto; display: block; max-width: 90%; max-height: 85vh;
+            object-fit: contain; border-radius: 5px; animation: zoomIn 0.3s ease;
         }
         @keyframes zoomIn { from {transform: scale(0.8); opacity: 0;} to {transform: scale(1); opacity: 1;} }
         .modal-close { position: absolute; top: 20px; right: 35px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer; transition: color 0.3s; z-index: 2001; }
         .modal-close:hover { color: var(--color-cyan-vibrant); }
 
-        /* Correction Iframe Youtube pour Mobile et PC */
+        /* Iframe YouTube */
         #fullIframe {
             width: 90%;
             max-width: 1000px;
-            aspect-ratio: 16 / 9; /* Maintient les proportions parfaites de la vidéo */
+            aspect-ratio: 16 / 9;
             height: auto;
             background-color: #000;
         }
@@ -173,7 +173,7 @@
             justify-content: center;
             margin-bottom: 20px;
         }
-        
+
         .social-links a {
             display: flex;
             align-items: center;
@@ -181,19 +181,19 @@
             width: 45px;
             height: 45px;
             border-radius: 50%;
-            background-color: #222; /* Fond gris foncé */
-            color: #fff; /* Icône blanche */
+            background-color: #222;
+            color: #fff;
             transition: all 0.3s ease;
         }
-        
+
         .social-links a:hover {
-            /* Le même dégradé que tes boutons pour rester cohérent ! */
+
             background: linear-gradient(135deg, var(--color-cyan-vibrant), var(--color-fuchsia-vibrant));
             color: #fff;
-            transform: translateY(-3px); /* Petit effet de soulèvement */
+            transform: translateY(-3px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        
+
         .social-links svg {
             width: 22px;
             height: 22px;
@@ -209,7 +209,7 @@
             .nav-links {
                 position: absolute; top: var(--header-height); right: 0;
                 height: calc(100vh - var(--header-height)); width: 100%; background-color: #fff;
-                flex-direction: column; justify-content: flex-start; gap: 0; 
+                flex-direction: column; justify-content: flex-start; gap: 0;
                 transform: translateY(-110%); opacity: 0; z-index: 1050;
                 box-shadow: 0 10px 15px rgba(0,0,0,0.1);
             }
@@ -223,20 +223,69 @@
             .dropdown-content { display: none; position: static; box-shadow: none; border: none; background-color: var(--bg-alt-color); min-width: 100%; }
             .dropdown-content.mobile-open { display: block; }
             .dropdown-content a { padding: 15px 20px; border-bottom: 1px solid #ddd; }
-            
+
             .dropdown:hover .dropdown-content { display: none; }
-            .dropdown:hover .dropdown-content.mobile-open { display: block; } 
-            .dropdown > a { font-weight: 700; color: var(--color-purple-dark); } 
+            .dropdown:hover .dropdown-content.mobile-open { display: block; }
+            .dropdown > a { font-weight: 700; color: var(--color-purple-dark); }
 
             .cta-menu-button { margin: 20px auto; width: calc(100% - 40px); display: block; box-sizing: border-box; }
-            
+
             .portfolio-header h1 { font-size: 2.2rem; }
             .portfolio-container { grid-template-columns: 1fr; }
 
-            /* Sur mobile, la vidéo prend presque toute la largeur */
+
             #fullIframe {
                 width: 95%;
             }
+        }
+
+        /* --- Étude de cas --- */
+        .cs { position: fixed; inset: 0; z-index: 2100; display: none; background: rgba(5,9,22,.75); backdrop-filter: blur(6px); }
+        .cs.open { display: block; }
+        .cs-panel { position: absolute; inset: 0; overflow-y: auto; color: #F3EFE4; background: radial-gradient(circle at 15% 0%, rgba(201,162,75,.18), transparent 45%), #0A1024; animation: csIn .5s cubic-bezier(.2,.8,.2,1); }
+        @keyframes csIn { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+        .cs-close { position: fixed; top: 18px; right: 22px; z-index: 2; width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(201,162,75,.6); background: rgba(10,16,36,.8); color: #E4C77A; font-size: 28px; cursor: pointer; transition: background .3s, color .3s; }
+        .cs-close:hover { background: #C9A24B; color: #101B3D; }
+        .cs-hero { max-width: 1100px; margin: 0 auto; padding: 120px 24px 50px; }
+        .cs-badge { display: inline-block; padding: 8px 18px; border-radius: 99px; background: rgba(201,162,75,.15); border: 1px solid rgba(201,162,75,.4); color: #E4C77A; font-size: .75rem; letter-spacing: .15em; text-transform: uppercase; }
+        .cs-hero h1 { margin: 22px 0 0; font-style: italic; font-size: clamp(2.8rem, 8vw, 6rem); line-height: .95; color: #fff; }
+        .cs-hero h1 span { color: #E4C77A; display: block; }
+        .cs-meta { display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid rgba(201,162,75,.25); }
+        .cs-meta div { padding: 22px 24px; border-right: 1px solid rgba(201,162,75,.25); }
+        .cs-meta div:last-child { border-right: 0; }
+        .cs-meta b { display: block; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: #E4C77A; margin-bottom: 6px; }
+        .cs-meta a { color: #fff; text-decoration: underline; text-decoration-color: #C9A24B; }
+        .cs-visual { max-width: 1100px; margin: 50px auto 0; padding: 0 24px; display: grid; gap: 24px; }
+        .cs-visual img, .cs-visual iframe { width: 100%; border-radius: 20px; background: #131F42; box-shadow: 0 20px 60px rgba(0,0,0,.5); border: 1px solid rgba(201,162,75,.2); }
+        .cs-visual img { cursor: zoom-in; object-fit: contain; max-height: 80vh; }
+        .cs-visual iframe { aspect-ratio: 16 / 9; }
+        .cs-grid { max-width: 1100px; margin: 0 auto; padding: 70px 24px; display: grid; grid-template-columns: 1fr 280px; gap: 60px; }
+        .cs-grid h2 { font-size: clamp(2rem, 4vw, 3rem); margin: 0 0 14px; color: #fff; }
+        .cs-grid h2 i { color: #E4C77A; }
+        .cs-text h3 { font-family: var(--font-title); font-weight: 400; font-size: 1.9rem; color: #fff; margin: 38px 0 12px; }
+        .cs-text p { line-height: 1.85; color: #CFCBBF; margin: 0 0 14px; }
+        .cs-text p b { color: #fff; }
+        .cs-side { align-self: start; position: sticky; top: 30px; }
+        .cs-side h4 { display: inline-block; margin: 0 0 18px; padding: 10px 18px; border-radius: 99px; background: rgba(201,162,75,.15); border: 1px solid rgba(201,162,75,.4); color: #E4C77A; font-size: .75rem; letter-spacing: .15em; text-transform: uppercase; }
+        .cs-side li { list-style: none; padding: 9px 0; color: #F3EFE4; }
+        .cs-side li::before { content: "# "; color: #C9A24B; font-weight: 700; }
+        .cs-side ul { margin: 0; padding: 0; }
+        .cs-cta { text-align: center; padding: 70px 24px 90px; border-top: 1px solid rgba(201,162,75,.25); }
+        .cs-cta h2 { font-size: clamp(2rem, 5vw, 3.4rem); margin: 0 0 12px; font-style: italic; color: #fff; }
+        .cs-cta h2 i { color: #E4C77A; }
+        .cs-cta p { color: #CFCBBF; margin: 0 0 28px; }
+        .cs-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .cs-btn { padding: 14px 32px; border-radius: 99px; font-weight: 700; text-decoration: none; cursor: pointer; border: 1px solid #C9A24B; font-size: .9rem; transition: transform .3s, box-shadow .3s; }
+        .cs-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(201,162,75,.4); }
+        .cs-btn.gold { background: linear-gradient(90deg, #E4C77A, #C9A24B); color: #101B3D; }
+        .cs-btn.line { background: transparent; color: #E4C77A; }
+        @media (max-width: 860px) {
+            .cs-grid { grid-template-columns: 1fr; gap: 30px; padding: 40px 20px; }
+            .cs-side { position: static; }
+            .cs-meta { grid-template-columns: 1fr; }
+            .cs-meta div { border-right: 0; border-bottom: 1px solid rgba(201,162,75,.25); }
+            .cs-meta div:last-child { border-bottom: 0; }
+            .cs-hero { padding: 100px 20px 36px; }
         }
     </style>
     <link rel="stylesheet" href="theme.css">
@@ -298,7 +347,7 @@
 
         <div class="portfolio-container" id="projectGrid">
 
-            <div class="project-card" data-category="web" onclick="openModal('https://www.youtube.com/watch?v=0J4PFdntIIw')">
+            <div class="project-card" data-category="web" data-project="chene">
                 <div class="project-image" style="background-image: url('img/chene.png'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: var(--bg-alt-color);"></div>
                 <div class="project-info">
                     <span class="project-category">Webdesign</span>
@@ -306,7 +355,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="branding" onclick="openModal('img/tout.png')">
+            <div class="project-card" data-category="branding" data-project="novaflow">
                 <div class="project-image" style="background-image: url('img/tout.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Branding</span>
@@ -314,7 +363,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="uxui" onclick="openModal('https://www.youtube.com/watch?v=scb3g3UfGF8')">
+            <div class="project-card" data-category="uxui" data-project="fitness">
                 <div class="project-image" style="background-image: url('img/sport.png'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: var(--bg-alt-color);"></div>
                 <div class="project-info">
                     <span class="project-category">UX / UI Design</span>
@@ -322,7 +371,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="uxui" onclick="openModal('img/alpharun2.png')">
+            <div class="project-card" data-category="uxui" data-project="alpharun-wireframe">
                 <div class="project-image" style="background-image: url('img/alpharun2.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Wireframe</span>
@@ -330,7 +379,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="uxui" onclick="openModal('img/alpharun.png')">
+            <div class="project-card" data-category="uxui" data-project="alpharun-mockup">
                 <div class="project-image" style="background-image: url('img/alpharun.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Mockup / Maquette UI</span>
@@ -338,7 +387,7 @@
                 </div>
             </div>
 
-<div class="project-card" data-category="web" onclick="openModal('https://www.youtube.com/watch?v=eastP8lNCXY')">
+<div class="project-card" data-category="web" data-project="alpharun-site">
                 <div class="project-image" style="background-image: url('img/logo-alpharun.png'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: var(--bg-alt-color);"></div>
                 <div class="project-info">
                     <span class="project-category">Webdesign</span>
@@ -346,7 +395,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="uxui" onclick="openModal('https://www.youtube.com/watch?v=gqcltf1fx7E')">
+            <div class="project-card" data-category="uxui" data-project="ssiap">
                 <div class="project-image" style="background-image: url('img/ssiap.png'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: var(--bg-alt-color);"></div>
                 <div class="project-info">
                     <span class="project-category">UX / UI Design</span>
@@ -354,7 +403,7 @@
                 </div>
             </div>
 
-<div class="project-card" data-category="web" onclick="openModal('https://www.youtube.com/watch?v=0HQHG7Dz7CM')">
+<div class="project-card" data-category="web" data-project="sirene">
                 <div class="project-image" style="background-image: url('img/sirene.jpg'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: var(--bg-alt-color);"></div>
                 <div class="project-info">
                     <span class="project-category">Webdesign</span>
@@ -362,7 +411,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="web" onclick="openModal('https://www.youtube.com/watch?v=lLWI3pBSHbk')">
+            <div class="project-card" data-category="web" data-project="food">
                 <div class="project-image" style="background-image: url('img/food.png'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: var(--bg-alt-color);"></div>
                 <div class="project-info">
                     <span class="project-category">Webdesign</span>
@@ -370,7 +419,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="print" onclick="openModal('img/flyers-alpharun.png')">
+            <div class="project-card" data-category="print" data-project="flyers-alpharun">
                 <div class="project-image" style="background-image: url('img/flyers-alpharun.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Flyers</span>
@@ -378,7 +427,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="print" onclick="openModal('img/flyers-relax.jpg')">
+            <div class="project-card" data-category="print" data-project="flyers-relax">
                 <div class="project-image" style="background-image: url('img/flyers-relax.jpg'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Flyers</span>
@@ -386,7 +435,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="web" onclick="openModal('https://youtu.be/cfqsCqP9IJE')">
+            <div class="project-card" data-category="web" data-project="swag">
                 <div class="project-image" style="background-image: url('img/swag.png'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: var(--bg-alt-color);"></div>
                 <div class="project-info">
                     <span class="project-category">Webdesign</span>
@@ -394,7 +443,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="print" onclick="openModal('img/carte.png')">
+            <div class="project-card" data-category="print" data-project="cartes-alpharun">
                 <div class="project-image" style="background-image: url('img/carte.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Cartes de visites</span>
@@ -402,7 +451,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="web" onclick="openModal('https://youtu.be/uiOyUTmCEa8')">
+            <div class="project-card" data-category="web" data-project="zovalux">
                 <div class="project-image" style="background-image: url('img/zovaluxlogo.png'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: var(--bg-alt-color);"></div>
                 <div class="project-info">
                     <span class="project-category">Webdesign</span>
@@ -410,7 +459,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="print" onclick="openModal('img/viruse.png')">
+            <div class="project-card" data-category="print" data-project="flyers-virus">
                 <div class="project-image" style="background-image: url('img/viruse.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Flyers</span>
@@ -418,7 +467,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="print" onclick="openModal('img/carte-cadeau.png')">
+            <div class="project-card" data-category="print" data-project="cartes-relax">
                 <div class="project-image" style="background-image: url('img/carte-cadeau.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Cartes de visites</span>
@@ -426,7 +475,7 @@
                 </div>
             </div>
 
-             <div class="project-card" data-category="print" onclick="openModal('img/flyersresauxzovalux.png')">
+             <div class="project-card" data-category="print" data-project="flyers-zovalux">
                 <div class="project-image" style="background-image: url('img/flyersresauxzovalux.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Flyers</span>
@@ -434,7 +483,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="branding" onclick="openModal('img/logo.png')">
+            <div class="project-card" data-category="branding" data-project="logo-nova">
                 <div class="project-image" style="background-image: url('img/logo.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Logo</span>
@@ -442,7 +491,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="branding" onclick="openModal('img/logo-alpharun.png')">
+            <div class="project-card" data-category="branding" data-project="logo-alpharun">
                 <div class="project-image" style="background-image: url('img/logo-alpharun.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Logo</span>
@@ -450,15 +499,15 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="print" onclick="openModal('img/menu.png')">
+            <div class="project-card" data-category="print" data-project="menu">
                 <div class="project-image" style="background-image: url('img/menu.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Menu dépliant 3 volets </span>
                     <h3 class="project-title">Menu L'Épicurien Rustique </h3>
                 </div>
             </div>
-            
-           <div class="project-card" data-category="print" onclick="openModal('img/carte-sphere.png')">
+
+           <div class="project-card" data-category="print" data-project="cartes-sphere">
                 <div class="project-image" style="background-image: url('img/carte-sphere.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Cartes de visites</span>
@@ -466,7 +515,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="branding" onclick="openModal('img/japan.png')">
+            <div class="project-card" data-category="branding" data-project="logo-japan">
                 <div class="project-image" style="background-image: url('img/japan.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Logo</span>
@@ -474,7 +523,7 @@
                 </div>
             </div>
 
-            <div class="project-card" data-category="branding" onclick="openModal('img/logo45.png')">
+            <div class="project-card" data-category="branding" data-project="logo-altitude">
                 <div class="project-image" style="background-image: url('img/logo45.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="project-info">
                     <span class="project-category">Logo</span>
@@ -496,6 +545,10 @@
         <img class="modal-content" id="fullImage" style="display: none;">
         <video class="modal-content" id="fullVideo" controls autoplay style="display: none;"></video>
         <iframe class="modal-content" id="fullIframe" frameborder="0" allow="autoplay; encrypted-media; fullscreen" style="display: none;"></iframe>
+    </div>
+
+    <div id="caseStudy" class="cs no-cms" role="dialog" aria-modal="true" aria-label="Étude de cas">
+        <div class="cs-panel" id="csPanel"><button class="cs-close" id="csClose" aria-label="Fermer">&times;</button><div id="csBody"></div></div>
     </div>
 
     <button id="scrollTopBtn" title="Retour en haut">↑</button>
@@ -548,130 +601,146 @@
         </div>
     </footer>
 
+    <script src="projects.js"></script>
     <script>
-        // --- SCRIPT EXACT DU MENU MOBILE ---
+        // --- MENU MOBILE ---
         const burger = document.getElementById('burgerToggle');
         const nav = document.querySelector('.nav-links');
         const body = document.getElementById('body');
-        
         const navLinksArr = document.querySelectorAll('.nav-links li a:not(.dropdown-toggle)');
         const dropToggleBtn = document.querySelector('.dropdown-toggle');
         const dropContent = document.querySelector('.dropdown-content');
 
         function toggleMenu() {
-            burger.classList.toggle('active'); 
-            nav.classList.toggle('nav-active'); 
-            body.classList.toggle('no-scroll'); 
+            burger.classList.toggle('active');
+            nav.classList.toggle('nav-active');
+            body.classList.toggle('no-scroll');
         }
         burger.addEventListener('click', toggleMenu);
-
-        navLinksArr.forEach(link => {
-            link.addEventListener('click', () => {
-                if (nav.classList.contains('nav-active')) {
-                    toggleMenu();
-                }
-            });
+        navLinksArr.forEach(link => link.addEventListener('click', () => { if (nav.classList.contains('nav-active')) toggleMenu(); }));
+        dropToggleBtn.addEventListener('click', function (event) {
+            if (window.innerWidth <= 768) { event.preventDefault(); dropContent.classList.toggle('mobile-open'); }
         });
 
-        dropToggleBtn.addEventListener('click', function(event) {
-            if (window.innerWidth <= 768) {
-                event.preventDefault(); 
-                dropContent.classList.toggle('mobile-open'); 
-            }
-        });
-
-        // --- SCRIPT FILTRES PORTFOLIO ---
+        // --- FILTRES PORTFOLIO ---
         const filterBtns = document.querySelectorAll('.filter-btn');
         const projects = document.querySelectorAll('.project-card');
-
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 filterBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-
-                const filterValue = btn.getAttribute('data-filter');
-                projects.forEach(project => {
-                    if (filterValue === 'all' || project.getAttribute('data-category') === filterValue) {
-                        project.style.display = 'block';
-                    } else {
-                        project.style.display = 'none';
-                    }
-                });
+                const f = btn.getAttribute('data-filter');
+                projects.forEach(p => { p.style.display = (f === 'all' || p.getAttribute('data-category') === f) ? 'block' : 'none'; });
             });
         });
 
-        // --- SCRIPT SCROLL TOP ---
-        const scrollTopBtn = document.getElementById("scrollTopBtn");
-        window.addEventListener('scroll', function() {
-            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-                scrollTopBtn.style.display = "block";
-            } else {
-                scrollTopBtn.style.display = "none";
-            }
+        // --- RETOUR EN HAUT ---
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        window.addEventListener('scroll', function () {
+            scrollTopBtn.style.display = (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) ? 'block' : 'none';
         });
-        scrollTopBtn.addEventListener("click", function() {
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        });
+        scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    
-      // --- SCRIPT MODALE (LIGHTBOX INTÉLLIGENTE) ---
-        const modal = document.getElementById("imageModal");
-        const modalImg = document.getElementById("fullImage");
-        const modalVideo = document.getElementById("fullVideo");
-        const modalIframe = document.getElementById("fullIframe");
+        // --- LIGHTBOX ---
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('fullImage');
+        const modalVideo = document.getElementById('fullVideo');
+        const modalIframe = document.getElementById('fullIframe');
+        const ytEmbed = u => { const m = u.match(/(?:v=|youtu\.be\/)([\w-]{11})/); return m ? 'https://www.youtube.com/embed/' + m[1] : ''; };
 
-        // Fonction pour transformer un lien Youtube "watch" en lien Youtube "embed"
-        function getYoutubeEmbedUrl(url) {
-            let videoId = "";
-            if (url.includes('youtube.com/watch?v=')) {
-                videoId = url.split('v=')[1].split('&')[0];
-            } else if (url.includes('youtu.be/')) {
-                videoId = url.split('youtu.be/')[1].split('?')[0];
-            }
-            // Retourne le format Embed avec Autoplay
-            return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        function openModal(src) {
+            const y = ytEmbed(src);
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            modalVideo.style.display = 'none';
+            modalImg.style.display = y ? 'none' : 'block';
+            modalIframe.style.display = y ? 'block' : 'none';
+            if (y) modalIframe.src = y + '?autoplay=1'; else modalImg.src = src;
         }
-
-        function openModal(mediaSrc) {
-            modal.style.display = "block";
-            document.body.style.overflow = 'hidden'; 
-            
-            // On cache tout par défaut pour éviter les superpositions
-            modalImg.style.display = "none";
-            modalVideo.style.display = "none";
-            modalIframe.style.display = "none";
-            modalVideo.pause();
-            modalIframe.src = "";
-
-            // On vérifie le type de média cliqué
-            if (mediaSrc.includes('youtube.com') || mediaSrc.includes('youtu.be')) {
-                // C'est un lien YouTube ! On génère le bon lien
-                modalIframe.style.display = "block";
-                modalIframe.src = getYoutubeEmbedUrl(mediaSrc);
-            } else if (mediaSrc.endsWith('.mp4')) {
-                // C'est une vidéo locale
-                modalVideo.style.display = "block";
-                modalVideo.src = mediaSrc;
-                modalVideo.play();
-            } else {
-                // C'est une image classique
-                modalImg.style.display = "block";
-                modalImg.src = mediaSrc;
-            }
-        }
-
         function closeModal() {
-            modal.style.display = "none";
-            document.body.style.overflow = 'visible'; 
-            modalVideo.pause(); // Coupe la vidéo locale
-            modalIframe.src = ""; // Coupe la vidéo YouTube en vidant sa source !
+            modal.style.display = 'none';
+            modalIframe.src = '';
+            document.body.style.overflow = cs.classList.contains('open') ? 'hidden' : '';
+        }
+        modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+        // --- ÉTUDE DE CAS ---
+        const { CAT, P } = window.PRJ;
+        const cs = document.getElementById('caseStudy');
+        const csPanel = document.getElementById('csPanel');
+        const csBody = document.getElementById('csBody');
+        let openedByClick = false;
+
+        const u = s => (window.__u ? window.__u(s) : s);
+        const tt = (id, fb) => (window.__cmsTr ? window.__cmsTr(id, fb) : fb);
+        const ov = id => (window.__cmsPrj || {})[id] || {};
+        const isPub = id => !!P[id] && ov(id).published !== false;
+        const val = (id, k) => { const o = ov(id)[k]; return (o != null && o !== '') ? o : (P[id][k] || ''); };
+        const txt = (id, k) => tt('prj_' + id + '_' + k, val(id, k));
+        const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        const em = s => { const w = s.split(' '); const l = w.pop(); return (w.length ? esc(w.join(' ')) + ' ' : '') + '<i>' + esc(l) + '</i>'; };
+        const embed = u => { const m = (u || '').match(/(?:v=|youtu\.be\/)([\w-]{11})/); return m ? 'https://www.youtube.com/embed/' + m[1] : ''; };
+
+        function visibleIds() { return [...projects].filter(c => c.style.display !== 'none' && isPub(c.dataset.project)).map(c => c.dataset.project); }
+
+        function renderProject(id) {
+            const p = P[id], c = CAT[p.cat], o = ov(id);
+            const site = val(id, 'site');
+            const loc = val(id, 'loc') ? txt(id, 'loc') : u('France');
+            const video = embed(val(id, 'video'));
+            const tags = o.tags ? tt('prj_' + id + '_tags', o.tags).split(',').map(s => s.trim()).filter(Boolean) : c.tags.map(u);
+            const how = c.how.map((a, i) => [tt('prj_' + id + '_h' + i + 't', o['h' + i + 't'] || u(a[0])), tt('prj_' + id + '_h' + i + 'p', o['h' + i + 'p'] || u(a[1]))]);
+            const meta = [[u('Client'), esc(txt(id, 'client'))], [u('Localisation'), esc(loc)], site ? [u('Site web'), '<a href="' + esc(site) + '" target="_blank" rel="noopener noreferrer">' + esc(site) + '</a>'] : [u('Prestation'), esc(u(c.type))]];
+            const ids = visibleIds(); const nextId = ids[(ids.indexOf(id) + 1) % ids.length] || id;
+            csBody.innerHTML =
+                '<section class="cs-hero"><span class="cs-badge">' + esc(u(c.type)) + '</span><h1><span>' + esc(txt(id, 'name')) + '</span>' + esc(u('Étude de cas')) + '</h1></section>' +
+                '<div class="cs-meta">' + meta.map(m => '<div><b>' + esc(m[0]) + '</b>' + m[1] + '</div>').join('') + '</div>' +
+                '<div class="cs-visual">' + (video ? '<iframe src="' + video + '" title="' + esc(txt(id, 'name')) + '" allow="fullscreen; encrypted-media" allowfullscreen></iframe>' : '') + '<img src="' + esc(val(id, 'image')) + '" alt="' + esc(txt(id, 'name')) + '"></div>' +
+                '<div class="cs-grid"><div class="cs-text"><h2>' + em(u('Description du projet')) + '</h2>' +
+                '<h3>' + esc(u('Le contexte')) + '</h3><p>' + esc(txt(id, 'ctx')) + '</p><h3>' + esc(u('L\'enjeu')) + '</h3><p>' + esc(txt(id, 'enjeu')) + '</p>' +
+                '<h3>' + esc(u('Notre approche')) + '</h3>' + how.map(a => '<p><b>' + esc(a[0]) + '</b> ' + esc(a[1]) + '</p>').join('') +
+                '<h3>' + esc(u('Le résultat')) + '</h3><p>' + esc(txt(id, 'res')) + '</p></div>' +
+                '<aside class="cs-side"><h4>' + esc(u('Services fournis')) + '</h4><ul>' + tags.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul></aside></div>' +
+                '<section class="cs-cta"><h2>' + esc(u('Un projet similaire ?')) + '</h2><p>' + esc(u('Parlons de votre projet, sans engagement.')) + '</p><div class="cs-btns"><a class="cs-btn gold" href="contact.html">' + esc(u('Nous contacter')) + '</a><a class="cs-btn line" href="#' + nextId + '">' + esc(u('Projet suivant')) + '</a></div></section>';
+            csBody.querySelector('.cs-visual img').addEventListener('click', e => openModal(e.target.src));
         }
 
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                closeModal();
-            }
+        function showProject(id) {
+            renderProject(id);
+            cs.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            csPanel.scrollTop = 0;
+            document.getElementById('csClose').focus();
         }
+        function hideProject() {
+            cs.classList.remove('open');
+            document.body.style.overflow = '';
+            csBody.innerHTML = '';
+        }
+        function syncProject() {
+            const id = decodeURIComponent(location.hash.slice(1));
+            if (isPub(id)) showProject(id); else hideProject();
+        }
+        function closeProject() {
+            if (openedByClick) { openedByClick = false; history.back(); }
+            else { history.replaceState(null, '', location.pathname + location.search); hideProject(); }
+        }
+
+        document.getElementById('projectGrid').addEventListener('click', e => {
+            const card = e.target.closest('.project-card');
+            const id = card && card.dataset.project;
+            if (!id || !P[id]) return;
+            if (isPub(id)) { openedByClick = true; location.hash = id; }
+            else openModal(val(id, 'video') || val(id, 'image'));
+        });
+        document.getElementById('csClose').addEventListener('click', closeProject);
+        cs.addEventListener('click', e => { if (e.target === cs) closeProject(); });
+        document.addEventListener('keydown', e => {
+            if (e.key !== 'Escape') return;
+            if (modal.style.display === 'block') closeModal(); else if (cs.classList.contains('open')) closeProject();
+        });
+        window.addEventListener('hashchange', syncProject);
+        document.addEventListener('DOMContentLoaded', syncProject);
     </script>
 </body>
 </html>
