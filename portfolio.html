@@ -1084,6 +1084,7 @@
         const cs = document.getElementById('caseStudy');
         const csPanel = document.getElementById('csPanel');
         const csBody = document.getElementById('csBody');
+        let openedByClick = false;
 
         const u = s => (window.__u ? window.__u(s) : s);
         const tt = (id, fb) => (window.__cmsTr ? window.__cmsTr(id, fb) : fb);
@@ -1136,47 +1137,33 @@
             projects = document.querySelectorAll('.project-card');
         }
 
-        let lastY = 0, pushed = false, current = null;
-        const jump = y => window.scrollTo({ top: y, left: 0, behavior: 'instant' });
         function showProject(id) {
-            if (!cs.classList.contains('open')) lastY = window.scrollY;
-            try { renderProject(id); } catch (err) { console.error(err); openModal(val(id, 'video') || val(id, 'image')); return; }
-            current = id;
+            renderProject(id);
             cs.classList.add('open');
             document.body.style.overflow = 'hidden';
             csPanel.scrollTop = 0;
-            document.getElementById('csClose').focus({ preventScroll: true });
+            document.getElementById('csClose').focus();
         }
         function hideProject() {
-            if (!cs.classList.contains('open')) return;
             cs.classList.remove('open');
             document.body.style.overflow = '';
             csBody.innerHTML = '';
-            current = null;
-            jump(lastY);
         }
         function syncProject() {
             const id = decodeURIComponent(location.hash.slice(1));
-            if (isPub(id)) { if (current !== id) showProject(id); } else hideProject();
+            if (isPub(id)) showProject(id); else hideProject();
         }
         function closeProject() {
-            if (pushed) { pushed = false; history.back(); }
+            if (openedByClick) { openedByClick = false; history.back(); }
             else { history.replaceState(null, '', location.pathname + location.search); hideProject(); }
         }
 
-        /* Le clic n'utilise plus location.hash : pushState ne déclenche aucun défilement automatique du navigateur. */
         document.getElementById('projectGrid').addEventListener('click', e => {
             const card = e.target.closest('.project-card');
             const id = card && card.dataset.project;
             if (!id || !P[id]) return;
-            e.preventDefault();
-            if (isPub(id)) { lastY = window.scrollY; history.pushState(null, '', '#' + id); pushed = true; showProject(id); }
+            if (isPub(id)) { openedByClick = true; location.hash = id; }
             else openModal(val(id, 'video') || val(id, 'image'));
-        });
-        csBody.addEventListener('click', e => {
-            const a = e.target.closest('a[href^="#"]'); if (!a) return;
-            e.preventDefault(); const id = decodeURIComponent(a.getAttribute('href').slice(1));
-            if (isPub(id)) { history.replaceState(null, '', '#' + id); showProject(id); }
         });
         document.getElementById('csClose').addEventListener('click', closeProject);
         cs.addEventListener('click', e => { if (e.target === cs) closeProject(); });
