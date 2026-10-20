@@ -952,16 +952,22 @@ html[data-theme="dark"] header select option,html[data-theme="dark"] select[id*=
   box-shadow:0 0 0 1px var(--c-gold),0 8px 22px rgba(var(--c-gold-rgb),.35)!important; }
 
 /* ========== Ordinateur et téléphone de « Ma méthode » ========== */
-.lap-lid{ border:10px solid #07090f; border-bottom-width:14px; border-radius:18px 18px 6px 6px; background:#07090f;
-  box-shadow:0 0 0 2px #b9bfd0,0 0 0 3px rgba(var(--c-gold2-rgb),.45),0 30px 80px rgba(0,0,0,.55),0 0 90px rgba(var(--c-gold-rgb),.2); }
-.lap-lid::before{ right:auto; left:50%; top:-1px; width:17%; height:15px; transform:translateX(-50%); border-radius:0 0 10px 10px;
-  background:radial-gradient(circle at 50% 52%,#24336b 2px,#10162c 3.2px,transparent 3.8px),#07090f; }
-.lap-page{ top:0; border-radius:4px; }
-.lap-deck{ left:-4%; width:108%; border-radius:3px 3px 26px 26px; border-top:1px solid #fff;
-  background:linear-gradient(180deg,#f1f3f8,#bcc2d3 55%,#9ea5ba); box-shadow:inset 0 -3px 0 #878ea4,0 40px 70px rgba(0,0,0,.55); }
-.lap-deck::before{ left:6%; right:6%; top:9%; height:46%; border-radius:6px; opacity:1;
-  background:repeating-linear-gradient(0deg,transparent 0 15%,#a9afc2 15% 19%),repeating-linear-gradient(90deg,#262c48 0 5.6%,#a9afc2 5.6% 6.8%),#262c48; }
-.lap-deck::after{ left:34%; right:34%; bottom:9%; height:26%; border-radius:8px; background:rgba(120,128,160,.16); border:1px solid rgba(80,90,130,.4); }
 .phone{ border:5px solid #12162a; border-radius:30px; box-shadow:0 0 0 2px #8f96ad,0 0 0 3px rgba(var(--c-gold2-rgb),.5),0 30px 60px rgba(0,0,0,.55); }
 .phone::before{ content:''; position:absolute; z-index:3; top:0; left:50%; width:46%; height:4.4%; transform:translateX(-50%); border-radius:0 0 12px 12px;
   background:radial-gradient(circle at 74% 50%,#24336b 1.6px,#0b0f1f 2.6px,transparent 3.2px),radial-gradient(ellipse at 38% 50%,#2a2f45 0 7%,transparent 8%),#05060c; background-size:100% 100%; }
+
+/* ========== Ordinateur portable ========== */
+.lap-lid{ border:8px solid #090b12; border-bottom-width:12px; border-radius:16px 16px 3px 3px; background:#090b12;
+  box-shadow:0 0 0 2px #c4c9d6,0 0 0 3px #7d849a,0 -6px 40px rgba(var(--c-gold-rgb),.25),0 30px 80px rgba(0,0,0,.55); }
+.lap-lid::before{ content:''; position:absolute; z-index:4; left:50%; top:0; width:13%; height:5.2%; min-height:12px; transform:translateX(-50%); border-radius:0 0 9px 9px; background:#090b12 radial-gradient(circle at 70% 50%,#2c3d7a 0 1.6px,#121a36 2.4px,transparent 3px); }
+.lap-lid::after{ background:linear-gradient(115deg,rgba(255,255,255,.14),transparent 34%,transparent 70%,rgba(255,255,255,.05)); }
+.lap-page{ top:0; border-radius:2px; }
+.lap-hinge{ position:absolute; left:-1.5%; width:103%; top:100%; height:7px; margin-top:-3px; border-radius:0 0 8px 8px; background:linear-gradient(#151827,#05060b); box-shadow:0 1px 0 #8a91a6; }
+.lap-hinge::after{ content:''; position:absolute; left:42%; right:42%; top:0; height:3px; border-radius:0 0 6px 6px; background:#3a4160; }
+.lap-deck{ left:-5%; width:110%; border-radius:2px 2px 22px 22px; border-top:1px solid #f2f4f9;
+  background:linear-gradient(180deg,#d6d9e4,#c2c7d5 45%,#a9afc1); box-shadow:0 40px 70px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.25); }
+.lap-deck::before,.lap-deck::after{ content:none; }
+.lap-deck .kb{ position:absolute; left:8%; right:8%; top:7%; height:50%; border-radius:6px; box-shadow:inset 0 0 0 2px #0f1320,0 1px 0 rgba(255,255,255,.5);
+  background:repeating-linear-gradient(180deg,transparent 0 16%,#0f1320 16% 20%),repeating-linear-gradient(90deg,transparent 0 6.5%,#0f1320 6.5% 7.14%),linear-gradient(180deg,#2a3150,#1d2340); }
+.lap-deck .tp{ position:absolute; left:32%; right:32%; bottom:7%; height:25%; border-radius:9px; border:1px solid rgba(70,78,110,.4);
+  background:linear-gradient(145deg,rgba(255,255,255,.45),rgba(120,128,160,.08)); box-shadow:inset 0 1px 0 rgba(255,255,255,.6); }
