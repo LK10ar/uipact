@@ -287,6 +287,25 @@
             .cs-meta div:last-child { border-bottom: 0; }
             .cs-hero { padding: 100px 20px 36px; }
         }
+
+        .cs-grid { display: block; padding: 70px 24px 20px; }
+        .cs-text { max-width: 820px; margin: 0 auto; }
+        .cs-svc { max-width: 1100px; margin: 0 auto; padding: 30px 24px 60px; }
+        .cs-svc h2, .cs-video h2 { font-size: clamp(2rem, 4vw, 3rem); margin: 0 0 24px; color: #fff; text-align: center; }
+        .cs-svc h2 i, .cs-video h2 i { color: #E4C77A; }
+        .cs-svc ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+        .cs-svc li { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-radius: 16px; background: rgba(201,162,75,.08); border: 1px solid rgba(201,162,75,.3); color: #F3EFE4; font-weight: 600; }
+        .cs-svc li span { color: #E4C77A; }
+        .cs-video { max-width: 1100px; margin: 0 auto; padding: 30px 24px 70px; }
+        .cs-video iframe { width: 100%; aspect-ratio: 16 / 9; border: 1px solid rgba(201,162,75,.2); border-radius: 20px; background: #000; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+        .cs-foot { text-align: center; padding: 50px 24px 40px; border-top: 1px solid rgba(201,162,75,.25); background: linear-gradient(180deg, transparent, rgba(201,162,75,.07)); }
+        .cs-foot img { height: 44px; margin-bottom: 14px; }
+        .cs-foot-t { color: #CFCBBF; margin: 0 0 22px; }
+        .cs-foot nav { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .cs-foot nav a, .cs-ig { display: inline-block; padding: 8px 18px; border-radius: 99px; border: 1px solid rgba(201,162,75,.35); color: #E4C77A; text-decoration: none; font-size: .85rem; transition: background .3s; }
+        .cs-foot nav a:hover, .cs-ig:hover { background: rgba(201,162,75,.15); }
+        .cs-ig { margin-top: 14px; }
+        .cs-foot small { display: block; margin-top: 22px; color: #8f93a6; }
     </style>
     <link rel="stylesheet" href="theme.css">
     <script src="config.js"></script>
@@ -1020,7 +1039,7 @@
 
         // --- FILTRES PORTFOLIO ---
         const filterBtns = document.querySelectorAll('.filter-btn');
-        const projects = document.querySelectorAll('.project-card');
+        let projects = document.querySelectorAll('.project-card');
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 filterBtns.forEach(b => b.classList.remove('active'));
@@ -1080,25 +1099,42 @@
         function visibleIds() { return [...projects].filter(c => c.style.display !== 'none' && isPub(c.dataset.project)).map(c => c.dataset.project); }
 
         function renderProject(id) {
-            const p = P[id], c = CAT[p.cat], o = ov(id);
-            const site = val(id, 'site');
+            const p = P[id], c = CAT[p.cat] || CAT.web, o = ov(id);
+            const site = val(id, 'site'), name = txt(id, 'name'), image = val(id, 'image');
             const loc = val(id, 'loc') ? txt(id, 'loc') : u('France');
             const video = embed(val(id, 'video'));
             const tags = o.tags ? tt('prj_' + id + '_tags', o.tags).split(',').map(s => s.trim()).filter(Boolean) : c.tags.map(u);
             const how = c.how.map((a, i) => [tt('prj_' + id + '_h' + i + 't', o['h' + i + 't'] || u(a[0])), tt('prj_' + id + '_h' + i + 'p', o['h' + i + 'p'] || u(a[1]))]);
             const meta = [[u('Client'), esc(txt(id, 'client'))], [u('Localisation'), esc(loc)], site ? [u('Site web'), '<a href="' + esc(site) + '" target="_blank" rel="noopener noreferrer">' + esc(site) + '</a>'] : [u('Prestation'), esc(u(c.type))]];
             const ids = visibleIds(); const nextId = ids[(ids.indexOf(id) + 1) % ids.length] || id;
+            const nav = [['index.html', 'Accueil'], ['portfolio.html', 'Portfolio'], ['a-propos.html', 'À propos'], ['contact.html', 'Contact'], ['mentions-legales.html', 'Mentions légales']].map(l => '<a href="' + l[0] + '">' + esc(u(l[1])) + '</a>').join('');
+            const ig = document.querySelector('a[href*="instagram.com"]');
             csBody.innerHTML =
-                '<section class="cs-hero"><span class="cs-badge">' + esc(u(c.type)) + '</span><h1><span>' + esc(txt(id, 'name')) + '</span>' + esc(u('Étude de cas')) + '</h1></section>' +
+                '<section class="cs-hero"><span class="cs-badge">' + esc(u(c.type)) + '</span><h1><span>' + esc(name) + '</span>' + esc(u('Étude de cas')) + '</h1></section>' +
                 '<div class="cs-meta">' + meta.map(m => '<div><b>' + esc(m[0]) + '</b>' + m[1] + '</div>').join('') + '</div>' +
-                '<div class="cs-visual">' + (video ? '<iframe src="' + video + '" title="' + esc(txt(id, 'name')) + '" allow="fullscreen; encrypted-media" allowfullscreen></iframe>' : '') + '<img src="' + esc(val(id, 'image')) + '" alt="' + esc(txt(id, 'name')) + '"></div>' +
+                (image ? '<div class="cs-visual"><img src="' + esc(image) + '" alt="' + esc(name) + '"></div>' : '') +
                 '<div class="cs-grid"><div class="cs-text"><h2>' + em(u('Description du projet')) + '</h2>' +
-                '<h3>' + esc(u('Le contexte')) + '</h3><p>' + esc(txt(id, 'ctx')) + '</p><h3>' + esc(u('L\'enjeu')) + '</h3><p>' + esc(txt(id, 'enjeu')) + '</p>' +
+                '<h3>' + esc(u('Le contexte')) + '</h3><p>' + esc(txt(id, 'ctx')) + '</p><h3>' + esc(u("L'enjeu")) + '</h3><p>' + esc(txt(id, 'enjeu')) + '</p>' +
                 '<h3>' + esc(u('Notre approche')) + '</h3>' + how.map(a => '<p><b>' + esc(a[0]) + '</b> ' + esc(a[1]) + '</p>').join('') +
-                '<h3>' + esc(u('Le résultat')) + '</h3><p>' + esc(txt(id, 'res')) + '</p></div>' +
-                '<aside class="cs-side"><h4>' + esc(u('Services fournis')) + '</h4><ul>' + tags.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul></aside></div>' +
-                '<section class="cs-cta"><h2>' + esc(u('Un projet similaire ?')) + '</h2><p>' + esc(u('Parlons de votre projet, sans engagement.')) + '</p><div class="cs-btns"><a class="cs-btn gold" href="contact.html">' + esc(u('Nous contacter')) + '</a><a class="cs-btn line" href="#' + nextId + '">' + esc(u('Projet suivant')) + '</a></div></section>';
-            csBody.querySelector('.cs-visual img').addEventListener('click', e => openModal(e.target.src));
+                '<h3>' + esc(u('Le résultat')) + '</h3><p>' + esc(txt(id, 'res')) + '</p></div></div>' +
+                '<section class="cs-svc"><h2>' + em(u('Services fournis')) + '</h2><ul>' + tags.map(t => '<li><span>✦</span>' + esc(t) + '</li>').join('') + '</ul></section>' +
+                (video ? '<section class="cs-video"><h2>' + em(u('La démonstration en vidéo')) + '</h2><iframe src="' + video + '" title="' + esc(name) + '" allow="fullscreen; encrypted-media" allowfullscreen></iframe></section>' : '') +
+                '<section class="cs-cta"><h2>' + esc(u('Un projet similaire ?')) + '</h2><p>' + esc(u('Parlons de votre projet, sans engagement.')) + '</p><div class="cs-btns"><a class="cs-btn gold" href="contact.html">' + esc(u('Nous contacter')) + '</a><a class="cs-btn line" href="#' + nextId + '">' + esc(u('Projet suivant')) + '</a></div></section>' +
+                '<footer class="cs-foot"><img src="logo.png" alt="UIPACT"><p class="cs-foot-t">' + esc(u('Agence de conception visuelle & web.')) + '</p><nav>' + nav + '</nav>' + (ig ? '<a class="cs-ig" href="' + esc(ig.href) + '" target="_blank" rel="noopener noreferrer">Instagram</a>' : '') + '<small>' + esc(u('© 2026 UIPACT — Tous droits réservés.')) + '</small></footer>';
+            const im = csBody.querySelector('.cs-visual img'); if (im) im.addEventListener('click', e => openModal(e.target.src));
+        }
+
+        function initCustom() {
+            const grid = document.getElementById('projectGrid'), lab = { web: 'Webdesign', branding: 'Branding', uxui: 'UX / UI Design', print: 'Print' };
+            Object.entries(window.__cmsPrj || {}).forEach(([id, o]) => {
+                if (!o || !o.custom || o.published === false || P[id]) return;
+                P[id] = { cat: o.cat || 'web', name: '', client: '', loc: '', site: '', ctx: '', enjeu: '', res: '', video: '', image: '' };
+                const d = document.createElement('div');
+                d.className = 'project-card'; d.dataset.category = P[id].cat; d.dataset.project = id;
+                d.innerHTML = '<div class="project-image" style="background-image: url(\'' + esc(o.image || '') + '\'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: var(--bg-alt-color);"></div><div class="project-info"><span class="project-category">' + esc(lab[P[id].cat] || '') + '</span><h3 class="project-title">' + esc(txt(id, 'name')) + '</h3></div>';
+                grid.appendChild(d);
+            });
+            projects = document.querySelectorAll('.project-card');
         }
 
         function showProject(id) {
@@ -1136,7 +1172,7 @@
             if (modal.style.display === 'block') closeModal(); else if (cs.classList.contains('open')) closeProject();
         });
         window.addEventListener('hashchange', syncProject);
-        document.addEventListener('DOMContentLoaded', syncProject);
+        document.addEventListener('DOMContentLoaded', () => { initCustom(); syncProject(); });
     </script>
 </body>
 </html>
