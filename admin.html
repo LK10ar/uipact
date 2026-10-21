@@ -100,6 +100,28 @@ button.lnk{border:0;background:none;padding:0;color:#8a6a1c;font-size:.82rem}but
 .drw-p{position:absolute;top:0;right:0;bottom:0;width:min(760px,100%);background:#f6f7f7;display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(0,0,0,.2)}
 .drw-h{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#fff;border-bottom:1px solid #dcdfe6}.drw-b{padding:6px 20px 40px;overflow:auto}
 @media(max-width:700px){.g2{grid-template-columns:1fr}.sbar{padding:0 12px}}
+
+/* ===== Animations, textes, thème sombre ===== */
+.seg{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid #dcdfe6;flex-wrap:wrap}.seg button{border:0;background:none;border-radius:6px 6px 0 0;padding:11px 18px;font-weight:600;color:#646970}
+.seg button.on{color:#1d2327;box-shadow:inset 0 -3px 0 #C9A24B;background:none}
+.step{display:grid;grid-template-columns:34px 1fr 300px;gap:18px;padding:16px 0;border-top:1px solid #eef0f2}.step.ni{grid-template-columns:34px 1fr}
+.step .n{width:30px;height:30px;border-radius:50%;background:#C9A24B;color:#101B3D;display:grid;place-items:center;font-weight:700}
+.tg{background:#fff;border:1px solid #dcdfe6;border-radius:8px;margin-bottom:10px;overflow:hidden}
+.tg>summary{padding:13px 16px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;gap:12px;list-style:none}.tg>summary em{font-style:normal;font-weight:400;color:#646970;font-size:.82rem}
+.trow{display:grid;grid-template-columns:90px 1fr auto;gap:12px;align-items:start;padding:8px 16px;border-top:1px solid #f0f0f1}
+.trow .tag{padding-top:11px}.trow input,.trow textarea{margin:0}.tact{display:flex;gap:10px;align-items:center;padding-top:6px;font-size:.8rem;color:#646970}.tact label{display:flex;gap:5px;align-items:center}
+.trow.blk{background:#fffbea}
+html[data-adm="dark"] body{background:#0b1020;color:#e8eaf5}html[data-adm="dark"] a{color:#E4C77A}
+html[data-adm="dark"] input,html[data-adm="dark"] textarea,html[data-adm="dark"] select{background:#161f45;color:#fff;border-color:#2c3768}
+html[data-adm="dark"] button{background:#161f45;color:#fff;border-color:#2c3768}html[data-adm="dark"] button.gold{background:linear-gradient(90deg,#E4C77A,#C9A24B);color:#101B3D}
+html[data-adm="dark"] .card,html[data-adm="dark"] .stat,html[data-adm="dark"] .sc,html[data-adm="dark"] .mbox,html[data-adm="dark"] .pc,html[data-adm="dark"] .tg{background:#111a3a;border-color:#222d5c}
+html[data-adm="dark"] .hd,html[data-adm="dark"] .sbar,html[data-adm="dark"] .drw-h{background:#0f1730;border-color:#222d5c}html[data-adm="dark"] .hd h1,html[data-adm="dark"] h3,html[data-adm="dark"] .stat b{color:#fff}
+html[data-adm="dark"] .pill{background:#161f45;color:#dfe3f5;border-color:#2c3768}html[data-adm="dark"] .pill.on{background:#C9A24B;color:#101B3D}
+html[data-adm="dark"] .drw-p{background:#0b1020}html[data-adm="dark"] .pc-i,html[data-adm="dark"] .thumb{background:#0f1730}
+html[data-adm="dark"] .seg button.on{color:#fff}html[data-adm="dark"] .seg,html[data-adm="dark"] .trow,html[data-adm="dark"] .step{border-color:#222d5c}html[data-adm="dark"] .trow.blk{background:#1a2147}
+html[data-adm="dark"] .hint,html[data-adm="dark"] .note,html[data-adm="dark"] .hd p,html[data-adm="dark"] .tact,html[data-adm="dark"] .tg>summary em{color:#9ea3bd}
+#themeBtn{margin-right:8px}
+@media(max-width:900px){.step{grid-template-columns:1fr}.step .n{display:none}.trow{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -109,7 +131,7 @@ button.lnk{border:0;background:none;padding:0;color:#8a6a1c;font-size:.82rem}but
     <aside class="side"><div class="brand"><img src="logo.png" alt=""><b>UIPACT</b><small>Admin</small></div><nav id="tabs"></nav><div class="sfoot"><a href="index.html" target="_blank" rel="noopener">Voir le site ↗</a><button id="out">Se déconnecter</button></div></aside>
     <section class="stage"><header class="hd"><h1 id="vt"></h1><p id="vd"></p></header><main id="view"></main></section>
   </div>
-  <div class="sbar" id="sbar"><span>● Modifications non enregistrées</span><div><a class="vs" href="index.html" target="_blank" rel="noopener">Voir le site ↗</a><button id="undo">Annuler</button><button class="gold" id="saveBtn">Enregistrer</button></div></div>
+  <div class="sbar" id="sbar"><span>● Modifications non enregistrées</span><div><button id="themeBtn" title="Mode clair / sombre">◐ Thème</button><a class="vs" href="index.html" target="_blank" rel="noopener">Voir le site ↗</a><button id="undo">Annuler</button><button class="gold" id="saveBtn">Enregistrer</button></div></div>
 </div>
 <div id="modal" hidden></div><div id="toast"></div>
 <script>window.CMS_ADMIN = true;</script>
@@ -705,24 +727,25 @@ async function vTexts(v) {
   v.appendChild(h('div', { class: 'row' }, pageSelect(p, function (x) { v.dataset.p = x; show(); }), q)); v.appendChild(list);
   var doc = await pageDoc(p), sc = C.scan(doc).filter(function (s) { return !s.chrome; }), T = (S.texts[p] = S.texts[p] || {});
   function draw() {
-    list.innerHTML = ''; var f = q.value.toLowerCase();
+    list.innerHTML = ''; var f = q.value.toLowerCase(), groups = [], cur = null, NAMES = { h1: 'Titre', h2: 'Titre', h3: 'Sous-titre', h4: 'Sous-titre', p: 'Paragraphe', a: 'Lien', button: 'Bouton', li: 'Liste', label: 'Étiquette' };
     sc.forEach(function (s) {
-      var shown = s.nodes.some(function (nd) { return (T[s.key + '_' + nd.i] || nd.node.nodeValue).toLowerCase().indexOf(f) > -1; }); if (!shown) return;
-      var card = h('div', { class: 'card' }), hid = (S.hidden[p] || []).indexOf(s.key) > -1;
-      s.nodes.forEach(function (nd) {
-        var k = s.key + '_' + nd.i, orig = nd.node.nodeValue.trim();
-        card.appendChild(h('div', { class: 'orig' }, h('span', { class: 'tag' }, ({ h1: 'Titre', h2: 'Titre', h3: 'Sous-titre', h4: 'Sous-titre', p: 'Paragraphe', a: 'Lien / bouton', button: 'Bouton', li: 'Liste', label: 'Étiquette', span: 'Texte', div: 'Texte' })[s.el.tagName.toLowerCase()] || 'Texte'), T[k] != null && T[k] !== orig ? 'Original : ' + orig : ''));
-        card.appendChild(tx(T[k] != null ? T[k] : orig, function (val) { if (val === orig) delete T[k]; else T[k] = val; }, '', orig.length > 80 ? 3 : 1));
-      });
-      var ck = h('input', { type: 'checkbox' }); ck.checked = hid;
-      ck.onchange = function () { var a = S.hidden[p] = S.hidden[p] || []; var i = a.indexOf(s.key); if (ck.checked && i < 0) a.push(s.key); if (!ck.checked && i > -1) a.splice(i, 1); mark(); };
-      card.appendChild(h('div', { class: 'acts' }, h('label', { class: 'fx' }, ck, ' Masquer'), h('button', { class: 'lnk', onclick: function () { (S.blocks[p] = S.blocks[p] || []).push({ id: Date.now().toString(36), after: s.key, tag: 'p', text: 'Nouveau texte' }); mark(); draw(); } }, '＋ Ajouter un texte après')));
+      var tag = s.el.tagName.toLowerCase(), all = s.nodes.map(function (nd) { return (T[s.key + '_' + nd.i] != null ? T[s.key + '_' + nd.i] : nd.node.nodeValue).trim(); }).join(' ');
+      if (!/[A-Za-zÀ-ÿ]/.test(all)) return;
+      if (/^h[1-3]$/.test(tag) || !cur) { cur = { title: /^h[1-3]$/.test(tag) ? all.slice(0, 80) : 'Début de la page', rows: [] }; groups.push(cur); }
+      if (f && all.toLowerCase().indexOf(f) < 0) return;
+      var hid = (S.hidden[p] || []).indexOf(s.key) > -1, ck = h('input', { type: 'checkbox' }); ck.checked = hid;
+      ck.onchange = function () { var ar = S.hidden[p] = S.hidden[p] || []; var i = ar.indexOf(s.key); if (ck.checked && i < 0) ar.push(s.key); if (!ck.checked && i > -1) ar.splice(i, 1); mark(); };
+      var ins = h('div', {});
+      s.nodes.forEach(function (nd) { var k = s.key + '_' + nd.i, orig = nd.node.nodeValue.trim(); ins.appendChild(tx(T[k] != null ? T[k] : orig, function (val) { if (val === orig) delete T[k]; else T[k] = val; }, '', orig.length > 90 ? 3 : 1)); });
+      var row = h('div', { class: 'trow' }, h('span', { class: 'tag' }, NAMES[tag] || 'Texte'), ins, h('div', { class: 'tact' }, h('label', { title: 'Masquer sur le site' }, ck, 'Masquer'), h('button', { class: 'sm', title: 'Ajouter un texte juste après', onclick: function () { (S.blocks[p] = S.blocks[p] || []).push({ id: Date.now().toString(36), after: s.key, tag: 'p', text: 'Nouveau texte' }); mark(); draw(); } }, '＋')));
+      cur.rows.push(row);
       (S.blocks[p] || []).filter(function (b) { return b.after === s.key; }).forEach(function (b) {
         var tg = h('select'); ['p', 'h2', 'h3', 'h4', 'span'].forEach(function (t) { var o = h('option', { value: t }, t); if (t === b.tag) o.selected = true; tg.appendChild(o); }); tg.onchange = function () { b.tag = tg.value; mark(); };
-        card.appendChild(h('div', { class: 'blk' }, h('div', { class: 'row' }, h('span', { class: 'tag' }, 'nouveau'), tg, h('button', { class: 'sm del', onclick: function () { S.blocks[p] = S.blocks[p].filter(function (x) { return x !== b; }); mark(); draw(); } }, 'Supprimer')), tx(b.text, function (val) { b.text = val; }, '', 2)));
+        cur.rows.push(h('div', { class: 'trow blk' }, h('span', { class: 'tag' }, 'Ajouté'), tx(b.text, function (val) { b.text = val; }, '', 2), h('div', { class: 'tact' }, tg, h('button', { class: 'sm del', onclick: function () { S.blocks[p] = S.blocks[p].filter(function (x) { return x !== b; }); mark(); draw(); } }, '✕'))));
       });
-      list.appendChild(card);
     });
+    groups.filter(function (g) { return g.rows.length; }).forEach(function (g, i) { var d = h('details', { class: 'tg' }, h('summary', {}, g.title, h('em', {}, g.rows.length + ' texte' + (g.rows.length > 1 ? 's' : '')))); d.open = i === 0 || !!f; g.rows.forEach(function (r) { d.appendChild(r); }); list.appendChild(d); });
+    if (!list.children.length) list.appendChild(h('p', { class: 'hint' }, 'Aucun texte trouvé.'));
   }
   q.oninput = draw; draw();
 }
@@ -1015,25 +1038,21 @@ function animImages(v) {
 }
 async function vImages(v) { await vImages0(v); if ((v.dataset.p || 'index') === 'index') animImages(v); }
 async function vAnim(v) {
-  var SH = secW('showcase'), ST = secW('statement'), ME = secW('method');
-  v.appendChild(h('p', { class: 'hint' }, 'Les trois animations de la page d’accueil. Modifiez les textes et les photos, cliquez sur « Enregistrer », puis rechargez le site (Ctrl + F5).'));
-  function card(t) { var c = h('div', { class: 'card' }, h('b', {}, t)); v.appendChild(c); return c; }
-  var c1 = card('1 · « Ma méthode » — l’ordinateur et le téléphone');
-  c1.appendChild(fld('Petit titre', tx(SH.eyebrow, function (x) { SH.eyebrow = x; })));
-  SH.steps.forEach(function (z, i) {
-    var c = h('div', { class: 'card', style: 'margin-top:10px' }, h('b', {}, 'Étape ' + (i + 1)));
-    c.appendChild(fld('Titre', tx(z.title, function (x) { z.title = x; }))); c.appendChild(fld('Texte', tx(z.text, function (x) { z.text = x; }, '', 3)));
-    c.appendChild(imgTile('Écran de l’ordinateur pour cette étape', function () { return z.image; }, function (u) { z.image = u; }, ANIM.showcase.steps[i].image)); c1.appendChild(c);
-  });
-  c1.appendChild(imgTile('Écran du téléphone', function () { return SH.phone; }, function (u) { SH.phone = u; }, ANIM.showcase.phone));
-  c1.appendChild(fld('Bouton — texte', tx(SH.cta.label, function (x) { SH.cta.label = x; }))); c1.appendChild(fld('Bouton — lien', tx(SH.cta.href, function (x) { SH.cta.href = x; })));
-  var c2 = card('2 · Phrase qui apparaît mot par mot'); c2.appendChild(fld('Texte', tx(ST.text, function (x) { ST.text = x; }, '', 3)));
-  var c3 = card('3 · « Du wireframe au site qui convertit »');
-  c3.appendChild(fld('Petit titre', tx(ME.eyebrow, function (x) { ME.eyebrow = x; }))); c3.appendChild(fld('Titre (début)', tx(ME.title, function (x) { ME.title = x; }))); c3.appendChild(fld('Titre (fin, en italique)', tx(ME.titleEm, function (x) { ME.titleEm = x; })));
-  ME.steps.forEach(function (z, i) { var c = h('div', { class: 'card', style: 'margin-top:10px' }, h('b', {}, 'Étape ' + (i + 1))); c.appendChild(fld('Titre', tx(z.title, function (x) { z.title = x; }))); c.appendChild(fld('Texte', tx(z.text, function (x) { z.text = x; }, '', 3))); c3.appendChild(c); });
-  c3.appendChild(imgTile('Site final affiché à la dernière étape', function () { return ME.image; }, function (u) { ME.image = u; }, ANIM.method.image));
-  [['typo', 'Étiquette « Typographie »'], ['button', 'Étiquette « Bouton »'], ['resp', 'Étiquette « Responsive »'], ['respSmall', 'Sous-texte « Responsive »']].forEach(function (f) { c3.appendChild(fld(f[1], tx(ME.chips[f[0]], function (x) { ME.chips[f[0]] = x; }))); });
-  v.appendChild(h('button', { class: 'del', onclick: function () { if (confirm('Remettre les trois animations comme à l’origine ?')) { delete S.sections; mark(); show(); } } }, '↺ Tout remettre à l’origine'));
+  var SH = secW('showcase'), ST = secW('statement'), ME = secW('method'), tabs = h('div', { class: 'seg' }), ps = [];
+  v.appendChild(h('p', { class: 'hint' }, 'Choisissez une animation, modifiez ses textes et ses photos, puis cliquez sur « Enregistrer » et rechargez le site (Ctrl + F5).')); v.appendChild(tabs);
+  function panel(name) { var p = h('div', { hidden: '' }), b = h('button', { onclick: function () { ps.forEach(function (x) { x.p.hidden = x.p !== p; x.b.classList.toggle('on', x.p === p); }); } }, name); tabs.appendChild(b); ps.push({ p: p, b: b }); v.appendChild(p); return p; }
+  function step(par, z, i, img) { var row = h('div', { class: 'step' + (img ? '' : ' ni') }, h('div', { class: 'n' }, String(i + 1)), h('div', {}, fld('Titre', tx(z.title, function (x) { z.title = x; })), fld('Texte', tx(z.text, function (x) { z.text = x; }, '', 3)))); if (img) row.appendChild(img); par.appendChild(row); }
+  var p1 = panel('1 · Ma méthode'), p2 = panel('2 · Phrase animée'), p3 = panel('3 · Du wireframe au site');
+  p1.appendChild(h('div', { class: 'card' }, fld('Petit titre', tx(SH.eyebrow, function (x) { SH.eyebrow = x; })), h('h3', {}, 'Étapes (ordinateur)')));
+  var c1 = p1.firstChild; SH.steps.forEach(function (z, i) { step(c1, z, i, imgTile('Écran de l\u2019ordinateur', function () { return z.image; }, function (u) { z.image = u; }, ANIM.showcase.steps[i].image)); });
+  p1.appendChild(h('div', { class: 'card' }, h('h3', {}, 'Téléphone et bouton'), h('div', { class: 'g2' }, imgTile('Écran du téléphone', function () { return SH.phone; }, function (u) { SH.phone = u; }, ANIM.showcase.phone), h('div', {}, fld('Bouton — texte', tx(SH.cta.label, function (x) { SH.cta.label = x; })), fld('Bouton — lien', tx(SH.cta.href, function (x) { SH.cta.href = x; }))))));
+  p2.appendChild(h('div', { class: 'card' }, fld('Phrase qui apparaît mot par mot', tx(ST.text, function (x) { ST.text = x; }, '', 4))));
+  var c3 = h('div', { class: 'card' }, h('div', { class: 'g2' }, fld('Petit titre', tx(ME.eyebrow, function (x) { ME.eyebrow = x; })), fld('Titre (début)', tx(ME.title, function (x) { ME.title = x; })), fld('Titre (fin, en italique)', tx(ME.titleEm, function (x) { ME.titleEm = x; })))); p3.appendChild(c3);
+  var c3b = h('div', { class: 'card' }, h('h3', {}, 'Étapes')); p3.appendChild(c3b); ME.steps.forEach(function (z, i) { step(c3b, z, i); });
+  var c3c = h('div', { class: 'card' }, h('h3', {}, 'Image finale et étiquettes'), imgTile('Site final affiché à la dernière étape', function () { return ME.image; }, function (u) { ME.image = u; }, ANIM.method.image), h('div', { class: 'g2' })); p3.appendChild(c3c);
+  [['typo', 'Étiquette « Typographie »'], ['button', 'Étiquette « Bouton »'], ['resp', 'Étiquette « Responsive »'], ['respSmall', 'Sous-texte « Responsive »']].forEach(function (f) { c3c.lastChild.appendChild(fld(f[1], tx(ME.chips[f[0]], function (x) { ME.chips[f[0]] = x; }))); });
+  v.appendChild(h('button', { class: 'del', style: 'margin-top:14px', onclick: function () { if (confirm('Remettre les trois animations comme à l\u2019origine ?')) { delete S.sections; mark(); show(); } } }, '↺ Tout remettre à l\u2019origine'));
+  ps[0].b.click();
 }
 
 /* ---------------- Aperçus Header / Footer ---------------- */
@@ -1085,5 +1104,5 @@ if (tok) start();
 })();
 
 </script>
-</body>
+<script>(function(){var r=document.documentElement,k="adm-theme";try{r.dataset.adm=localStorage.getItem(k)||"light"}catch(e){r.dataset.adm="light"}document.getElementById("themeBtn").onclick=function(){r.dataset.adm=r.dataset.adm==="dark"?"light":"dark";try{localStorage.setItem(k,r.dataset.adm)}catch(e){}}})();</script></body>
 </html>
