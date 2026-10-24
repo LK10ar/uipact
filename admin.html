@@ -122,6 +122,17 @@ html[data-adm="dark"] .seg button.on{color:#fff}html[data-adm="dark"] .seg,html[
 html[data-adm="dark"] .hint,html[data-adm="dark"] .note,html[data-adm="dark"] .hd p,html[data-adm="dark"] .tact,html[data-adm="dark"] .tg>summary em{color:#9ea3bd}
 #themeBtn{margin-right:8px}
 @media(max-width:900px){.step{grid-template-columns:1fr}.step .n{display:none}.trow{grid-template-columns:1fr}}
+
+/* ===== Éditeur visuel des textes ===== */
+main.wide{max-width:none;padding:6px 22px 60px}
+.vbar{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px}.vbar .vpg{display:flex;flex-direction:column;gap:3px;min-width:220px}.vbar select{width:100%}.vbar small{color:var(--mut)}
+.vseg{display:inline-flex;gap:4px;flex-wrap:wrap}.vseg .pill{margin:0}.pills{margin-bottom:0}
+.vstage{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+.vfr{display:flex;justify-content:center;height:calc(100vh - 230px);min-height:520px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:rgba(128,128,128,.12)}
+.vfr iframe{border:0;width:100%;height:100%;background:#fff}.vfr.mob iframe{width:390px;flex:0 0 390px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.vsp{position:sticky;top:76px;margin:0}.vsp h4{margin:0 0 10px;font-size:1.05rem}.vsp h4 small{font-weight:400;color:var(--mut)}.vsp .fld{margin-bottom:10px}
+.vact{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+@media(max-width:1100px){.vstage{grid-template-columns:1fr}.vsp{position:static}}
 </style>
 </head>
 <body>
@@ -591,7 +602,7 @@ async function save() {
 }
 addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 function show() {
-  var v = $('#view'); v.innerHTML = ''; mark.pend = null; var t = LABEL[tab]; $('#vt').textContent = t[1] + '  ' + t[2]; $('#vd').textContent = t[3];
+  var v = $('#view'); v.innerHTML = ''; v.className = ''; mark.pend = null; var t = LABEL[tab]; $('#vt').textContent = t[1] + '  ' + t[2]; $('#vd').textContent = t[3];
   ({ home: vHome, texts: vTexts, anim: vAnim, images: vImages, carousels: vCars, media: vMedia, colors: vColors, header: vHeader, footer: vFooter, seo: vSeo, projects: vProjects, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); });
   window.scrollTo(0, 0);
 }
@@ -721,7 +732,7 @@ async function vCars(v) {
 }
 
 /* ---------------- Textes ---------------- */
-async function vTexts(v) {
+async function vTextsList(v) {
   var p = v.dataset.p || 'index', q = h('input', { placeholder: 'Rechercher un texte…' }), list = h('div');
   v.appendChild(h('h2', {}, 'Textes des pages')); v.appendChild(h('p', { class: 'hint' }, 'Modifiez n\u2019importe quel texte, masquez-le, ou ajoutez un nouveau texte juste après. Le header et le footer ont leurs propres onglets.'));
   v.appendChild(h('div', { class: 'row' }, pageSelect(p, function (x) { v.dataset.p = x; show(); }), q)); v.appendChild(list);
@@ -748,6 +759,72 @@ async function vTexts(v) {
     if (!list.children.length) list.appendChild(h('p', { class: 'hint' }, 'Aucun texte trouvé.'));
   }
   q.oninput = draw; draw();
+}
+
+/* ---------------- Textes : édition directement sur le site ---------------- */
+async function vTexts(v) {
+  var p = v.dataset.p || 'index', mode = v.dataset.mode || 'site', dev = v.dataset.dev || 'desk';
+  function seg(list, cur, on) { var d = h('div', { class: 'vseg' }); list.forEach(function (x) { d.appendChild(h('button', { class: 'pill' + (x[0] === cur ? ' on' : ''), onclick: function () { on(x[0]); } }, x[1])); }); return d; }
+  var modes = seg([['site', 'Sur le site'], ['list', 'Liste des textes']], mode, function (m) { v.dataset.mode = m; show(); });
+  if (mode === 'list') { v.appendChild(h('div', { class: 'vbar' }, modes)); return vTextsList(v); }
+  v.classList.add('wide');
+  var T = (S.texts[p] = S.texts[p] || {}), HD = (S.hidden[p] = S.hidden[p] || []), BL = (S.blocks[p] = S.blocks[p] || []);
+  var NAMES = { h1: 'Titre', h2: 'Titre', h3: 'Sous-titre', h4: 'Sous-titre', p: 'Paragraphe', a: 'Lien', button: 'Bouton', li: 'Liste', label: 'Étiquette', span: 'Texte' };
+  var pg = h('select', { onchange: function () { v.dataset.p = pg.value; show(); } }); C.PAGES.forEach(function (x) { var o = h('option', { value: x }, PAGE_NAMES[x] || x); if (x === p) o.selected = true; pg.appendChild(o); });
+  var frame = h('iframe', { src: p + '.html?cmsedit=1', title: 'Aperçu du site' }), fr = h('div', { class: 'vfr' + (dev === 'mob' ? ' mob' : '') }, frame), panel = h('aside', { class: 'card vsp' });
+  function mkDevs(cur) { return seg([['desk', 'Ordinateur'], ['mob', 'Mobile']], cur, function (d) { v.dataset.dev = d; fr.classList.toggle('mob', d === 'mob'); var n = mkDevs(d); devs.replaceWith(n); devs = n; }); }
+  var devs = mkDevs(dev);
+  v.appendChild(h('div', { class: 'vbar' }, h('label', { class: 'vpg' }, h('small', {}, 'Page'), pg), modes, devs, h('button', { class: 'sm', title: 'Recharger l’aperçu', onclick: function () { frame.contentWindow.location.reload(); } }, '↻ Recharger')));
+  v.appendChild(h('p', { class: 'hint' }, 'Passez la souris sur un texte du site : ✎ pour le modifier, + pour ajouter un texte en dessous, − pour le masquer. Le menu du haut et le pied de page se modifient dans « Header » et « Footer ».'));
+  v.appendChild(h('div', { class: 'vstage' }, fr, panel));
+  var sel = null;
+  function post(m) { m.source = 'uipact-admin'; try { frame.contentWindow.postMessage(m, location.origin); } catch (e) {} }
+  function push() { post({ type: 'state', texts: T, hidden: HD, blocks: BL, theme: S.theme || null }); }
+  function pick(s) { sel = s; panel_(); post({ type: 'select', key: s && s.members && s.members[0].key, block: s && s.block }); }
+  function hide_(keys, off) { keys.forEach(function (k) { var i = HD.indexOf(k); if (off && i < 0) HD.push(k); if (!off && i > -1) HD.splice(i, 1); }); mark(); push(); }
+  function addBlock(afterKey, afterBlock) {
+    var b = { id: Date.now().toString(36), after: afterKey, tag: 'p', text: 'Nouveau texte' }, i;
+    if (afterBlock) { i = BL.indexOf(afterBlock); BL.splice(i + 1, 0, b); }
+    else { i = BL.findIndex(function (x) { return x.after === afterKey; }); if (i < 0) BL.push(b); else BL.splice(i, 0, b); }
+    mark(); push(); pick({ block: b.id }); setTimeout(function () { var t = panel.querySelector('textarea'); if (t) { t.focus(); t.select(); } }, 60);
+  }
+  function btn(label, fn, cls) { return h('button', { class: 'sm ' + (cls || ''), onclick: fn }, label); }
+  function panel_() {
+    panel.innerHTML = '';
+    if (!sel) { panel.appendChild(h('h4', {}, 'Aucun texte sélectionné')); panel.appendChild(h('p', { class: 'hint' }, 'Survolez un texte du site puis cliquez sur ✎ (ou double-cliquez dessus) pour le modifier ici.')); panel.appendChild(h('p', { class: 'hint' }, 'La page se met à jour en direct. N’oubliez pas « Enregistrer » en haut à droite.')); return; }
+    if (sel.block) {
+      var b = BL.filter(function (x) { return x.id === sel.block; })[0]; if (!b) { sel = null; return panel_(); }
+      var tg = h('select', { onchange: function () { b.tag = tg.value; mark(); push(); } }); [['p', 'Paragraphe'], ['h2', 'Titre'], ['h3', 'Sous-titre'], ['span', 'Petit texte']].forEach(function (t) { var o = h('option', { value: t[0] }, t[1]); if (t[0] === b.tag) o.selected = true; tg.appendChild(o); });
+      panel.appendChild(h('h4', {}, 'Texte ajouté')); panel.appendChild(fld('Type', tg));
+      panel.appendChild(fld('Texte', tx(b.text, function (x) { b.text = x; push(); }, '', 5)));
+      panel.appendChild(h('div', { class: 'vact' }, btn('+ Ajouter un texte dessous', function () { addBlock(b.after, b); }), btn('Supprimer', function () { BL.splice(BL.indexOf(b), 1); mark(); push(); pick(null); }, 'del')));
+      return;
+    }
+    var M = sel.members, off = HD.indexOf(M[0].key) > -1, mod = false;
+    panel.appendChild(h('h4', {}, NAMES[sel.tag] || 'Texte', h('small', {}, M.length > 1 ? ' · présent ' + M.length + ' fois sur la page' : '')));
+    M[0].nodes.forEach(function (n0, j) {
+      var cur = T[n0.k] != null ? T[n0.k] : n0.orig; if (T[n0.k] != null && T[n0.k] !== n0.orig) mod = true;
+      panel.appendChild(fld(M[0].nodes.length > 1 ? 'Texte ' + (j + 1) : 'Texte', tx(cur, function (val) { M.forEach(function (m) { var n = m.nodes[j]; if (!n) return; if (val === n.orig) delete T[n.k]; else T[n.k] = val; }); push(); }, '', n0.orig.length > 60 ? 5 : 2)));
+    });
+    if (M.length > 1) panel.appendChild(h('p', { class: 'hint' }, 'Ce texte apparaît plusieurs fois : la modification s’applique à chaque endroit.'));
+    var acts = h('div', { class: 'vact' }, btn('+ Ajouter un texte dessous', function () { addBlock(M[0].key); }),
+      btn(off ? 'Afficher à nouveau' : '− Masquer ce texte', function () { hide_(M.map(function (m) { return m.key; }), !off); panel_(); }, off ? '' : 'del'));
+    if (mod) acts.insertBefore(btn('↺ Original', function () { M.forEach(function (m) { m.nodes.forEach(function (n) { delete T[n.k]; }); }); mark(); push(); panel_(); }), acts.firstChild);
+    panel.appendChild(acts);
+    var ta = panel.querySelector('textarea'); if (ta) setTimeout(function () { ta.focus(); }, 60);
+  }
+  if (window.__vte) removeEventListener('message', window.__vte);
+  window.__vte = function (e) {
+    if (e.origin !== location.origin || e.source !== frame.contentWindow || !e.data || e.data.source !== 'uipact-preview') return;
+    var d = e.data;
+    if (d.type === 'ready') { push(); if (sel) post({ type: 'select', key: sel.members && sel.members[0].key, block: sel.block }); }
+    else if (d.type === 'edit') pick(d.block ? { block: d.block } : { tag: d.tag, members: d.members });
+    else if (d.type === 'add') { if (d.block) { var b = BL.filter(function (x) { return x.id === d.block; })[0]; if (b) addBlock(b.after, b); } else addBlock(d.after); }
+    else if (d.type === 'remove') { if (d.block) { BL = S.blocks[p] = BL.filter(function (x) { return x.id !== d.block; }); mark(); push(); if (sel && sel.block === d.block) pick(null); } else { hide_(d.keys, true); if (sel && sel.members) panel_(); } }
+    else if (d.type === 'restore') { hide_(d.keys, false); if (sel && sel.members) panel_(); }
+  };
+  addEventListener('message', window.__vte);
+  frame.onload = push; panel_();
 }
 
 /* ---------------- Header / Footer ---------------- */
