@@ -139,6 +139,9 @@ main.wide{max-width:none;padding:6px 22px 60px}
 .vblk{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}.vblk h4{margin:0 0 8px}.vsp .pic-i{aspect-ratio:16/9;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:rgba(128,128,128,.15)}.vsp .pic-i img{width:100%;height:100%;object-fit:contain;display:block}.vsp .pic-b{margin:8px 0 10px;display:flex;flex-direction:column;gap:6px}.vsp .pic-b small{color:var(--mut)}
 .vci{display:grid;grid-template-columns:96px 1fr;gap:10px;padding:10px;margin-bottom:8px;border:1px solid var(--line);border-radius:12px}.vci.drag{opacity:.4}.vci-i{position:relative}.vci-i img{width:96px;height:72px;object-fit:cover;border-radius:8px;display:block}.vci-i .badge{position:absolute;top:4px;left:4px;background:var(--gold);color:var(--navy);border-radius:99px;font-size:.72rem;font-weight:700;width:20px;height:20px;display:grid;place-items:center}.vci-f{display:flex;flex-direction:column;gap:6px}.vci-f input{padding:6px 10px}
 .vpr{display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;padding:8px;margin-bottom:6px;border:1px solid var(--line);border-radius:12px}.vpr-i{width:64px;height:48px;border-radius:8px;background:rgba(128,128,128,.2) center/cover;cursor:pointer}.vpr-b{display:flex;flex-direction:column;gap:2px;min-width:0}.vpr-b b{cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vpr-b small{color:var(--mut)}
+
+.vfr.min{overflow:auto;justify-content:flex-start}.vfr.min iframe{min-width:1100px;flex:0 0 1100px;width:1100px}
+.vfe{padding:6px;margin-bottom:6px;border-radius:10px}.vfe.flash{box-shadow:0 0 0 2px var(--gold);background:rgba(201,162,75,.12)}.vblk.hl{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,162,75,.35)}
 @media(max-width:1100px){.vstage{grid-template-columns:1fr}.vsp{position:static;max-height:none}}
 </style>
 </head>
@@ -1027,6 +1030,7 @@ async function vProjects(v) {
 
 /* ---------------- Animations de l'accueil ---------------- */
 var ANIM = {
+  hero: { pre: 'Un', words: 'Graphiste\nWeb designer\nCréatif\nStratège', post: "passionné par l'art et la technique.", ghost: { label: 'Me contacter', href: 'contact.html' } },
   showcase: { eyebrow: 'Ma méthode', phone: 'img/sport.png', cta: { label: 'Démarrer un projet', href: 'contact.html' }, steps: [
     { title: 'Stratégie', text: 'Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.', image: 'img/tout.png' },
     { title: 'Créativité', text: 'Concevoir une identité et des interfaces qui vous démarquent et racontent votre histoire.', image: 'img/chene.png' },
@@ -1124,7 +1128,7 @@ function pagesList() { return C.PAGES.map(function (x) { return [x, PAGE_NAMES[x
 function edState() { return { theme: S.theme || {}, header: S.header, footer: S.footer, sections: S.sections, carousels: S.carousels, projects: S.projects, images: S.images, texts: S.texts, hidden: S.hidden, blocks: S.blocks, langNames: S.langNames }; }
 function liveShell(v, o) {
   v.classList.add('wide');
-  var dev = v.dataset.dev || 'desk', tm, frame = h('iframe', { title: 'Aperçu du site' }), fr = h('div', { class: 'vfr' + (dev === 'mob' ? ' mob' : '') }, frame), panel = h('aside', { class: 'card vsp' }), tb = h('div', { class: 'vbar' });
+  var dev = v.dataset.dev || 'desk', tm, frame = h('iframe', { title: 'Aperçu du site' }), fr = h('div', { class: 'vfr' + (dev === 'mob' ? ' mob' : '') + (o.min ? ' min' : '') }, frame), panel = h('aside', { class: 'card vsp' }), tb = h('div', { class: 'vbar' });
   if (o.list) { var sl = h('select', { onchange: function () { o.setCur(sl.value); } }); o.list.forEach(function (x) { var op = h('option', { value: x[0] }, x[1]); if (x[0] === o.cur) op.selected = true; sl.appendChild(op); }); tb.appendChild(h('label', { class: 'vpg' }, h('small', {}, o.label || 'Page'), sl)); }
   (o.extra || []).forEach(function (x) { tb.appendChild(x); });
   function mkDevs(cur) { return vseg([['desk', 'Ordinateur'], ['mob', 'Mobile']], cur, function (d) { v.dataset.dev = d; fr.classList.toggle('mob', d === 'mob'); var n = mkDevs(d); devs.replaceWith(n); devs = n; }); }
@@ -1167,14 +1171,20 @@ async function vTexts(v) {
   var T = (S.texts[p] = S.texts[p] || {}), HD = (S.hidden[p] = S.hidden[p] || []), BL = (S.blocks[p] = S.blocks[p] || []), sel = null;
   var NAMES = { h1: 'Titre', h2: 'Titre', h3: 'Sous-titre', h4: 'Sous-titre', p: 'Paragraphe', a: 'Lien', button: 'Bouton', li: 'Liste', label: 'Étiquette', span: 'Texte' };
   var A = liveShell(v, { mode: 'texts', list: pagesList(), cur: p, setCur: function (x) { v.dataset.p = x; show(); }, extra: [modes], page: function () { return p; }, onNav: goPage(v),
-    hint: 'Passez la souris sur un texte du site : ✎ pour le modifier, + pour ajouter un texte en dessous, − pour le masquer. Vous pouvez aussi naviguer avec le menu du site.',
+    hint: 'Passez la souris sur un texte du site : ✎ pour le modifier, + pour ajouter un texte en dessous, − pour le masquer. Les animations et l’accroche se modifient de la même façon. Vous pouvez naviguer avec le menu du site.',
     onReady: function () { if (sel) A.post({ type: 'select', key: sel.members && sel.members[0].key, block: sel.block }); },
     onMsg: function (d) {
       if (d.type === 'edit') pick(d.block ? { block: d.block } : { tag: d.tag, members: d.members });
       else if (d.type === 'add') { if (d.block) { var b = BL.filter(function (x) { return x.id === d.block; })[0]; if (b) addBlock(b.after, b); } else addBlock(d.after); }
       else if (d.type === 'remove') { if (d.block) { BL = S.blocks[p] = BL.filter(function (x) { return x.id !== d.block; }); mark(); A.push(); if (sel && sel.block === d.block) pick(null); } else { hide_(d.keys, true); if (sel && sel.members) panel_(); } }
       else if (d.type === 'restore') { hide_(d.keys, false); if (sel && sel.members) panel_(); }
+      else if (d.type === 'sec') secPanel(d.name, d.step);
     } }), panel = A.panel;
+  var STITLE = { hero: 'Accroche et bouton de l’accueil', statement: 'Phrase animée', showcase: 'Animation « Ma méthode »', method: 'Animation « Du wireframe au site »' };
+  function secPanel(name, step) {
+    sel = null; panel.innerHTML = ''; panel.appendChild(h('div', { class: 'row', style: 'margin-bottom:10px' }, h('h4', { style: 'flex:1;margin:0' }, STITLE[name]), pbtn('✕ Fermer', function () { panel_(); })));
+    animForm(panel, name, function () { A.reload(); }, step);
+  }
   function pick(s) { sel = s; panel_(); A.post({ type: 'select', key: s && s.members && s.members[0].key, block: s && s.block }); }
   function hide_(keys, off) { keys.forEach(function (k) { var i = HD.indexOf(k); if (off && i < 0) HD.push(k); if (!off && i > -1) HD.splice(i, 1); }); mark(); A.push(); }
   function addBlock(afterKey, afterBlock) {
@@ -1246,31 +1256,42 @@ async function vColors(v) {
 }
 
 /* ---------- Animations de l'accueil ---------- */
-async function vAnim(v) {
-  var SH = secW('showcase'), ST = secW('statement'), ME = secW('method'), sub = v.dataset.sub || 'm1';
-  var SUBS = [['m1', '1 · Ma méthode', 'showcase', '#sc3'], ['m2', '2 · Phrase animée', 'statement', '.st-sec'], ['m3', '3 · Du wireframe au site', 'method', '#methode']], cur = SUBS.filter(function (s) { return s[0] === sub; })[0];
-  var A = liveShell(v, { mode: 'anim', page: function () { return 'index'; }, scroll: cur[3], pw: '430px', onNav: function () { toast('Les animations sont sur la page d’accueil.', true); },
-    extra: [vseg(SUBS.map(function (s) { return [s[0], s[1]]; }), sub, function (x) { v.dataset.sub = x; show(); })],
-    hint: 'L’animation s’affiche à gauche : modifiez ses textes et ses photos à droite, elle se recharge toute seule. Faites défiler le site pour la voir bouger.' }), P = A.panel, up = function () { A.reload(cur[3]); };
+function animForm(P, key, up, hl) {
   function pic(label, get, set, def) {
     var im = h('img', { src: get() || def, alt: '' });
     function put(u) { set(u); im.src = u; mark(); up(); }
     return h('div', { class: 'pic' }, h('div', { class: 'pic-i' }, im), h('div', { class: 'pic-b' }, h('small', {}, label), h('div', { class: 'row' }, h('button', { class: 'sm gold', onclick: function () { pickImage(put); } }, 'Changer la photo'), h('button', { class: 'sm', title: 'Remettre l’image d’origine', onclick: function () { put(def); } }, '↺'))));
   }
   function on(f) { return function (x) { f(x); up(); }; }
-  function block(title, pc, fields) { var c = h('div', { class: 'vblk' }); c.appendChild(h('h4', {}, title)); if (pc) c.appendChild(pc); fields.forEach(function (f) { c.appendChild(f); }); P.appendChild(c); }
-  if (sub === 'm1') {
-    SH.steps.forEach(function (z, i) { block('Étape ' + (i + 1), pic('Écran de l’ordinateur', function () { return z.image; }, function (u) { z.image = u; }, ANIM.showcase.steps[i].image), [fld('Titre', tx(z.title, on(function (x) { z.title = x; }))), fld('Texte', tx(z.text, on(function (x) { z.text = x; }), '', 3))]); });
+  function block(title, pc, fields, flag) { var c = h('div', { class: 'vblk' + (flag ? ' hl' : '') }); c.appendChild(h('h4', {}, title)); if (pc) c.appendChild(pc); fields.forEach(function (f) { c.appendChild(f); }); P.appendChild(c); if (flag) setTimeout(function () { c.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, 80); }
+  if (key === 'hero') {
+    var HE = secW('hero');
+    block('Phrase qui change', null, [fld('Début de la phrase', tx(HE.pre, on(function (x) { HE.pre = x; }))), fld('Mots qui défilent (un par ligne)', tx(HE.words, on(function (x) { HE.words = x; }), '', 5)), fld('Fin de la phrase', tx(HE.post, on(function (x) { HE.post = x; }), '', 2))]);
+    block('Bouton « Me contacter »', null, [fld('Texte du bouton', tx(HE.ghost.label, on(function (x) { HE.ghost.label = x; }))), fld('Lien du bouton', tx(HE.ghost.href, on(function (x) { HE.ghost.href = x; })))]);
+  } else if (key === 'showcase') {
+    var SH = secW('showcase');
+    SH.steps.forEach(function (z, i) { block('Étape ' + (i + 1) + (i === hl ? ' · affichée' : ''), pic('Écran de l’ordinateur', function () { return z.image; }, function (u) { z.image = u; }, ANIM.showcase.steps[i].image), [fld('Titre', tx(z.title, on(function (x) { z.title = x; }))), fld('Texte', tx(z.text, on(function (x) { z.text = x; }), '', 3))], i === hl); });
     block('Téléphone et bouton', pic('Écran du téléphone', function () { return SH.phone; }, function (u) { SH.phone = u; }, ANIM.showcase.phone), [fld('Petit titre', tx(SH.eyebrow, on(function (x) { SH.eyebrow = x; }))), fld('Texte du bouton', tx(SH.cta.label, on(function (x) { SH.cta.label = x; }))), fld('Lien du bouton', tx(SH.cta.href, on(function (x) { SH.cta.href = x; })))]);
-  } else if (sub === 'm2') {
+  } else if (key === 'statement') {
+    var ST = secW('statement');
     block('Phrase d’accroche', null, [fld('Phrase (elle apparaît mot par mot)', tx(ST.text, on(function (x) { ST.text = x; }), '', 5))]);
   } else {
+    var ME = secW('method');
     block('Titre', null, [fld('Petit titre', tx(ME.eyebrow, on(function (x) { ME.eyebrow = x; }))), fld('Début du titre', tx(ME.title, on(function (x) { ME.title = x; }))), fld('Fin du titre (en italique)', tx(ME.titleEm, on(function (x) { ME.titleEm = x; })))]);
-    ME.steps.forEach(function (z, i) { block('Étape ' + (i + 1), null, [fld('Titre', tx(z.title, on(function (x) { z.title = x; }))), fld('Texte', tx(z.text, on(function (x) { z.text = x; }), '', 3))]); });
+    ME.steps.forEach(function (z, i) { block('Étape ' + (i + 1) + (i === hl ? ' · affichée' : ''), null, [fld('Titre', tx(z.title, on(function (x) { z.title = x; }))), fld('Texte', tx(z.text, on(function (x) { z.text = x; }), '', 3))], i === hl); });
     block('Site final', pic('Site affiché à la dernière étape', function () { return ME.image; }, function (u) { ME.image = u; }, ANIM.method.image), []);
     var dt = h('details', { class: 'tsec' }, h('summary', {}, 'Étiquettes de l’animation', h('span', { class: 'cnt2' }, 'rarement utile')), h('div', { class: 'tbody', style: 'padding:14px 16px' }));
     [['typo', 'Étiquette « Typographie »'], ['button', 'Étiquette « Bouton »'], ['resp', 'Étiquette « Responsive »'], ['respSmall', 'Sous-texte « Responsive »']].forEach(function (f) { dt.lastChild.appendChild(fld(f[1], tx(ME.chips[f[0]], on(function (x) { ME.chips[f[0]] = x; })))); }); P.appendChild(dt);
   }
+}
+var ANIM_SCROLL = { hero: '#hero', showcase: '#sc3', statement: '.st-sec', method: '#methode' };
+async function vAnim(v) {
+  var sub = v.dataset.sub || 'm0';
+  var SUBS = [['m0', '0 · Accroche', 'hero'], ['m1', '1 · Ma méthode', 'showcase'], ['m2', '2 · Phrase animée', 'statement'], ['m3', '3 · Du wireframe au site', 'method']], cur = SUBS.filter(function (s) { return s[0] === sub; })[0] || SUBS[0], sel = ANIM_SCROLL[cur[2]];
+  var A = liveShell(v, { mode: 'anim', page: function () { return 'index'; }, scroll: sel, pw: '430px', onNav: function () { toast('Les animations sont sur la page d’accueil.', true); },
+    extra: [vseg(SUBS.map(function (s) { return [s[0], s[1]]; }), cur[0], function (x) { v.dataset.sub = x; show(); })],
+    hint: 'L’animation s’affiche à gauche : modifiez ses textes et ses photos à droite, elle se recharge toute seule. Faites défiler le site pour la voir bouger.' }), P = A.panel;
+  animForm(P, cur[2], function () { A.reload(sel); });
   P.appendChild(h('div', { class: 'vact' }, pbtn('↺ Rétablir cette animation d’origine', function () { if (confirm('Remettre cette animation comme à l’origine ?')) { delete S.sections[cur[2]]; mark(); show(); } })));
 }
 
@@ -1338,6 +1359,68 @@ async function vProjects(v) {
     document.body.appendChild(box);
   }
   list();
+}
+
+/* ---------- Header et Footer : on survole le menu / le bas de page du site ---------- */
+function focusRow(P, key) {
+  var r = P.querySelector('[data-k="' + key + '"]'); if (!r) return;
+  r.scrollIntoView({ block: 'center', behavior: 'smooth' }); r.classList.add('flash'); setTimeout(function () { r.classList.remove('flash'); }, 1600);
+  var i = r.querySelector('input,textarea'); if (i) setTimeout(function () { i.focus(); }, 120);
+}
+function frow(k, nodes) { var r = h('div', { class: 'vfe', 'data-k': k }); nodes.forEach(function (n) { if (n) r.appendChild(n); }); return r; }
+function lnk(l, up, extra) { return h('div', { class: 'g2' }, tx(l.label, function (x) { l.label = x; up(); }, 'Texte'), tx(l.href, function (x) { l.href = x; up(); }, 'Lien')); }
+async function vHeader(v) {
+  var p = v.dataset.p || 'index', H = S.header || (S.header = clone(C.DEF.header)); H.items = H.items || clone(C.DEF.header.items); H.dropdown = H.dropdown || clone(C.DEF.header.dropdown); H.cta = H.cta || clone(C.DEF.header.cta);
+  var A = liveShell(v, { mode: 'header', min: true, list: pagesList(), cur: p, setCur: function (x) { v.dataset.p = x; show(); }, page: function () { return p; }, onNav: goPage(v), pw: '390px',
+    hint: 'Survolez un lien du menu du site : ✎ pour le modifier, + pour ajouter un lien dans le menu déroulant, − pour le retirer. Le menu s’applique à toutes les pages.',
+    onMsg: function (d) {
+      if (d.type !== 'fe') return; var m = /^([id])(\d+)$/.exec(d.key || ''), n = m ? +m[2] : -1;
+      if (d.action === 'edit') focusRow(P, d.key);
+      else if (d.action === 'add' && m && m[1] === 'd') { H.dropdown.splice(n + 1, 0, { label: 'Nouveau lien', href: 'index.html' }); mark(); draw(); up(); focusRow(P, 'd' + (n + 1)); }
+      else if (d.action === 'del' && m && m[1] === 'd') { H.dropdown.splice(n, 1); mark(); draw(); up(); }
+    } }), P = A.panel;
+  function up() { A.reload(); }
+  function draw() {
+    P.innerHTML = ''; P.appendChild(h('h4', {}, 'Menu du haut'));
+    P.appendChild(frow('brand', [fld('Nom à côté du logo', tx(H.brand || 'UIPACT', function (x) { H.brand = x; up(); }))]));
+    P.appendChild(h('div', { class: 'vgt' }, 'Liens principaux (dans l’ordre)')); H.items.forEach(function (l, i) { P.appendChild(frow('i' + i, [lnk(l, up)])); });
+    P.appendChild(h('div', { class: 'vgt' }, 'Menu déroulant « Mes savoir-faire »'));
+    H.dropdown.forEach(function (l, i) { P.appendChild(frow('d' + i, [lnk(l, up), h('div', { class: 'row' }, pbtn('↑', function () { if (i > 0) { H.dropdown.splice(i - 1, 0, H.dropdown.splice(i, 1)[0]); mark(); draw(); up(); } }), pbtn('↓', function () { if (i < H.dropdown.length - 1) { H.dropdown.splice(i + 1, 0, H.dropdown.splice(i, 1)[0]); mark(); draw(); up(); } }), pbtn('Retirer', function () { H.dropdown.splice(i, 1); mark(); draw(); up(); }, 'del'))])); });
+    P.appendChild(h('div', { class: 'vact' }, pbtn('+ Ajouter un lien', function () { H.dropdown.push({ label: 'Nouveau lien', href: 'index.html' }); mark(); draw(); up(); focusRow(P, 'd' + (H.dropdown.length - 1)); })));
+    P.appendChild(h('div', { class: 'vgt' }, 'Bouton principal')); P.appendChild(frow('cta', [lnk(H.cta, up)]));
+  }
+  draw();
+}
+async function vFooter(v) {
+  var p = v.dataset.p || 'index', F = S.footer || (S.footer = clone(C.DEF.footer)); F.columns = F.columns || clone(C.DEF.footer.columns);
+  function up() { A.reload(); }
+  var A = liveShell(v, { mode: 'footer', scroll: '.kf', list: pagesList(), cur: p, setCur: function (x) { v.dataset.p = x; show(); }, page: function () { return p; }, onNav: goPage(v), pw: '390px',
+    hint: 'Survolez un texte ou un lien du bas de page : ✎ pour le modifier, + pour ajouter un lien, − pour le retirer. Le bas de page s’applique à toutes les pages.',
+    onMsg: function (d) {
+      if (d.type !== 'fe') return; var ml = /^c(\d+)l(\d+)$/.exec(d.key || ''), mc = /^c(\d+)$/.exec(d.key || '');
+      if (d.action === 'edit') focusRow(P, d.key);
+      else if (d.action === 'add' && ml) { var c = F.columns[+ml[1]]; c.links.splice(+ml[2] + 1, 0, { label: 'Nouveau lien', href: 'index.html' }); mark(); draw(); up(); focusRow(P, 'c' + ml[1] + 'l' + (+ml[2] + 1)); }
+      else if (d.action === 'add' && mc) { var c2 = F.columns[+mc[1]]; c2.links = c2.links || []; c2.links.push({ label: 'Nouveau lien', href: 'index.html' }); mark(); draw(); up(); focusRow(P, 'c' + mc[1] + 'l' + (c2.links.length - 1)); }
+      else if (d.action === 'del' && ml) { F.columns[+ml[1]].links.splice(+ml[2], 1); mark(); draw(); up(); }
+      else if (d.action === 'del' && mc) { if (confirm('Supprimer cette colonne ?')) { F.columns.splice(+mc[1], 1); mark(); draw(); up(); } }
+    } }), P = A.panel;
+  function one(k, label, key) { return frow(k, [fld(label, tx(F[key], function (x) { F[key] = x; up(); }))]); }
+  function draw() {
+    P.innerHTML = ''; P.appendChild(h('h4', {}, 'Bas de page'));
+    P.appendChild(one('brand', 'Nom', 'brand')); P.appendChild(frow('tag', [fld('Accroche', tx(F.tag1, function (x) { F.tag1 = x; up(); })), fld('Sous-accroche', tx(F.tag2, function (x) { F.tag2 = x; up(); }))]));
+    P.appendChild(frow('follow', [fld('Texte « Suivez-nous »', tx(F.follow, function (x) { F.follow = x; up(); })), fld('Lien Instagram', tx(F.instagram, function (x) { F.instagram = x; up(); }))]));
+    P.appendChild(frow('lucky', [fld('Badge du logo (« Un projet ? »)', tx(F.lucky, function (x) { F.lucky = x; up(); })), fld('Lien du badge', tx(F.luckyHref, function (x) { F.luckyHref = x; up(); }))]));
+    P.appendChild(h('div', { class: 'vgt' }, 'Colonnes de liens'));
+    F.columns.forEach(function (c, ci) {
+      c.links = c.links || [];
+      P.appendChild(frow('c' + ci, [h('div', { class: 'row' }, h('div', { style: 'flex:1' }, tx(c.title, function (x) { c.title = x; up(); }, 'Titre de colonne')), pbtn('Supprimer', function () { if (confirm('Supprimer cette colonne ?')) { F.columns.splice(ci, 1); mark(); draw(); up(); } }, 'del'))]));
+      c.links.forEach(function (l, li) { P.appendChild(frow('c' + ci + 'l' + li, [lnk(l, up), h('div', { class: 'row' }, pbtn('↑', function () { if (li > 0) { c.links.splice(li - 1, 0, c.links.splice(li, 1)[0]); mark(); draw(); up(); } }), pbtn('↓', function () { if (li < c.links.length - 1) { c.links.splice(li + 1, 0, c.links.splice(li, 1)[0]); mark(); draw(); up(); } }), pbtn('Retirer', function () { c.links.splice(li, 1); mark(); draw(); up(); }, 'del'))])); });
+      P.appendChild(h('div', { class: 'vact' }, pbtn('+ Ajouter un lien', function () { c.links.push({ label: 'Nouveau lien', href: 'index.html' }); mark(); draw(); up(); focusRow(P, 'c' + ci + 'l' + (c.links.length - 1)); })));
+    });
+    P.appendChild(h('div', { class: 'vact' }, pbtn('+ Ajouter une colonne', function () { F.columns.push({ title: 'Nouvelle colonne', links: [] }); mark(); draw(); up(); }, 'gold')));
+    P.appendChild(h('div', { class: 'vgt' }, 'Bas du bas de page')); P.appendChild(one('copy', 'Copyright', 'copyright')); P.appendChild(one('sig', 'Signature', 'signature'));
+  }
+  draw();
 }
 
 if (tok) start();

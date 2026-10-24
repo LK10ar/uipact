@@ -971,3 +971,32 @@ html[data-theme="dark"] header select option,html[data-theme="dark"] select[id*=
   background:repeating-linear-gradient(180deg,transparent 0 16%,#0f1320 16% 20%),repeating-linear-gradient(90deg,transparent 0 6.5%,#0f1320 6.5% 7.14%),linear-gradient(180deg,#2a3150,#1d2340); }
 .lap-deck .tp{ position:absolute; left:32%; right:32%; bottom:7%; height:25%; border-radius:9px; border:1px solid rgba(70,78,110,.4);
   background:linear-gradient(145deg,rgba(255,255,255,.45),rgba(120,128,160,.08)); box-shadow:inset 0 1px 0 rgba(255,255,255,.6); }
+
+/* ===== Wireframe réaliste (animation « Du wireframe au site ») ===== */
+.wf2{position:absolute;inset:0;display:grid;grid-template-rows:12% 25% 29% 20% 14%;background:#f3f3f1;color:#5b5b5b;font:600 clamp(6px,.85vw,10px)/1 Inter,system-ui,sans-serif;letter-spacing:.05em;overflow:hidden}
+.wf2>div{display:flex;position:relative;border-bottom:1.5px solid #8d8d8d;min-height:0}
+.wf2 p{height:.45em;margin:0;border-radius:2px;background:#bdbdbd;width:60%}.wf2 p.s{width:38%}
+.wf2 u{text-decoration:none;border:1.5px solid #6e6e6e;border-radius:.5em;padding:.7em 1.3em;background:#fff;white-space:nowrap;color:#555}
+.wf2 h4,.wf2 h5{margin:0;color:#555;font-weight:700}
+.w-nav{align-items:center;gap:2.2em;padding:0 3%}.w-nav b{font-size:1.6em;margin-right:auto;letter-spacing:.08em}.w-nav u{margin-left:.6em}
+.w-hero{flex-direction:column;align-items:center;justify-content:center;gap:.9em}.w-hero h4{font-size:2.8em;letter-spacing:.03em}.w-hero p{width:42%}.w-hero p.s{width:28%}
+.w-srv{flex-direction:column;align-items:center;justify-content:center;gap:1em}.w-srv h5,.w-ab h5,.w-ct h5{font-size:1.5em}
+.w-cards{display:flex;gap:4%;width:84%;justify-content:center}.w-cards>div{flex:1;display:flex;flex-direction:column;gap:.7em}.w-cards p{width:100%}
+.wf2 i.x{display:block;height:5.4em;border:1.5px solid #8d8d8d;background:linear-gradient(to top right,transparent calc(50% - .75px),#8d8d8d,transparent calc(50% + .75px)),linear-gradient(to bottom right,transparent calc(50% - .75px),#8d8d8d,transparent calc(50% + .75px)),#eee}
+.w-row{padding:0}.w-ab{flex:1;padding:3% 5%;display:flex;flex-direction:column;gap:.8em;justify-content:center;border-right:1.5px solid #8d8d8d}.w-ab p{width:70%}
+.w-map{flex:1;display:grid;place-items:center;background:repeating-linear-gradient(30deg,transparent 0 14px,#d6d6d6 14px 15px),repeating-linear-gradient(-35deg,transparent 0 18px,#d6d6d6 18px 19px),#ececec}
+.w-map em{width:1.3em;height:1.3em;border:2px solid #666;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#fff}
+.w-ct{flex-direction:column;align-items:center;justify-content:center;gap:.8em;border-bottom:0!important}.w-ct div{display:flex;gap:.8em;align-items:center}.w-ct s{display:block;width:13em;height:2.1em;border:1.5px solid #6e6e6e;border-radius:.4em;background:#fff}
+@keyframes wfin{from{opacity:0;transform:translateY(10px)}}
+.p3-lay.on .wf2>div{animation:wfin .6s both}.p3-lay.on .wf2>div:nth-child(2){animation-delay:.08s}.p3-lay.on .wf2>div:nth-child(3){animation-delay:.16s}.p3-lay.on .wf2>div:nth-child(4){animation-delay:.24s}.p3-lay.on .wf2>div:nth-child(5){animation-delay:.32s}
+/* étape 2 : le même gabarit, habillé aux couleurs de la marque */
+.wf2.d{background:linear-gradient(180deg,var(--c-navy),#0d1634);color:#F3EFE4}
+.wf2.d>div{border-color:rgba(var(--c-gold2-rgb),.25)}
+.wf2.d p{background:rgba(243,239,228,.38)}.wf2.d p.s{background:rgba(243,239,228,.2)}
+.wf2.d u{border:0;background:linear-gradient(135deg,var(--c-gold2),var(--c-gold));color:var(--c-navy)}
+.wf2.d .w-nav{background:linear-gradient(90deg,var(--c-navy2),var(--c-navy))}.wf2.d .w-nav b{color:var(--c-gold2);font-family:'Instrument Serif',serif;font-weight:400;font-size:2em}
+.wf2.d .w-hero{background:radial-gradient(circle at 25% 30%,rgba(var(--c-gold2-rgb),.35),transparent 55%),linear-gradient(135deg,#243a7a,var(--c-navy))}
+.wf2.d h4,.wf2.d h5{color:var(--c-gold2);font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;letter-spacing:0}.wf2.d h4{font-size:3.4em}.wf2.d h5{font-size:1.9em}
+.wf2.d i.x{border:0;background:linear-gradient(135deg,#243a7a,#16204A);box-shadow:inset 0 0 0 1px rgba(var(--c-gold2-rgb),.3)}
+.wf2.d .w-ab{border-color:rgba(var(--c-gold2-rgb),.25)}.wf2.d .w-map{background:linear-gradient(135deg,#1c2c5c,#101b3d)}.wf2.d .w-map em{border-color:var(--c-gold2);background:var(--c-gold)}
+.wf2.d .w-ct s{background:rgba(255,255,255,.08);border-color:rgba(var(--c-gold2-rgb),.5)}

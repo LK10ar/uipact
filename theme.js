@@ -134,9 +134,10 @@
             var st = hc.querySelector('.hero-subtitle');
             if (st) {
                 var rl = document.createElement('p'); rl.className = 'role-line';
-                rl.innerHTML = 'Un <b id="rl">Graphiste</b> passionné par l\'art et la technique.'; st.after(rl);
-                var R = ['Graphiste', 'Web designer', 'Créatif', 'Stratège'], ri = 0;
-                setInterval(function () { ri = (ri + 1) % 4; var o = document.getElementById('rl'), n = o.cloneNode(); n.textContent = R[ri]; o.replaceWith(n); }, 2000);
+                var HX = (window.__cmsSec && window.__cmsSec.hero) || {}, EH = (window.CMS && window.CMS.esc) || function (v) { return v; };
+                var R = String(HX.words || '').split('\n').map(function (w) { return w.trim(); }).filter(Boolean); if (!R.length) R = ['Graphiste', 'Web designer', 'Créatif', 'Stratège'];
+                var ri = 0; rl.innerHTML = EH(HX.pre || 'Un') + ' <b id="rl">' + EH(R[0]) + '</b> ' + EH(HX.post || 'passionné par l\'art et la technique.'); st.after(rl);
+                setInterval(function () { ri = (ri + 1) % R.length; var o = document.getElementById('rl'), n = o.cloneNode(); n.textContent = R[ri]; o.replaceWith(n); }, 2000);
             }
             Array.prototype.forEach.call(hc.children, function (c, i) {
                 if (c !== ht) { c.classList.add('bi'); c.style.setProperty('--i', i + 5); }
@@ -556,7 +557,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 [].forEach.call(rg.children, function (c) { c.style.marginTop = (-scrollY * c.dataset.sp) + 'px'; });
             }, { passive: true });
             var b = hc.querySelector('.cta-button');
-            if (b && !hc.querySelector('.cta-ghost')) b.insertAdjacentElement('afterend', h('<a class="cta-ghost bi" href="contact.html" style="--i:9">Me contacter</a>'));
+            if (b && !hc.querySelector('.cta-ghost')) b.insertAdjacentElement('afterend', h((function () { var g = ((window.__cmsSec || {}).hero || {}).ghost || {}, e = (window.CMS && window.CMS.esc) || function (v) { return v; }; return '<a class="cta-ghost bi" href="' + e(g.href || 'contact.html') + '" style="--i:9">' + e(g.label || 'Me contacter') + '</a>'; })()));
         }
         if (fine && !reduce) {
             // Halo qui suit le curseur + anneau + boutons magnétiques
@@ -649,13 +650,18 @@ document.addEventListener('DOMContentLoaded', function () {
     (document.querySelector('.ticker-wrap') || hero).after(st);
     var ws = [].slice.call(tp.children);
     // 2. Du wireframe au site : maquette 3D pilotée par le scroll
+    var WFH = '<div class="wf2"><div class="w-nav"><b>LOGO</b><span>ACCUEIL</span><span>SERVICES</span><span>À PROPOS</span><u>CONTACT</u></div>' +
+        '<div class="w-hero"><h4>TITRE PRINCIPAL</h4><p></p><p class="s"></p><u>COMMENCER</u></div>' +
+        '<div class="w-srv"><h5>NOS SERVICES</h5><div class="w-cards">' + new Array(4).join('<div><i class="x"></i><p></p><p class="s"></p></div>') + '</div></div>' +
+        '<div class="w-row"><div class="w-ab"><h5>À PROPOS</h5><p></p><p class="s"></p><p></p></div><div class="w-map"><em></em></div></div>' +
+        '<div class="w-ct"><h5>CONTACT</h5><div><s></s><u>ENVOYER</u></div></div></div>';
     var M = XS.method || {}, MS = M.steps || [], CH = M.chips || {}, E2 = (window.CMS && window.CMS.esc) || function (v) { return v; };
     var MD = [['01 · Stratégie', 'Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.'], ['02 · Design', 'Wireframes puis maquettes : identité, typographies, couleurs et interface pensées pour votre image.'], ['03 · Développement', 'Un site à votre image, responsive et facile à prendre en main.']];
     var li = MD.map(function (d, i) { var z = MS[i] || {}; return '<li' + (i === 0 ? ' class="on"' : '') + '><b>' + E2(tt2('m_' + i + '_t', z.title || d[0])) + '</b><span>' + E2(tt2('m_' + i + '_p', z.text || d[1])) + '</span></li>'; }).join('');
     var p3 = h('<section class="p3" id="methode"><div class="p3-in"><div class="p3-txt"><div class="eb">' + E2(tt2('m_eb', M.eyebrow || 'Méthode')) + '</div><h2 class="p3-h">' + E2(tt2('m_title', M.title || 'Du wireframe au site')) + ' <i>' + E2(tt2('m_em', M.titleEm || 'qui convertit')) + '</i></h2><ul class="p3-steps">' + li + '</ul></div>' +
         '<div class="p3-stage"><div class="p3-rig" data-s="0"><div class="p3-win">' +
-        '<div class="p3-lay on"><div class="wf"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>' +
-        '<div class="p3-lay"><div class="wf d"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>' +
+        '<div class="p3-lay on">' + WFH + '</div>' +
+        '<div class="p3-lay">' + WFH.replace('class="wf2"', 'class="wf2 d"') + '</div>' +
         '<div class="p3-lay"><img class="p3-live" src="' + E2(M.image || 'img/chene.png') + '" alt=""></div></div>' +
         '<div class="p3-chip c1">Aa<small>' + E2(tt2('m_c1', CH.typo || 'Typographie')) + '</small></div><div class="p3-chip c2"><u></u><u></u><u></u></div>' +
         '<div class="p3-chip c3">' + E2(tt2('m_c3', CH.button || 'Bouton')) + '</div><div class="p3-chip c4">' + E2(tt2('m_c4', CH.resp || 'Responsive')) + '<small>' + E2(tt2('m_c4s', CH.respSmall || 'mobile · tablette · bureau')) + '</small></div></div></div></div></section>');

@@ -137,11 +137,11 @@
   }
   window.__cmsFooter = function (igh) {
     var F = merge(DEF.footer, D.footer || {}), cols = (D.footer && D.footer.columns) || DEF.footer.columns;
-    var h = '<div class="kf"><div class="kf-l"><div class="kf-logo"><img src="logo.png" alt="' + esc(F.brand) + '"><b>' + esc(F.brand) + '</b></div><p class="kf-tag">' + esc(tr('ftr_tag1', F.tag1)) + '<br><span>' + esc(tr('ftr_tag2', F.tag2)) +
-      '</span></p><div class="kf-soc"><a class="kf-follow" href="' + esc(F.instagram) + '" target="_blank" rel="noopener noreferrer">' + esc(tr('ftr_follow', F.follow)) + '</a><div class="social-links">' + (igh || '') + '</div></div></div>' +
-      '<div class="kf-r"><a class="kf-lucky" href="' + esc(F.luckyHref) + '"><span><img src="logo.png" alt="' + esc(F.brand) + '"></span><em>' + esc(tr('ftr_lucky', F.lucky)) + '</em></a><div class="kf-cols">';
-    cols.forEach(function (c, i) { h += '<div><h4>' + esc(tr('ftr_c' + i + '_t', c.title)) + '</h4>'; (c.links || []).forEach(function (l, j) { h += '<a href="' + esc(l.href) + '">' + esc(tr('ftr_c' + i + '_l' + j, l.label)) + '</a>'; }); h += '</div>'; });
-    return h + '</div><div class="kf-bot"><p>' + esc(tr('ftr_copy', F.copyright)) + '</p><p>' + esc(tr('ftr_sig', F.signature)) + '</p></div></div></div>';
+    var h = '<div class="kf"><div class="kf-l"><div class="kf-logo" data-fe="brand"><img src="logo.png" alt="' + esc(F.brand) + '"><b>' + esc(F.brand) + '</b></div><p class="kf-tag" data-fe="tag">' + esc(tr('ftr_tag1', F.tag1)) + '<br><span>' + esc(tr('ftr_tag2', F.tag2)) +
+      '</span></p><div class="kf-soc"><a class="kf-follow" data-fe="follow" href="' + esc(F.instagram) + '" target="_blank" rel="noopener noreferrer">' + esc(tr('ftr_follow', F.follow)) + '</a><div class="social-links">' + (igh || '') + '</div></div></div>' +
+      '<div class="kf-r"><a class="kf-lucky" data-fe="lucky" href="' + esc(F.luckyHref) + '"><span><img src="logo.png" alt="' + esc(F.brand) + '"></span><em>' + esc(tr('ftr_lucky', F.lucky)) + '</em></a><div class="kf-cols">';
+    cols.forEach(function (c, i) { h += '<div><h4 data-fe="c' + i + '">' + esc(tr('ftr_c' + i + '_t', c.title)) + '</h4>'; (c.links || []).forEach(function (l, j) { h += '<a data-fe="c' + i + 'l' + j + '" href="' + esc(l.href) + '">' + esc(tr('ftr_c' + i + '_l' + j, l.label)) + '</a>'; }); h += '</div>'; });
+    return h + '</div><div class="kf-bot"><p data-fe="copy">' + esc(tr('ftr_copy', F.copyright)) + '</p><p data-fe="sig">' + esc(tr('ftr_sig', F.signature)) + '</p></div></div></div>';
   };
   function seo(d) {
     var S = d.seo || {}, g = S.site || {}, pg = pk(), p = (S.pages || {})[pg] || {};
@@ -203,7 +203,10 @@
     var M = (location.search.match(/[?&]m=([a-z]+)/) || [])[1] || 'texts', pg = pk(), ed = {};
     try { ed = JSON.parse(sessionStorage.getItem('uipact_edit') || '{}'); } catch (e) {}
     var st = { texts: (ed.texts || {})[pg] || {}, hidden: (ed.hidden || {})[pg] || [], blocks: (ed.blocks || {})[pg] || [], images: (ed.images || {})[pg] || {}, theme: ed.theme || null };
-    var items = {}, groups = {}, imgs = {}, sel = null, hov = null, bar = null, hideT, SEL = { texts: '[data-cms],[data-cms-block]', images: '[data-cms-img]', projects: '[data-project]' }[M] || null;
+    var items = {}, groups = {}, imgs = {}, sel = null, hov = null, bar = null, hideT, SEL = { texts: '[data-cms],[data-cms-block]', images: '[data-cms-img]', projects: '[data-project]', header: '[data-fe]', footer: '[data-fe]' }[M] || null;
+    var SECSEL = '.role-line,.cta-ghost,.st-txt,.sc3-txt,.sc3-scene,.p3-txt,.p3-stage';
+    function secName(t) { return t.matches('.role-line,.cta-ghost') ? 'hero' : t.matches('.st-txt') ? 'statement' : t.matches('.sc3-txt,.sc3-scene') ? 'showcase' : t.matches('.p3-txt,.p3-stage') ? 'method' : null; }
+    function secStep(n) { if (n === 'showcase') { var e = document.querySelector('.sc3-n'); return (parseInt(e && e.textContent, 10) || 1) - 1; } if (n === 'method') { var l = [].slice.call(document.querySelectorAll('.p3-steps li')); return Math.max(0, l.findIndex(function (x) { return x.classList.contains('on'); })); } return 0; }
     var I = {
       edit: '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>',
       add: '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>',
@@ -211,9 +214,14 @@
       restore: '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.09-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>'
     };
     function send(m) { m.source = 'uipact-preview'; window.parent.postMessage(m, location.origin); }
-    function target(e) { var t = e.target; return SEL && t && t.closest ? t.closest(SEL) : null; }
+    function target(e) { var t = e.target; if (!t || !t.closest) return null; if (M === 'texts') { var s = t.closest(SECSEL); if (s) return s; } return SEL ? t.closest(SEL) : null; }
     function hide() { if (bar) bar.style.display = 'none'; if (hov) hov.classList.remove('cms-hov'); hov = null; }
     function cfg(t) {
+      if (M === 'texts' && secName(t)) return { edit: 'Modifier ce texte / cette animation', add: null, del: null };
+      if (M === 'header' || M === 'footer') {
+        var k = t.getAttribute('data-fe'), col = /^c\d+$/.test(k), dd = M === 'header' ? /^d\d+$/.test(k) : /^c\d+l\d+$/.test(k);
+        return { edit: 'Modifier', add: dd ? 'Ajouter un lien après celui-ci' : (col ? 'Ajouter un lien dans cette colonne' : null), del: dd ? ['del', 'Supprimer ce lien'] : (col ? ['del', 'Supprimer cette colonne'] : null) };
+      }
       if (M === 'texts') { var b = t.hasAttribute('data-cms-block'), off = !b && st.hidden.indexOf(t.getAttribute('data-cms')) > -1; return { edit: off ? null : 'Modifier ce texte', add: off ? null : 'Ajouter un texte en dessous', del: off ? ['restore', 'Afficher à nouveau ce texte'] : ['del', b ? 'Supprimer ce texte' : 'Masquer ce texte'] }; }
       if (M === 'images') return { edit: 'Changer la photo', add: null, del: st.images[t.getAttribute('data-cms-img')] ? ['restore', 'Remettre la photo d’origine'] : null };
       return { edit: 'Modifier la fiche de ce projet', add: 'Ajouter un projet', del: ((ed.projects || {})[t.getAttribute('data-project')] || {}).custom ? ['del', 'Supprimer ce projet'] : null };
@@ -226,12 +234,14 @@
       d.style.display = c.del ? '' : 'none'; if (c.del) { d.setAttribute('data-a', c.del[0]); d.innerHTML = I[c.del[0]]; d.title = c.del[1]; }
       bar.style.display = 'flex';
       var r = t.getBoundingClientRect(), w = bar.offsetWidth || 100, left = Math.min(Math.max(4, r.right - w), window.innerWidth - w - 4), top = r.top - 36;
-      if (top < 4) top = Math.min(Math.max(4, r.top + 4), window.innerHeight - 40);
+      if (top < 4) top = Math.min(r.bottom + 6, window.innerHeight - 40);
       bar.style.left = left + 'px'; bar.style.top = top + 'px';
     }
     function act(a) {
       if (!hov) return;
       var key = hov.getAttribute('data-cms'), blk = hov.getAttribute('data-cms-block'), im = hov.getAttribute('data-cms-img'), pr = hov.getAttribute('data-project');
+      if (M === 'header' || M === 'footer') return send({ type: 'fe', action: a, key: hov.getAttribute('data-fe') });
+      if (M === 'texts' && secName(hov)) { var sn = secName(hov); return send({ type: 'sec', name: sn, step: secStep(sn) }); }
       if (M === 'images') return send({ type: a === 'edit' ? 'img' : 'imgreset', key: im });
       if (M === 'projects') return send({ type: 'proj', action: a, id: pr });
       if (a === 'edit') {
@@ -306,6 +316,11 @@
       D = ed; T = {}; window.__cmsSec = ed.sections || {}; window.__cmsTr = tr; window.__cmsPrj = ed.projects || {}; window.__cmsCar = {};
       Object.keys(ed.carousels || {}).forEach(function (k) { window.__cmsCar[k] = (ed.carousels[k] || []).map(function (x) { return { image: x.image, href: x.href, title: x.title, subtitle: x.subtitle }; }); });
       try { theme(ed.theme); header(ed); } catch (e) { console.error(e); }
+      if (M === 'header') {
+        var nv = document.querySelector('header .nav-links');
+        if (nv) { [].forEach.call(nv.querySelectorAll(':scope > li > a'), function (a, i) { a.setAttribute('data-fe', 'i' + i); }); [].forEach.call(nv.querySelectorAll('.dropdown-content a'), function (a, i) { a.setAttribute('data-fe', 'd' + i); }); }
+        var bn = document.querySelector('.brand-name'), cb = document.querySelector('.cta-menu-button'); if (bn) bn.setAttribute('data-fe', 'brand'); if (cb) cb.setAttribute('data-fe', 'cta');
+      }
       if (SEL) {
         bar = document.createElement('div'); bar.className = 'cms-bar no-cms';
         bar.innerHTML = '<button type="button" data-s="edit" data-a="edit">' + I.edit + '</button><button type="button" data-s="add" data-a="add">' + I.add + '</button><button type="button" data-s="del" data-a="del">' + I.del + '</button>';
