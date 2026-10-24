@@ -123,16 +123,23 @@ html[data-adm="dark"] .hint,html[data-adm="dark"] .note,html[data-adm="dark"] .h
 #themeBtn{margin-right:8px}
 @media(max-width:900px){.step{grid-template-columns:1fr}.step .n{display:none}.trow{grid-template-columns:1fr}}
 
-/* ===== Éditeur visuel des textes ===== */
+/* ===== Éditeur visuel ===== */
 main.wide{max-width:none;padding:6px 22px 60px}
 .vbar{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px}.vbar .vpg{display:flex;flex-direction:column;gap:3px;min-width:220px}.vbar select{width:100%}.vbar small{color:var(--mut)}
-.vseg{display:inline-flex;gap:4px;flex-wrap:wrap}.vseg .pill{margin:0}.pills{margin-bottom:0}
-.vstage{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+.vseg{display:inline-flex;gap:4px;flex-wrap:wrap}.vseg .pill{margin:0}
+.vstage{display:grid;grid-template-columns:minmax(0,1fr) var(--pw,340px);gap:16px;align-items:start}
 .vfr{display:flex;justify-content:center;height:calc(100vh - 230px);min-height:520px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:rgba(128,128,128,.12)}
 .vfr iframe{border:0;width:100%;height:100%;background:#fff}.vfr.mob iframe{width:390px;flex:0 0 390px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
-.vsp{position:sticky;top:76px;margin:0}.vsp h4{margin:0 0 10px;font-size:1.05rem}.vsp h4 small{font-weight:400;color:var(--mut)}.vsp .fld{margin-bottom:10px}
-.vact{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-@media(max-width:1100px){.vstage{grid-template-columns:1fr}.vsp{position:static}}
+.vsp{position:sticky;top:76px;margin:0;max-height:calc(100vh - 230px);overflow:auto}.vsp h4{margin:0 0 10px;font-size:1.05rem}.vsp h4 small{font-weight:400;color:var(--mut)}.vsp .fld{margin-bottom:10px}
+.vact{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.vthumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.vth{padding:5px;display:flex;flex-direction:column;gap:4px;font-size:.72rem;border-radius:10px;text-align:left;line-height:1.2}.vth img{width:100%;aspect-ratio:4/3;object-fit:contain;background:rgba(128,128,128,.18);border-radius:6px}.vth.on{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,162,75,.45)}.vth.mod{border-style:dashed}
+.vdet{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px}.vdet small{color:var(--mut);word-break:break-all}
+.vgt{margin:14px 0 6px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.vcol{display:flex;align-items:center;gap:10px;margin-bottom:6px}.vcol span{flex:1}.vcol input[type=color]{width:54px;height:36px;flex:0 0 auto}
+.vblk{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}.vblk h4{margin:0 0 8px}.vsp .pic-i{aspect-ratio:16/9;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:rgba(128,128,128,.15)}.vsp .pic-i img{width:100%;height:100%;object-fit:contain;display:block}.vsp .pic-b{margin:8px 0 10px;display:flex;flex-direction:column;gap:6px}.vsp .pic-b small{color:var(--mut)}
+.vci{display:grid;grid-template-columns:96px 1fr;gap:10px;padding:10px;margin-bottom:8px;border:1px solid var(--line);border-radius:12px}.vci.drag{opacity:.4}.vci-i{position:relative}.vci-i img{width:96px;height:72px;object-fit:cover;border-radius:8px;display:block}.vci-i .badge{position:absolute;top:4px;left:4px;background:var(--gold);color:var(--navy);border-radius:99px;font-size:.72rem;font-weight:700;width:20px;height:20px;display:grid;place-items:center}.vci-f{display:flex;flex-direction:column;gap:6px}.vci-f input{padding:6px 10px}
+.vpr{display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;padding:8px;margin-bottom:6px;border:1px solid var(--line);border-radius:12px}.vpr-i{width:64px;height:48px;border-radius:8px;background:rgba(128,128,128,.2) center/cover;cursor:pointer}.vpr-b{display:flex;flex-direction:column;gap:2px;min-width:0}.vpr-b b{cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vpr-b small{color:var(--mut)}
+@media(max-width:1100px){.vstage{grid-template-columns:1fr}.vsp{position:static;max-height:none}}
 </style>
 </head>
 <body>
@@ -761,72 +768,6 @@ async function vTextsList(v) {
   q.oninput = draw; draw();
 }
 
-/* ---------------- Textes : édition directement sur le site ---------------- */
-async function vTexts(v) {
-  var p = v.dataset.p || 'index', mode = v.dataset.mode || 'site', dev = v.dataset.dev || 'desk';
-  function seg(list, cur, on) { var d = h('div', { class: 'vseg' }); list.forEach(function (x) { d.appendChild(h('button', { class: 'pill' + (x[0] === cur ? ' on' : ''), onclick: function () { on(x[0]); } }, x[1])); }); return d; }
-  var modes = seg([['site', 'Sur le site'], ['list', 'Liste des textes']], mode, function (m) { v.dataset.mode = m; show(); });
-  if (mode === 'list') { v.appendChild(h('div', { class: 'vbar' }, modes)); return vTextsList(v); }
-  v.classList.add('wide');
-  var T = (S.texts[p] = S.texts[p] || {}), HD = (S.hidden[p] = S.hidden[p] || []), BL = (S.blocks[p] = S.blocks[p] || []);
-  var NAMES = { h1: 'Titre', h2: 'Titre', h3: 'Sous-titre', h4: 'Sous-titre', p: 'Paragraphe', a: 'Lien', button: 'Bouton', li: 'Liste', label: 'Étiquette', span: 'Texte' };
-  var pg = h('select', { onchange: function () { v.dataset.p = pg.value; show(); } }); C.PAGES.forEach(function (x) { var o = h('option', { value: x }, PAGE_NAMES[x] || x); if (x === p) o.selected = true; pg.appendChild(o); });
-  var frame = h('iframe', { src: p + '.html?cmsedit=1', title: 'Aperçu du site' }), fr = h('div', { class: 'vfr' + (dev === 'mob' ? ' mob' : '') }, frame), panel = h('aside', { class: 'card vsp' });
-  function mkDevs(cur) { return seg([['desk', 'Ordinateur'], ['mob', 'Mobile']], cur, function (d) { v.dataset.dev = d; fr.classList.toggle('mob', d === 'mob'); var n = mkDevs(d); devs.replaceWith(n); devs = n; }); }
-  var devs = mkDevs(dev);
-  v.appendChild(h('div', { class: 'vbar' }, h('label', { class: 'vpg' }, h('small', {}, 'Page'), pg), modes, devs, h('button', { class: 'sm', title: 'Recharger l’aperçu', onclick: function () { frame.contentWindow.location.reload(); } }, '↻ Recharger')));
-  v.appendChild(h('p', { class: 'hint' }, 'Passez la souris sur un texte du site : ✎ pour le modifier, + pour ajouter un texte en dessous, − pour le masquer. Le menu du haut et le pied de page se modifient dans « Header » et « Footer ».'));
-  v.appendChild(h('div', { class: 'vstage' }, fr, panel));
-  var sel = null;
-  function post(m) { m.source = 'uipact-admin'; try { frame.contentWindow.postMessage(m, location.origin); } catch (e) {} }
-  function push() { post({ type: 'state', texts: T, hidden: HD, blocks: BL, theme: S.theme || null }); }
-  function pick(s) { sel = s; panel_(); post({ type: 'select', key: s && s.members && s.members[0].key, block: s && s.block }); }
-  function hide_(keys, off) { keys.forEach(function (k) { var i = HD.indexOf(k); if (off && i < 0) HD.push(k); if (!off && i > -1) HD.splice(i, 1); }); mark(); push(); }
-  function addBlock(afterKey, afterBlock) {
-    var b = { id: Date.now().toString(36), after: afterKey, tag: 'p', text: 'Nouveau texte' }, i;
-    if (afterBlock) { i = BL.indexOf(afterBlock); BL.splice(i + 1, 0, b); }
-    else { i = BL.findIndex(function (x) { return x.after === afterKey; }); if (i < 0) BL.push(b); else BL.splice(i, 0, b); }
-    mark(); push(); pick({ block: b.id }); setTimeout(function () { var t = panel.querySelector('textarea'); if (t) { t.focus(); t.select(); } }, 60);
-  }
-  function btn(label, fn, cls) { return h('button', { class: 'sm ' + (cls || ''), onclick: fn }, label); }
-  function panel_() {
-    panel.innerHTML = '';
-    if (!sel) { panel.appendChild(h('h4', {}, 'Aucun texte sélectionné')); panel.appendChild(h('p', { class: 'hint' }, 'Survolez un texte du site puis cliquez sur ✎ (ou double-cliquez dessus) pour le modifier ici.')); panel.appendChild(h('p', { class: 'hint' }, 'La page se met à jour en direct. N’oubliez pas « Enregistrer » en haut à droite.')); return; }
-    if (sel.block) {
-      var b = BL.filter(function (x) { return x.id === sel.block; })[0]; if (!b) { sel = null; return panel_(); }
-      var tg = h('select', { onchange: function () { b.tag = tg.value; mark(); push(); } }); [['p', 'Paragraphe'], ['h2', 'Titre'], ['h3', 'Sous-titre'], ['span', 'Petit texte']].forEach(function (t) { var o = h('option', { value: t[0] }, t[1]); if (t[0] === b.tag) o.selected = true; tg.appendChild(o); });
-      panel.appendChild(h('h4', {}, 'Texte ajouté')); panel.appendChild(fld('Type', tg));
-      panel.appendChild(fld('Texte', tx(b.text, function (x) { b.text = x; push(); }, '', 5)));
-      panel.appendChild(h('div', { class: 'vact' }, btn('+ Ajouter un texte dessous', function () { addBlock(b.after, b); }), btn('Supprimer', function () { BL.splice(BL.indexOf(b), 1); mark(); push(); pick(null); }, 'del')));
-      return;
-    }
-    var M = sel.members, off = HD.indexOf(M[0].key) > -1, mod = false;
-    panel.appendChild(h('h4', {}, NAMES[sel.tag] || 'Texte', h('small', {}, M.length > 1 ? ' · présent ' + M.length + ' fois sur la page' : '')));
-    M[0].nodes.forEach(function (n0, j) {
-      var cur = T[n0.k] != null ? T[n0.k] : n0.orig; if (T[n0.k] != null && T[n0.k] !== n0.orig) mod = true;
-      panel.appendChild(fld(M[0].nodes.length > 1 ? 'Texte ' + (j + 1) : 'Texte', tx(cur, function (val) { M.forEach(function (m) { var n = m.nodes[j]; if (!n) return; if (val === n.orig) delete T[n.k]; else T[n.k] = val; }); push(); }, '', n0.orig.length > 60 ? 5 : 2)));
-    });
-    if (M.length > 1) panel.appendChild(h('p', { class: 'hint' }, 'Ce texte apparaît plusieurs fois : la modification s’applique à chaque endroit.'));
-    var acts = h('div', { class: 'vact' }, btn('+ Ajouter un texte dessous', function () { addBlock(M[0].key); }),
-      btn(off ? 'Afficher à nouveau' : '− Masquer ce texte', function () { hide_(M.map(function (m) { return m.key; }), !off); panel_(); }, off ? '' : 'del'));
-    if (mod) acts.insertBefore(btn('↺ Original', function () { M.forEach(function (m) { m.nodes.forEach(function (n) { delete T[n.k]; }); }); mark(); push(); panel_(); }), acts.firstChild);
-    panel.appendChild(acts);
-    var ta = panel.querySelector('textarea'); if (ta) setTimeout(function () { ta.focus(); }, 60);
-  }
-  if (window.__vte) removeEventListener('message', window.__vte);
-  window.__vte = function (e) {
-    if (e.origin !== location.origin || e.source !== frame.contentWindow || !e.data || e.data.source !== 'uipact-preview') return;
-    var d = e.data;
-    if (d.type === 'ready') { push(); if (sel) post({ type: 'select', key: sel.members && sel.members[0].key, block: sel.block }); }
-    else if (d.type === 'edit') pick(d.block ? { block: d.block } : { tag: d.tag, members: d.members });
-    else if (d.type === 'add') { if (d.block) { var b = BL.filter(function (x) { return x.id === d.block; })[0]; if (b) addBlock(b.after, b); } else addBlock(d.after); }
-    else if (d.type === 'remove') { if (d.block) { BL = S.blocks[p] = BL.filter(function (x) { return x.id !== d.block; }); mark(); push(); if (sel && sel.block === d.block) pick(null); } else { hide_(d.keys, true); if (sel && sel.members) panel_(); } }
-    else if (d.type === 'restore') { hide_(d.keys, false); if (sel && sel.members) panel_(); }
-  };
-  addEventListener('message', window.__vte);
-  frame.onload = push; panel_();
-}
-
 /* ---------------- Header / Footer ---------------- */
 function linkRows(arr, redraw) {
   return arr.map(function (l, i) { return h('div', { class: 'row', style: 'margin-bottom:6px' }, tx(l.label, function (x) { l.label = x; }, 'Texte'), tx(l.href, function (x) { l.href = x; }, 'Lien'), h('button', { class: 'sm del', onclick: function () { arr.splice(i, 1); mark(); redraw(); } }, '✕')); });
@@ -1177,6 +1118,228 @@ async function vMsgs(v) {
     list.appendChild(h('div', { class: 'card msg' + (m.read ? '' : ' unread') }, h('div', { class: 'row' }, h('b', {}, m.name), h('a', { href: 'mailto:' + m.email }, m.email), h('small', {}, new Date(m.createdAt).toLocaleString('fr-FR')), h('button', { class: 'sm', onclick: async function () { await api('/api/messages/' + m._id, { method: 'PUT', json: { read: !m.read } }); show(); } }, m.read ? 'Marquer non lu' : 'Marquer lu'), h('button', { class: 'sm del', onclick: async function () { if (confirm('Supprimer ce message ?')) { await api('/api/messages/' + m._id, { method: 'DELETE' }); show(); } } }, 'Supprimer')), h('p', { style: 'white-space:pre-wrap;margin:8px 0 0' }, m.message)));
   });
 }
+/* ======================= ÉDITEUR VISUEL : le vrai site s'affiche, on modifie dessus ======================= */
+function vseg(list, cur, on) { var d = h('div', { class: 'vseg' }); list.forEach(function (x) { d.appendChild(h('button', { class: 'pill' + (x[0] === cur ? ' on' : ''), onclick: function () { on(x[0]); } }, x[1])); }); return d; }
+function pagesList() { return C.PAGES.map(function (x) { return [x, PAGE_NAMES[x] || x]; }); }
+function edState() { return { theme: S.theme || {}, header: S.header, footer: S.footer, sections: S.sections, carousels: S.carousels, projects: S.projects, images: S.images, texts: S.texts, hidden: S.hidden, blocks: S.blocks, langNames: S.langNames }; }
+function liveShell(v, o) {
+  v.classList.add('wide');
+  var dev = v.dataset.dev || 'desk', tm, frame = h('iframe', { title: 'Aperçu du site' }), fr = h('div', { class: 'vfr' + (dev === 'mob' ? ' mob' : '') }, frame), panel = h('aside', { class: 'card vsp' }), tb = h('div', { class: 'vbar' });
+  if (o.list) { var sl = h('select', { onchange: function () { o.setCur(sl.value); } }); o.list.forEach(function (x) { var op = h('option', { value: x[0] }, x[1]); if (x[0] === o.cur) op.selected = true; sl.appendChild(op); }); tb.appendChild(h('label', { class: 'vpg' }, h('small', {}, o.label || 'Page'), sl)); }
+  (o.extra || []).forEach(function (x) { tb.appendChild(x); });
+  function mkDevs(cur) { return vseg([['desk', 'Ordinateur'], ['mob', 'Mobile']], cur, function (d) { v.dataset.dev = d; fr.classList.toggle('mob', d === 'mob'); var n = mkDevs(d); devs.replaceWith(n); devs = n; }); }
+  var devs = mkDevs(dev); tb.appendChild(devs);
+  var api = {
+    frame: frame, panel: panel,
+    post: function (m) { m.source = 'uipact-admin'; try { frame.contentWindow.postMessage(m, location.origin); } catch (e) {} },
+    push: function () { var p = o.page(); api.post({ type: 'state', texts: (S.texts || {})[p] || {}, hidden: (S.hidden || {})[p] || [], blocks: (S.blocks || {})[p] || [], images: (S.images || {})[p] || {}, theme: S.theme || null }); },
+    reload: function (sc, delay) {
+      clearTimeout(tm);
+      tm = setTimeout(function () {
+        var y = sc; if (y == null) { try { y = frame.contentWindow.scrollY; } catch (e) { y = 0; } }
+        write(y); try { frame.contentWindow.location.reload(); } catch (e) { frame.src = frame.src; }
+      }, delay == null ? 700 : delay);
+    }
+  };
+  tb.appendChild(h('button', { class: 'sm', title: 'Recharger l’aperçu', onclick: function () { api.reload(null, 0); } }, '↻ Recharger'));
+  v.appendChild(tb); if (o.hint) v.appendChild(h('p', { class: 'hint' }, o.hint));
+  var stage = h('div', { class: 'vstage' }, fr, panel); stage.style.setProperty('--pw', o.pw || '340px'); v.appendChild(stage);
+  function write(sc) { try { if (mark.pend) mark.pend(); sessionStorage.setItem('uipact_edit', JSON.stringify(edState())); if (sc != null) sessionStorage.setItem('uipact_edit_scroll', String(sc)); } catch (e) {} }
+  if (window.__vte) removeEventListener('message', window.__vte);
+  window.__vte = function (e) {
+    if (e.origin !== location.origin || e.source !== frame.contentWindow || !e.data || e.data.source !== 'uipact-preview') return;
+    var d = e.data;
+    if (d.type === 'ready') { api.push(); if (o.onReady) o.onReady(d); }
+    else if (d.type === 'navigate') { if (o.onNav) o.onNav(d.page); else toast('Cette rubrique se modifie sur sa propre page du site.', true); }
+    else if (o.onMsg) o.onMsg(d);
+  };
+  addEventListener('message', window.__vte);
+  write(o.scroll != null ? o.scroll : 0); frame.src = o.page() + '.html?cmsedit=1&m=' + o.mode; frame.onload = api.push;
+  return api;
+}
+function goPage(v) { return function (k) { if (C.PAGES.indexOf(k) > -1) { v.dataset.p = k; show(); } }; }
+function pbtn(label, fn, cls) { return h('button', { class: 'sm ' + (cls || ''), onclick: fn }, label); }
+
+/* ---------- Textes ---------- */
+async function vTexts(v) {
+  var p = v.dataset.p || 'index', mode = v.dataset.mode || 'site', modes = vseg([['site', 'Sur le site'], ['list', 'Liste des textes']], mode, function (m) { v.dataset.mode = m; show(); });
+  if (mode === 'list') { v.appendChild(h('div', { class: 'vbar' }, modes)); return vTextsList(v); }
+  var T = (S.texts[p] = S.texts[p] || {}), HD = (S.hidden[p] = S.hidden[p] || []), BL = (S.blocks[p] = S.blocks[p] || []), sel = null;
+  var NAMES = { h1: 'Titre', h2: 'Titre', h3: 'Sous-titre', h4: 'Sous-titre', p: 'Paragraphe', a: 'Lien', button: 'Bouton', li: 'Liste', label: 'Étiquette', span: 'Texte' };
+  var A = liveShell(v, { mode: 'texts', list: pagesList(), cur: p, setCur: function (x) { v.dataset.p = x; show(); }, extra: [modes], page: function () { return p; }, onNav: goPage(v),
+    hint: 'Passez la souris sur un texte du site : ✎ pour le modifier, + pour ajouter un texte en dessous, − pour le masquer. Vous pouvez aussi naviguer avec le menu du site.',
+    onReady: function () { if (sel) A.post({ type: 'select', key: sel.members && sel.members[0].key, block: sel.block }); },
+    onMsg: function (d) {
+      if (d.type === 'edit') pick(d.block ? { block: d.block } : { tag: d.tag, members: d.members });
+      else if (d.type === 'add') { if (d.block) { var b = BL.filter(function (x) { return x.id === d.block; })[0]; if (b) addBlock(b.after, b); } else addBlock(d.after); }
+      else if (d.type === 'remove') { if (d.block) { BL = S.blocks[p] = BL.filter(function (x) { return x.id !== d.block; }); mark(); A.push(); if (sel && sel.block === d.block) pick(null); } else { hide_(d.keys, true); if (sel && sel.members) panel_(); } }
+      else if (d.type === 'restore') { hide_(d.keys, false); if (sel && sel.members) panel_(); }
+    } }), panel = A.panel;
+  function pick(s) { sel = s; panel_(); A.post({ type: 'select', key: s && s.members && s.members[0].key, block: s && s.block }); }
+  function hide_(keys, off) { keys.forEach(function (k) { var i = HD.indexOf(k); if (off && i < 0) HD.push(k); if (!off && i > -1) HD.splice(i, 1); }); mark(); A.push(); }
+  function addBlock(afterKey, afterBlock) {
+    var b = { id: Date.now().toString(36), after: afterKey, tag: 'p', text: 'Nouveau texte' }, i;
+    if (afterBlock) { i = BL.indexOf(afterBlock); BL.splice(i + 1, 0, b); } else { i = BL.findIndex(function (x) { return x.after === afterKey; }); if (i < 0) BL.push(b); else BL.splice(i, 0, b); }
+    mark(); A.push(); pick({ block: b.id }); setTimeout(function () { var t = panel.querySelector('textarea'); if (t) { t.focus(); t.select(); } }, 60);
+  }
+  function panel_() {
+    panel.innerHTML = '';
+    if (!sel) { panel.appendChild(h('h4', {}, 'Aucun texte sélectionné')); panel.appendChild(h('p', { class: 'hint' }, 'Survolez un texte du site puis cliquez sur ✎ (ou double-cliquez dessus) pour le modifier ici.')); panel.appendChild(h('p', { class: 'hint' }, 'La page se met à jour en direct. N’oubliez pas « Enregistrer » en haut à droite.')); return; }
+    if (sel.block) {
+      var b = BL.filter(function (x) { return x.id === sel.block; })[0]; if (!b) { sel = null; return panel_(); }
+      var tg = h('select', { onchange: function () { b.tag = tg.value; mark(); A.push(); } }); [['p', 'Paragraphe'], ['h2', 'Titre'], ['h3', 'Sous-titre'], ['span', 'Petit texte']].forEach(function (t) { var o = h('option', { value: t[0] }, t[1]); if (t[0] === b.tag) o.selected = true; tg.appendChild(o); });
+      panel.appendChild(h('h4', {}, 'Texte ajouté')); panel.appendChild(fld('Type', tg)); panel.appendChild(fld('Texte', tx(b.text, function (x) { b.text = x; A.push(); }, '', 5)));
+      panel.appendChild(h('div', { class: 'vact' }, pbtn('+ Ajouter un texte dessous', function () { addBlock(b.after, b); }), pbtn('Supprimer', function () { BL.splice(BL.indexOf(b), 1); mark(); A.push(); pick(null); }, 'del'))); return;
+    }
+    var M = sel.members, off = HD.indexOf(M[0].key) > -1, mod = false;
+    panel.appendChild(h('h4', {}, NAMES[sel.tag] || 'Texte', h('small', {}, M.length > 1 ? ' · présent ' + M.length + ' fois sur la page' : '')));
+    M[0].nodes.forEach(function (n0, j) {
+      var cur = T[n0.k] != null ? T[n0.k] : n0.orig; if (T[n0.k] != null && T[n0.k] !== n0.orig) mod = true;
+      panel.appendChild(fld(M[0].nodes.length > 1 ? 'Texte ' + (j + 1) : 'Texte', tx(cur, function (val) { M.forEach(function (m) { var n = m.nodes[j]; if (!n) return; if (val === n.orig) delete T[n.k]; else T[n.k] = val; }); A.push(); }, '', n0.orig.length > 60 ? 5 : 2)));
+    });
+    if (M.length > 1) panel.appendChild(h('p', { class: 'hint' }, 'Ce texte apparaît plusieurs fois : la modification s’applique à chaque endroit.'));
+    var acts = h('div', { class: 'vact' }, pbtn('+ Ajouter un texte dessous', function () { addBlock(M[0].key); }), pbtn(off ? 'Afficher à nouveau' : '− Masquer ce texte', function () { hide_(M.map(function (m) { return m.key; }), !off); panel_(); }, off ? '' : 'del'));
+    if (mod) acts.insertBefore(pbtn('↺ Original', function () { M.forEach(function (m) { m.nodes.forEach(function (n) { delete T[n.k]; }); }); mark(); A.push(); panel_(); }), acts.firstChild);
+    panel.appendChild(acts); var ta = panel.querySelector('textarea'); if (ta) setTimeout(function () { ta.focus(); }, 60);
+  }
+  panel_();
+}
+
+/* ---------- Photos des pages ---------- */
+async function vImages(v) {
+  var p = v.dataset.p || 'index', I = (S.images[p] = S.images[p] || {}), LIST = [], cur = null;
+  var A = liveShell(v, { mode: 'images', list: pagesList(), cur: p, setCur: function (x) { v.dataset.p = x; show(); }, page: function () { return p; }, onNav: goPage(v),
+    hint: 'Passez la souris sur une photo du site : ✎ pour la remplacer, ↺ pour remettre l’originale. Vous pouvez naviguer avec le menu du site.',
+    onReady: function (d) { LIST = d.list || []; draw(); },
+    onMsg: function (d) { if (d.type === 'img') { cur = d.key; draw(); change(d.key); } else if (d.type === 'imgreset') reset(d.key); } }), P = A.panel;
+  function change(k) { pickImage(function (u) { I[k] = u; mark(); A.push(); draw(); }); }
+  function reset(k) { delete I[k]; mark(); A.push(); draw(); }
+  function draw() {
+    P.innerHTML = ''; P.appendChild(h('h4', {}, 'Photos de la page', h('small', {}, ' · ' + LIST.length)));
+    if (!LIST.length) { P.appendChild(h('p', { class: 'hint' }, 'Cette page n’a pas de photo fixe : ses images sont dans les carrousels (onglet « Carrousels »).')); return; }
+    var g = h('div', { class: 'vthumbs' });
+    LIST.forEach(function (it) { g.appendChild(h('button', { class: 'vth' + (I[it.key] ? ' mod' : '') + (cur === it.key ? ' on' : ''), title: it.label, onclick: function () { cur = it.key; A.post({ type: 'select', img: it.key }); draw(); } }, h('img', { src: I[it.key] || it.src, alt: '' }), h('span', {}, it.label))); });
+    P.appendChild(g);
+    var it = LIST.filter(function (x) { return x.key === cur; })[0];
+    if (it) P.appendChild(h('div', { class: 'vdet' }, h('b', {}, it.label), h('small', {}, I[it.key] || it.src), h('div', { class: 'vact' }, pbtn('🖼️ Changer la photo', function () { change(it.key); }, 'gold'), I[it.key] ? pbtn('↺ Originale', function () { reset(it.key); }) : null)));
+    else P.appendChild(h('p', { class: 'hint' }, 'Cliquez sur une photo ici, ou survolez-la sur le site, pour la remplacer.'));
+    if (p === 'index') P.appendChild(h('p', { class: 'hint' }, 'Les écrans des animations de l’accueil se changent dans « Animations ».'));
+  }
+  draw();
+}
+
+/* ---------- Couleurs ---------- */
+async function vColors(v) {
+  var p = v.dataset.p || 'index', T = S.theme || (S.theme = {}), D = C.DEF.theme;
+  var N = { gold: 'Or principal (boutons, titres)', gold2: 'Or clair', navy: 'Bleu nuit (texte sur boutons)', navy2: 'Bleu nuit clair', bg: 'Fond', bgAlt: 'Fond secondaire', card: 'Cartes', text: 'Texte', lightBg: 'Fond', lightAlt: 'Fond secondaire' };
+  var G = [['Or', ['gold', 'gold2']], ['Bleu nuit', ['navy', 'navy2']], ['Mode sombre', ['bg', 'bgAlt', 'card', 'text']], ['Mode clair', ['lightBg', 'lightAlt']]];
+  var A = liveShell(v, { mode: 'colors', list: pagesList(), cur: p, setCur: function (x) { v.dataset.p = x; show(); }, page: function () { return p; }, onNav: goPage(v), hint: 'Les couleurs changent en direct sur le site. Cliquez sur le bouton lune du site pour voir l’autre mode.' }), P = A.panel;
+  P.appendChild(h('h4', {}, 'Couleurs du site'));
+  G.forEach(function (g) {
+    P.appendChild(h('div', { class: 'vgt' }, g[0]));
+    g[1].forEach(function (k) {
+      var c = h('input', { type: 'color' }); c.value = T[k] || D[k]; c.oninput = function () { T[k] = c.value; mark(); A.push(); };
+      P.appendChild(h('div', { class: 'vcol' }, c, h('span', {}, N[k]), h('button', { class: 'sm', title: 'Couleur d’origine', onclick: function () { delete T[k]; c.value = D[k]; mark(); A.push(); } }, '↺')));
+    });
+  });
+  P.appendChild(h('div', { class: 'vact' }, pbtn('Tout réinitialiser', function () { if (confirm('Remettre toutes les couleurs d’origine ?')) { S.theme = {}; mark(); show(); } }, 'del')));
+}
+
+/* ---------- Animations de l'accueil ---------- */
+async function vAnim(v) {
+  var SH = secW('showcase'), ST = secW('statement'), ME = secW('method'), sub = v.dataset.sub || 'm1';
+  var SUBS = [['m1', '1 · Ma méthode', 'showcase', '#sc3'], ['m2', '2 · Phrase animée', 'statement', '.st-sec'], ['m3', '3 · Du wireframe au site', 'method', '#methode']], cur = SUBS.filter(function (s) { return s[0] === sub; })[0];
+  var A = liveShell(v, { mode: 'anim', page: function () { return 'index'; }, scroll: cur[3], pw: '430px', onNav: function () { toast('Les animations sont sur la page d’accueil.', true); },
+    extra: [vseg(SUBS.map(function (s) { return [s[0], s[1]]; }), sub, function (x) { v.dataset.sub = x; show(); })],
+    hint: 'L’animation s’affiche à gauche : modifiez ses textes et ses photos à droite, elle se recharge toute seule. Faites défiler le site pour la voir bouger.' }), P = A.panel, up = function () { A.reload(cur[3]); };
+  function pic(label, get, set, def) {
+    var im = h('img', { src: get() || def, alt: '' });
+    function put(u) { set(u); im.src = u; mark(); up(); }
+    return h('div', { class: 'pic' }, h('div', { class: 'pic-i' }, im), h('div', { class: 'pic-b' }, h('small', {}, label), h('div', { class: 'row' }, h('button', { class: 'sm gold', onclick: function () { pickImage(put); } }, 'Changer la photo'), h('button', { class: 'sm', title: 'Remettre l’image d’origine', onclick: function () { put(def); } }, '↺'))));
+  }
+  function on(f) { return function (x) { f(x); up(); }; }
+  function block(title, pc, fields) { var c = h('div', { class: 'vblk' }); c.appendChild(h('h4', {}, title)); if (pc) c.appendChild(pc); fields.forEach(function (f) { c.appendChild(f); }); P.appendChild(c); }
+  if (sub === 'm1') {
+    SH.steps.forEach(function (z, i) { block('Étape ' + (i + 1), pic('Écran de l’ordinateur', function () { return z.image; }, function (u) { z.image = u; }, ANIM.showcase.steps[i].image), [fld('Titre', tx(z.title, on(function (x) { z.title = x; }))), fld('Texte', tx(z.text, on(function (x) { z.text = x; }), '', 3))]); });
+    block('Téléphone et bouton', pic('Écran du téléphone', function () { return SH.phone; }, function (u) { SH.phone = u; }, ANIM.showcase.phone), [fld('Petit titre', tx(SH.eyebrow, on(function (x) { SH.eyebrow = x; }))), fld('Texte du bouton', tx(SH.cta.label, on(function (x) { SH.cta.label = x; }))), fld('Lien du bouton', tx(SH.cta.href, on(function (x) { SH.cta.href = x; })))]);
+  } else if (sub === 'm2') {
+    block('Phrase d’accroche', null, [fld('Phrase (elle apparaît mot par mot)', tx(ST.text, on(function (x) { ST.text = x; }), '', 5))]);
+  } else {
+    block('Titre', null, [fld('Petit titre', tx(ME.eyebrow, on(function (x) { ME.eyebrow = x; }))), fld('Début du titre', tx(ME.title, on(function (x) { ME.title = x; }))), fld('Fin du titre (en italique)', tx(ME.titleEm, on(function (x) { ME.titleEm = x; })))]);
+    ME.steps.forEach(function (z, i) { block('Étape ' + (i + 1), null, [fld('Titre', tx(z.title, on(function (x) { z.title = x; }))), fld('Texte', tx(z.text, on(function (x) { z.text = x; }), '', 3))]); });
+    block('Site final', pic('Site affiché à la dernière étape', function () { return ME.image; }, function (u) { ME.image = u; }, ANIM.method.image), []);
+    var dt = h('details', { class: 'tsec' }, h('summary', {}, 'Étiquettes de l’animation', h('span', { class: 'cnt2' }, 'rarement utile')), h('div', { class: 'tbody', style: 'padding:14px 16px' }));
+    [['typo', 'Étiquette « Typographie »'], ['button', 'Étiquette « Bouton »'], ['resp', 'Étiquette « Responsive »'], ['respSmall', 'Sous-texte « Responsive »']].forEach(function (f) { dt.lastChild.appendChild(fld(f[1], tx(ME.chips[f[0]], on(function (x) { ME.chips[f[0]] = x; })))); }); P.appendChild(dt);
+  }
+  P.appendChild(h('div', { class: 'vact' }, pbtn('↺ Rétablir cette animation d’origine', function () { if (confirm('Remettre cette animation comme à l’origine ?')) { delete S.sections[cur[2]]; mark(); show(); } })));
+}
+
+/* ---------- Carrousels ---------- */
+async function vCars(v) {
+  var k = v.dataset.k || 'home', saved = S.carousels[k], custom = !!(saved && saved.length), a = custom ? saved : await importCar(k).catch(function () { return []; }), drag = null;
+  var A = liveShell(v, { mode: 'cars', scroll: '.c3d-card, .carousel-container, .print-card', list: CARS.map(function (c) { return [c[0], c[1]]; }), label: 'Carrousel', cur: k, setCur: function (x) { v.dataset.k = x; show(); }, page: function () { return k === 'home' ? 'index' : k; }, pw: '400px',
+    onNav: function (pg) { var key = pg === 'index' ? 'home' : pg; if (CARS.some(function (c) { return c[0] === key; })) { v.dataset.k = key; show(); } else toast('Cette page n’a pas de carrousel.', true); },
+    hint: 'Le carrousel s’affiche à gauche. Ajoutez, remplacez, supprimez ou déplacez les photos à droite : il se recharge tout seul.' }), P = A.panel, list = h('div', { class: 'vlist' });
+  mark.pend = function () { S.carousels[k] = a; };
+  P.appendChild(h('div', { class: 'row', style: 'margin-bottom:10px' }, h('b', { style: 'flex:1' }, 'Photos du carrousel (' + a.length + ')'), custom ? pbtn('Revenir à l’origine', function () { if (confirm('Revenir au carrousel d’origine du site ?')) { delete S.carousels[k]; mark.pend = null; mark(); show(); } }, 'del') : null));
+  if (!custom) P.appendChild(h('p', { class: 'hint' }, 'Voici les photos actuelles du site. Modifiez-en une pour personnaliser ce carrousel.'));
+  P.appendChild(list);
+  function chg() { mark(); A.reload(); }
+  function draw() {
+    list.innerHTML = '';
+    a.forEach(function (it, i) {
+      var th = h('img', { src: it.image || '', alt: '' });
+      function setImg(u) { it.image = u; th.src = u; chg(); }
+      var row = h('div', { class: 'vci', draggable: 'true' }, h('div', { class: 'vci-i' }, th, h('span', { class: 'badge' }, String(i + 1))),
+        h('div', { class: 'vci-f' }, tx(it.title, function (x) { it.title = x; A.reload(); }, 'Titre'), tx(it.subtitle, function (x) { it.subtitle = x; A.reload(); }, 'Catégorie'), tx(it.href, function (x) { it.href = x; A.reload(); }, 'Lien au clic'),
+          h('div', { class: 'row' }, pbtn('🖼️ Photo', function () { pickImage(setImg); }, 'gold'), pbtn('←', function () { if (i > 0) { a.splice(i - 1, 0, a.splice(i, 1)[0]); chg(); draw(); } }), pbtn('→', function () { if (i < a.length - 1) { a.splice(i + 1, 0, a.splice(i, 1)[0]); chg(); draw(); } }), pbtn('✕', function () { if (confirm('Retirer cette photo du carrousel ?')) { a.splice(i, 1); chg(); draw(); } }, 'del'))));
+      row.ondragstart = function (e) { drag = i; row.classList.add('drag'); e.dataTransfer.effectAllowed = 'move'; }; row.ondragend = function () { row.classList.remove('drag'); }; row.ondragover = function (e) { e.preventDefault(); };
+      row.ondrop = function (e) { e.preventDefault(); if (drag == null || drag === i) return; a.splice(i, 0, a.splice(drag, 1)[0]); drag = null; chg(); draw(); };
+      list.appendChild(row);
+    });
+    list.appendChild(h('button', { class: 'addtile', onclick: function () { pickImage(function (u) { a.push({ image: u, title: '', subtitle: '', href: 'portfolio.html' }); chg(); draw(); }); } }, h('b', {}, '+'), 'Ajouter une photo'));
+  }
+  draw();
+}
+
+/* ---------- Fiches projets ---------- */
+async function vProjects(v) {
+  var PR = window.PRJ; S.projects = S.projects || {};
+  function O(id) { return (S.projects[id] = S.projects[id] || {}); }
+  var A = liveShell(v, { mode: 'projects', page: function () { return 'portfolio'; }, pw: '380px', onNav: function () { toast('Ici, on modifie les projets du portfolio.', true); },
+    hint: 'Cliquez sur un projet du portfolio (ou ✎) pour modifier sa fiche, + pour ajouter un projet. Le site se recharge tout seul.',
+    onMsg: function (d) { if (d.type !== 'proj') return; if (d.action === 'edit') drawer(d.id); else if (d.action === 'add') add(); else if (d.action === 'del') del(d.id); } }), P = A.panel;
+  function add() { var id = 'p' + Date.now().toString(36); S.projects[id] = { custom: true, published: false, cat: 'web', name: 'Nouveau projet' }; mark(); A.reload(null, 0); list(); drawer(id); }
+  function del(id) { if (confirm('Supprimer ce projet ?')) { delete S.projects[id]; mark(); A.reload(null, 0); list(); } }
+  function list() {
+    P.innerHTML = ''; P.appendChild(h('div', { class: 'row', style: 'margin-bottom:10px' }, h('b', { style: 'flex:1' }, 'Projets (' + allPrj().length + ')'), pbtn('＋ Ajouter', add, 'gold')));
+    P.appendChild(h('p', { class: 'hint' }, '« Fiche détaillée » active la page du projet ; sinon il s’ouvre en simple zoom.'));
+    allPrj().forEach(function (id) {
+      var o = S.projects[id] || {}, p = PR.P[id] || { cat: o.cat || 'web' }, img = o.image || p.image || '', pub = h('input', { type: 'checkbox' }); pub.checked = o.published !== false; pub.onchange = function () { O(id).published = pub.checked; mark(); A.reload(); };
+      P.appendChild(h('div', { class: 'vpr' }, h('div', { class: 'vpr-i', onclick: function () { drawer(id); }, style: img ? 'background-image:url(\'' + img + '\')' : '' }),
+        h('div', { class: 'vpr-b' }, h('b', { onclick: function () { drawer(id); } }, o.name || p.name || 'Sans titre'), h('small', {}, (PCAT[o.cat || p.cat] || '') + (o.custom ? ' · nouveau' : '')), h('label', { class: 'fx', style: 'display:flex;gap:6px;align-items:center;font-size:.82rem' }, pub, 'Fiche détaillée')),
+        pbtn('✎', function () { drawer(id); })));
+    });
+  }
+  function drawer(id) {
+    var o = O(id), custom = !!o.custom, p = PR.P[id] || { cat: o.cat || 'web' }, c = PR.CAT[p.cat] || PR.CAT.web, g1 = h('div', { class: 'g2' }), g2 = h('div', { class: 'g2' });
+    function f(k, label, rows, def) { return fld(label, tx(o[k], function (x) { O(id)[k] = x; }, def != null ? def : p[k], rows)); }
+    var sel = h('select', { onchange: function () { O(id).cat = sel.value; mark(); } }); Object.keys(PCAT).forEach(function (k) { sel.appendChild(h('option', { value: k }, PCAT[k])); }); sel.value = o.cat || p.cat;
+    g1.appendChild(f('name', 'Nom du projet', 0)); g1.appendChild(f('client', 'Client', 0)); g1.appendChild(f('loc', 'Localisation', 0, 'France')); g1.appendChild(f('site', 'Site web (URL)', 0, 'https://…'));
+    if (custom) g1.appendChild(fld('Catégorie', sel));
+    var imgIn = tx(o.image, function (x) { O(id).image = x; }, p.image || 'img/mon-projet.png'); g1.appendChild(fld('Image', h('div', { class: 'row' }, imgIn, pbtn('🖼️', function () { pickImage(function (u) { O(id).image = u; imgIn.value = u; mark(); }); }, 'gold'))));
+    g1.appendChild(f('video', 'Vidéo YouTube (lien)', 0)); g1.appendChild(f('tags', 'Services fournis (virgules)', 0, c.tags.join(', ')));
+    [0, 1, 2].forEach(function (i) { g2.appendChild(f('h' + i + 't', 'Approche ' + (i + 1) + ' — titre', 0, c.how[i][0])); g2.appendChild(f('h' + i + 'p', 'Approche ' + (i + 1) + ' — texte', 2, c.how[i][1])); });
+    var box = h('div', { class: 'drw' }), close = function () { box.remove(); list(); A.reload(null, 0); };
+    box.appendChild(h('div', { class: 'drw-bg', onclick: close }));
+    box.appendChild(h('aside', { class: 'drw-p' }, h('div', { class: 'drw-h' }, h('b', {}, o.name || p.name || 'Projet'), h('button', { class: 'sm', onclick: close }, '✕ Fermer')),
+      h('div', { class: 'drw-b' }, h('h3', {}, 'Informations et médias'), g1, h('h3', {}, 'Description'), f('ctx', 'Le contexte', 3), f('enjeu', 'L’enjeu', 3), h('h3', {}, 'Notre approche'), g2, h('h3', {}, 'Résultat'), f('res', 'Le résultat', 3),
+        custom ? h('button', { class: 'del', onclick: function () { if (confirm('Supprimer ce projet ?')) { delete S.projects[id]; mark(); close(); } } }, 'Supprimer ce projet') : h('a', { href: 'portfolio.html#' + id, target: '_blank', rel: 'noopener' }, 'Voir la fiche sur le site ↗'))));
+    document.body.appendChild(box);
+  }
+  list();
+}
+
 if (tok) start();
 })();
 
