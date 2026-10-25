@@ -1137,6 +1137,7 @@ function liveShell(v, o) {
     frame: frame, panel: panel,
     post: function (m) { m.source = 'uipact-admin'; try { frame.contentWindow.postMessage(m, location.origin); } catch (e) {} },
     push: function () { var p = o.page(); api.post({ type: 'state', texts: (S.texts || {})[p] || {}, hidden: (S.hidden || {})[p] || [], blocks: (S.blocks || {})[p] || [], images: (S.images || {})[p] || {}, theme: S.theme || null }); },
+    go: function () { write(0); frame.src = o.page() + '.html?cmsedit=1&m=' + o.mode; },
     reload: function (sc, delay) {
       clearTimeout(tm);
       tm = setTimeout(function () {
@@ -1323,40 +1324,47 @@ async function vCars(v) {
   draw();
 }
 
-/* ---------- Fiches projets ---------- */
+/* ---------- Fiches projets : la fiche s'ouvre sur le site, on la modifie à droite en direct ---------- */
 async function vProjects(v) {
-  var PR = window.PRJ; S.projects = S.projects || {};
+  var PR = window.PRJ, cur = null; S.projects = S.projects || {};
   function O(id) { return (S.projects[id] = S.projects[id] || {}); }
-  var A = liveShell(v, { mode: 'projects', page: function () { return 'portfolio'; }, pw: '380px', onNav: function () { toast('Ici, on modifie les projets du portfolio.', true); },
-    hint: 'Cliquez sur un projet du portfolio (ou ✎) pour modifier sa fiche, + pour ajouter un projet. Le site se recharge tout seul.',
-    onMsg: function (d) { if (d.type !== 'proj') return; if (d.action === 'edit') drawer(d.id); else if (d.action === 'add') add(); else if (d.action === 'del') del(d.id); } }), P = A.panel;
-  function add() { var id = 'p' + Date.now().toString(36); S.projects[id] = { custom: true, published: false, cat: 'web', name: 'Nouveau projet' }; mark(); A.reload(null, 0); list(); drawer(id); }
-  function del(id) { if (confirm('Supprimer ce projet ?')) { delete S.projects[id]; mark(); A.reload(null, 0); list(); } }
+  var A = liveShell(v, { mode: 'projects', page: function () { return 'portfolio'; }, pw: '450px', onNav: function () { toast('Ici, on modifie les projets du portfolio.', true); },
+    hint: 'Cliquez sur un projet du portfolio : sa fiche s’ouvre sur le site et se modifie à droite, en direct. + ajoute un projet.',
+    onReady: function () { if (cur) openSite(cur); },
+    onMsg: function (d) { if (d.type !== 'proj') return; if (d.action === 'edit') form(d.id); else if (d.action === 'add') add(); else if (d.action === 'del') del(d.id); } }), P = A.panel;
+  function openSite(id) { try { var w = A.frame.contentWindow; if (w.location.hash !== '#' + id) w.location.hash = id; } catch (e) {} }
+  function live() { A.post({ type: 'prj', projects: S.projects }); }
+  function add() { var id = 'p' + Date.now().toString(36); S.projects[id] = { custom: true, published: true, cat: 'web', name: 'Nouveau projet' }; mark(); cur = id; form(id, true); A.reload(null, 0); }
+  function del(id) { if (confirm('Supprimer ce projet ?')) { delete S.projects[id]; mark(); cur = null; list(); A.go(); } }
   function list() {
-    P.innerHTML = ''; P.appendChild(h('div', { class: 'row', style: 'margin-bottom:10px' }, h('b', { style: 'flex:1' }, 'Projets (' + allPrj().length + ')'), pbtn('＋ Ajouter', add, 'gold')));
-    P.appendChild(h('p', { class: 'hint' }, '« Fiche détaillée » active la page du projet ; sinon il s’ouvre en simple zoom.'));
+    cur = null; P.innerHTML = ''; P.appendChild(h('div', { class: 'row', style: 'margin-bottom:10px' }, h('b', { style: 'flex:1' }, 'Projets (' + allPrj().length + ')'), pbtn('＋ Ajouter', add, 'gold')));
+    P.appendChild(h('p', { class: 'hint' }, 'Cliquez sur un projet (ici ou sur le site) pour ouvrir sa fiche.'));
     allPrj().forEach(function (id) {
-      var o = S.projects[id] || {}, p = PR.P[id] || { cat: o.cat || 'web' }, img = o.image || p.image || '', pub = h('input', { type: 'checkbox' }); pub.checked = o.published !== false; pub.onchange = function () { O(id).published = pub.checked; mark(); A.reload(); };
-      P.appendChild(h('div', { class: 'vpr' }, h('div', { class: 'vpr-i', onclick: function () { drawer(id); }, style: img ? 'background-image:url(\'' + img + '\')' : '' }),
-        h('div', { class: 'vpr-b' }, h('b', { onclick: function () { drawer(id); } }, o.name || p.name || 'Sans titre'), h('small', {}, (PCAT[o.cat || p.cat] || '') + (o.custom ? ' · nouveau' : '')), h('label', { class: 'fx', style: 'display:flex;gap:6px;align-items:center;font-size:.82rem' }, pub, 'Fiche détaillée')),
-        pbtn('✎', function () { drawer(id); })));
+      var o = S.projects[id] || {}, p = PR.P[id] || { cat: o.cat || 'web' }, img = o.image || p.image || '';
+      P.appendChild(h('div', { class: 'vpr', onclick: function () { form(id, true); } }, h('div', { class: 'vpr-i', style: img ? 'background-image:url(\'' + img + '\')' : '' }),
+        h('div', { class: 'vpr-b' }, h('b', {}, o.name || p.name || 'Sans titre'), h('small', {}, (PCAT[o.cat || p.cat] || '') + (o.custom ? ' · nouveau' : '') + (o.published === false ? ' · zoom simple' : ''))), pbtn('✎', function () {})));
     });
   }
-  function drawer(id) {
-    var o = O(id), custom = !!o.custom, p = PR.P[id] || { cat: o.cat || 'web' }, c = PR.CAT[p.cat] || PR.CAT.web, g1 = h('div', { class: 'g2' }), g2 = h('div', { class: 'g2' });
-    function f(k, label, rows, def) { return fld(label, tx(o[k], function (x) { O(id)[k] = x; }, def != null ? def : p[k], rows)); }
-    var sel = h('select', { onchange: function () { O(id).cat = sel.value; mark(); } }); Object.keys(PCAT).forEach(function (k) { sel.appendChild(h('option', { value: k }, PCAT[k])); }); sel.value = o.cat || p.cat;
-    g1.appendChild(f('name', 'Nom du projet', 0)); g1.appendChild(f('client', 'Client', 0)); g1.appendChild(f('loc', 'Localisation', 0, 'France')); g1.appendChild(f('site', 'Site web (URL)', 0, 'https://…'));
-    if (custom) g1.appendChild(fld('Catégorie', sel));
-    var imgIn = tx(o.image, function (x) { O(id).image = x; }, p.image || 'img/mon-projet.png'); g1.appendChild(fld('Image', h('div', { class: 'row' }, imgIn, pbtn('🖼️', function () { pickImage(function (u) { O(id).image = u; imgIn.value = u; mark(); }); }, 'gold'))));
-    g1.appendChild(f('video', 'Vidéo YouTube (lien)', 0)); g1.appendChild(f('tags', 'Services fournis (virgules)', 0, c.tags.join(', ')));
-    [0, 1, 2].forEach(function (i) { g2.appendChild(f('h' + i + 't', 'Approche ' + (i + 1) + ' — titre', 0, c.how[i][0])); g2.appendChild(f('h' + i + 'p', 'Approche ' + (i + 1) + ' — texte', 2, c.how[i][1])); });
-    var box = h('div', { class: 'drw' }), close = function () { box.remove(); list(); A.reload(null, 0); };
-    box.appendChild(h('div', { class: 'drw-bg', onclick: close }));
-    box.appendChild(h('aside', { class: 'drw-p' }, h('div', { class: 'drw-h' }, h('b', {}, o.name || p.name || 'Projet'), h('button', { class: 'sm', onclick: close }, '✕ Fermer')),
-      h('div', { class: 'drw-b' }, h('h3', {}, 'Informations et médias'), g1, h('h3', {}, 'Description'), f('ctx', 'Le contexte', 3), f('enjeu', 'L’enjeu', 3), h('h3', {}, 'Notre approche'), g2, h('h3', {}, 'Résultat'), f('res', 'Le résultat', 3),
-        custom ? h('button', { class: 'del', onclick: function () { if (confirm('Supprimer ce projet ?')) { delete S.projects[id]; mark(); close(); } } }, 'Supprimer ce projet') : h('a', { href: 'portfolio.html#' + id, target: '_blank', rel: 'noopener' }, 'Voir la fiche sur le site ↗'))));
-    document.body.appendChild(box);
+  function form(id, open) {
+    cur = id; if (open) openSite(id);
+    var o = O(id), custom = !!o.custom, p = PR.P[id] || { cat: o.cat || 'web' }, c = PR.CAT[p.cat] || PR.CAT.web;
+    P.innerHTML = '';
+    P.appendChild(h('div', { class: 'row', style: 'margin-bottom:10px' }, pbtn('← Projets', function () { list(); A.go(); }), h('b', { style: 'flex:1;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, o.name || p.name || 'Projet')));
+    function f(k, label, rows, def) { return fld(label, tx(o[k], function (x) { O(id)[k] = x; live(); }, def != null ? def : p[k], rows)); }
+    var pub = h('input', { type: 'checkbox' }); pub.checked = o.published !== false; pub.onchange = function () { O(id).published = pub.checked; mark(); A.reload(null, 0); };
+    P.appendChild(h('label', { class: 'vfe', style: 'display:flex;gap:8px;align-items:center' }, pub, 'Fiche détaillée (sinon : simple zoom sur l’image)'));
+    var sel = h('select', { onchange: function () { O(id).cat = sel.value; mark(); live(); } }); Object.keys(PCAT).forEach(function (k) { sel.appendChild(h('option', { value: k }, PCAT[k])); }); sel.value = o.cat || p.cat;
+    var imgIn = tx(o.image, function (x) { O(id).image = x; live(); }, p.image || 'img/mon-projet.png');
+    P.appendChild(h('div', { class: 'vgt' }, 'Informations'));
+    P.appendChild(f('name', 'Nom du projet', 0)); P.appendChild(f('client', 'Client', 0)); if (custom) P.appendChild(fld('Catégorie', sel));
+    P.appendChild(f('loc', 'Localisation', 0, 'France')); P.appendChild(f('site', 'Site web (URL)', 0, 'https://…'));
+    P.appendChild(fld('Image', h('div', { class: 'row' }, imgIn, pbtn('🖼️', function () { pickImage(function (u) { O(id).image = u; imgIn.value = u; mark(); live(); }); }, 'gold'))));
+    P.appendChild(f('video', 'Vidéo YouTube (lien)', 0)); P.appendChild(f('tags', 'Services fournis (virgules)', 0, c.tags.join(', ')));
+    P.appendChild(h('div', { class: 'vgt' }, 'Description')); P.appendChild(f('ctx', 'Le contexte', 3)); P.appendChild(f('enjeu', 'L’enjeu', 3));
+    P.appendChild(h('div', { class: 'vgt' }, 'Notre approche'));
+    [0, 1, 2].forEach(function (i) { P.appendChild(f('h' + i + 't', 'Approche ' + (i + 1) + ' — titre', 0, c.how[i][0])); P.appendChild(f('h' + i + 'p', 'Approche ' + (i + 1) + ' — texte', 2, c.how[i][1])); });
+    P.appendChild(h('div', { class: 'vgt' }, 'Résultat')); P.appendChild(f('res', 'Le résultat', 3));
+    if (custom) P.appendChild(h('div', { class: 'vact' }, pbtn('Supprimer ce projet', function () { del(id); }, 'del')));
   }
   list();
 }

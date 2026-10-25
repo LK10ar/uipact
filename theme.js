@@ -610,9 +610,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var EB = tt('sc_eb', X.eyebrow || 'Ma méthode'), CTA = tt('sc_cta', (X.cta && X.cta.label) || 'Démarrer un projet'), CTAH = (X.cta && X.cta.href) || 'contact.html', PH = X.phone || 'img/sport.png';
     var sec = document.createElement('section'); sec.id = 'sc3'; sec.className = 'sc3';
     sec.innerHTML = '<div class="sc3-stick"><div class="sc3-txt"><div class="eb">' + E(EB) + '</div><div class="sc3-n">01</div><h3 class="sc3-h"></h3><p class="sc3-p"></p><div class="sc3-d"><i></i><i></i><i></i></div><a class="cta-button" href="' + E(CTAH) + '">' + E(CTA) + '</a></div>' +
-        '<div class="sc3-scene"><div class="lap"><div class="lap-lid"><div class="lap-page">' + S.map(function (s) { return '<img src="' + E(s[2]) + '" alt="">'; }).join('') + '</div></div><div class="lap-hinge"></div><div class="lap-deck"><i class="kb"></i><i class="tp"></i></div></div><div class="phone"><img src="' + E(PH) + '" alt=""></div></div></div>';
+        '<div class="sc3-scene"><div class="lt"><div class="lt-rig"><div class="lt-sh"></div><div class="lt-side l"></div><div class="lt-side r"></div><div class="lt-front"><i></i></div>' +
+        '<div class="lt-top"><div class="lt-vent l"></div><div class="lt-vent r"></div><div class="lt-kb"></div><div class="lt-tp"></div></div><div class="lt-hinge"></div>' +
+        '<div class="lt-lid"><div class="lt-in"><div class="lt-cam"></div><div class="lt-page">' + S.map(function (s) { return '<img src="' + E(s[2]) + '" alt="">'; }).join('') + '</div></div><div class="lt-out"><b>UIPACT</b></div><div class="lt-e t"></div><div class="lt-e l"></div><div class="lt-e r"></div></div></div></div><div class="phone"><img src="' + E(PH) + '" alt=""></div></div></div>';
     (document.querySelector('.ticker-wrap') || hero).after(sec);
-    var q = function (s) { return sec.querySelector(s); }, lap = q('.lap'), lid = q('.lap-lid'), ph = q('.phone'), n = q('.sc3-n'), hh = q('.sc3-h'), pp = q('.sc3-p'), dots = sec.querySelectorAll('.sc3-d i'), imgs = sec.querySelectorAll('.lap-page img'), cur = -1, mx = 0, my = 0;
+    var q = function (s) { return sec.querySelector(s); }, lap = q('.lt'), lid = q('.lt-lid'), ph = q('.phone'), n = q('.sc3-n'), hh = q('.sc3-h'), pp = q('.sc3-p'), dots = sec.querySelectorAll('.sc3-d i'), imgs = sec.querySelectorAll('.lt-page img'), cur = -1, mx = 0, my = 0;
     addEventListener('mousemove', function (e) { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; }, { passive: true });
     function step(i) {
         if (i === cur) return; cur = i; n.textContent = '0' + (i + 1); hh.textContent = S[i][0]; pp.textContent = S[i][1];
@@ -624,11 +626,11 @@ document.addEventListener('DOMContentLoaded', function () {
         var auto = mob.matches || reduce, p;
         if (auto) p = .12 + .88 * ((performance.now() / 13500) % 1);
         else { var r = sec.getBoundingClientRect(), tot = sec.offsetHeight - innerHeight; p = Math.max(0, Math.min(1, -r.top / tot)); }
-        var o = auto ? 1 : ease(Math.min(1, p / .14)), open = -88 * (1 - o) + 6 * o;
+        var o = auto ? 1 : ease(Math.min(1, p / .14)), open = -90 * (1 - o) + 15 * o;
         var k = Math.max(0, (p - .12) / .88), i = Math.min(2, Math.floor(k * 3)), lp = (k * 3) % 1;
         step(i);
         lid.style.transform = 'rotateX(' + open + 'deg)';
-        lap.style.transform = 'rotateX(' + (16 - 5 * Math.sin(p * Math.PI) + my * -8) + 'deg) rotateY(' + (-16 + p * 30 + mx * 8) + 'deg) scale(' + (.9 + .12 * o) + ')';
+        lap.style.transform = 'rotateX(' + (-(21 - 6 * Math.sin(p * Math.PI)) + my * -6) + 'deg) rotateY(' + (-27 + p * 24 + mx * 8) + 'deg) scale(' + (.84 + .1 * o) + ')';
         imgs[i].style.transform = 'scale(1.28) translateY(' + ((.5 - lp) * 11) + '%)';
         var pv = Math.max(0, Math.min(1, (p - .1) * 5)); ph.style.opacity = pv; ph.style.transform = 'translateZ(' + (60 + pv * 60) + 'px) rotateY(-22deg) rotateX(6deg) translateY(' + (-p * 40) + 'px)';
         requestAnimationFrame(frame);
@@ -650,18 +652,23 @@ document.addEventListener('DOMContentLoaded', function () {
     (document.querySelector('.ticker-wrap') || hero).after(st);
     var ws = [].slice.call(tp.children);
     // 2. Du wireframe au site : maquette 3D pilotée par le scroll
-    var WFH = '<div class="wf2"><div class="w-nav"><b>LOGO</b><span>ACCUEIL</span><span>SERVICES</span><span>À PROPOS</span><u>CONTACT</u></div>' +
-        '<div class="w-hero"><h4>TITRE PRINCIPAL</h4><p></p><p class="s"></p><u>COMMENCER</u></div>' +
-        '<div class="w-srv"><h5>NOS SERVICES</h5><div class="w-cards">' + new Array(4).join('<div><i class="x"></i><p></p><p class="s"></p></div>') + '</div></div>' +
-        '<div class="w-row"><div class="w-ab"><h5>À PROPOS</h5><p></p><p class="s"></p><p></p></div><div class="w-map"><em></em></div></div>' +
-        '<div class="w-ct"><h5>CONTACT</h5><div><s></s><u>ENVOYER</u></div></div></div>';
+    var X3 = '<i class="x"></i>', L3 = function (n, c) { return new Array(n + 1).join('<p' + (c ? ' class="' + c + '"' : '') + '></p>'); };
+    var C3 = '<div class="w3-c">' + X3 + '<h6></h6>' + L3(2, 's') + '</div>', I3 = '<div><em></em>' + L3(2, 's') + '</div>', SP = '<div>' + '<h5></h5>' + L3(3, 's') + '<u class="k"></u></div>';
+    var WFH = '<div class="wf3"><div class="w3-pg">' +
+        '<div class="w3-top"><p></p></div><div class="w3-nav"><b>LOGO</b><nav>' + L3(4) + '</nav><span class="w3-q"></span><u></u></div>' +
+        '<div class="w3-hero"><div><h4></h4><h4 class="s"></h4>' + L3(3, 's') + '<u class="k"></u></div>' + X3 + '</div>' +
+        '<div class="w3-sec"><h5></h5><div class="w3-g3">' + C3 + C3 + C3 + '</div></div>' +
+        '<div class="w3-ic">' + I3 + I3 + I3 + '</div>' +
+        '<div class="w3-sp">' + X3 + SP + '</div><div class="w3-sp r">' + X3 + SP + '</div>' +
+        '<div class="w3-cta"><h5></h5><u class="k"></u></div>' +
+        '<div class="w3-ft"><div>' + L3(3, 's') + '</div><div>' + L3(4) + '</div><div>' + L3(4) + '</div><div>' + L3(3) + '</div></div></div></div>';
     var M = XS.method || {}, MS = M.steps || [], CH = M.chips || {}, E2 = (window.CMS && window.CMS.esc) || function (v) { return v; };
     var MD = [['01 · Stratégie', 'Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.'], ['02 · Design', 'Wireframes puis maquettes : identité, typographies, couleurs et interface pensées pour votre image.'], ['03 · Développement', 'Un site à votre image, responsive et facile à prendre en main.']];
     var li = MD.map(function (d, i) { var z = MS[i] || {}; return '<li' + (i === 0 ? ' class="on"' : '') + '><b>' + E2(tt2('m_' + i + '_t', z.title || d[0])) + '</b><span>' + E2(tt2('m_' + i + '_p', z.text || d[1])) + '</span></li>'; }).join('');
     var p3 = h('<section class="p3" id="methode"><div class="p3-in"><div class="p3-txt"><div class="eb">' + E2(tt2('m_eb', M.eyebrow || 'Méthode')) + '</div><h2 class="p3-h">' + E2(tt2('m_title', M.title || 'Du wireframe au site')) + ' <i>' + E2(tt2('m_em', M.titleEm || 'qui convertit')) + '</i></h2><ul class="p3-steps">' + li + '</ul></div>' +
         '<div class="p3-stage"><div class="p3-rig" data-s="0"><div class="p3-win">' +
         '<div class="p3-lay on">' + WFH + '</div>' +
-        '<div class="p3-lay">' + WFH.replace('class="wf2"', 'class="wf2 d"') + '</div>' +
+        '<div class="p3-lay">' + WFH.replace('class="wf3"', 'class="wf3 d"') + '</div>' +
         '<div class="p3-lay"><img class="p3-live" src="' + E2(M.image || 'img/chene.png') + '" alt=""></div></div>' +
         '<div class="p3-chip c1">Aa<small>' + E2(tt2('m_c1', CH.typo || 'Typographie')) + '</small></div><div class="p3-chip c2"><u></u><u></u><u></u></div>' +
         '<div class="p3-chip c3">' + E2(tt2('m_c3', CH.button || 'Bouton')) + '</div><div class="p3-chip c4">' + E2(tt2('m_c4', CH.resp || 'Responsive')) + '<small>' + E2(tt2('m_c4s', CH.respSmall || 'mobile · tablette · bureau')) + '</small></div></div></div></div></section>');

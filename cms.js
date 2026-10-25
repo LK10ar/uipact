@@ -334,7 +334,7 @@
       }
       document.addEventListener('click', function (e) {
         if (bar && bar.contains(e.target)) return;
-        if (M === 'projects') { var c = e.target.closest && e.target.closest('[data-project]'); if (c) { e.preventDefault(); e.stopPropagation(); send({ type: 'proj', action: 'edit', id: c.getAttribute('data-project') }); return; } }
+        if (M === 'projects') { var c = e.target.closest && e.target.closest('[data-project]'); if (c) { hide(); send({ type: 'proj', action: 'edit', id: c.getAttribute('data-project') }); return; } }
         var a = e.target.closest && e.target.closest('a[href]');
         if (a) { e.preventDefault(); var k = pageOf(a.getAttribute('href')); if (k) send({ type: 'navigate', page: k }); }
       }, true);
@@ -345,6 +345,11 @@
         if (d.type === 'state') { st = { texts: d.texts || {}, hidden: d.hidden || [], blocks: d.blocks || [], images: d.images || {}, theme: d.theme || null }; apply(); }
         else if (d.type === 'select') select(d.key || d.block || d.img ? { key: d.key, block: d.block, img: d.img } : null);
         else if (d.type === 'scroll') goScroll(d.sel);
+        else if (d.type === 'prj') {
+          window.__cmsPrj = d.projects || {}; ed.projects = window.__cmsPrj;
+          var cs = document.getElementById('caseStudy');
+          if (cs && cs.classList.contains('open')) { var sp = document.getElementById('csPanel'), y = sp ? sp.scrollTop : 0; window.dispatchEvent(new HashChangeEvent('hashchange')); if (sp) sp.scrollTop = y; }
+        }
       });
       window.addEventListener('load', function () { setTimeout(function () { var v = null; try { v = sessionStorage.getItem('uipact_edit_scroll'); } catch (e) {} goScroll(v); }, 700); });
       apply();
