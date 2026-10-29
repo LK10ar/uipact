@@ -988,7 +988,7 @@ async function collect() {
   add('st_txt', ST.text); add('m_eb', ME.eyebrow); add('m_title', ME.title); add('m_em', ME.titleEm); ME.steps.forEach(function (z, i) { add('m_' + i + '_t', z.title); add('m_' + i + '_p', z.text); });
   (C.UI || []).forEach(function (t) { add('ui_' + hsh(t), t); });
   allPrj().forEach(function (id) { var p = window.PRJ.P[id] || {}, o = S.projects[id] || {};
-    ['name', 'client', 'loc', 'ctx', 'enjeu', 'res'].forEach(function (k) { add('prj_' + id + '_' + k, o[k] || p[k]); }); add('prj_' + id + '_tags', o.tags);
+    ['name', 'client', 'loc', 'ctx', 'enjeu', 'res'].forEach(function (k) { add('prj_' + id + '_' + k, o[k] || p[k]); }); add('prj_' + id + '_tags', o.tags); add('prj_' + id + '_sl', o.siteLabel); (o.links || []).forEach(function (l, i) { add('prj_' + id + '_l' + i, l.label); });
     [0, 1, 2].forEach(function (i) { add('prj_' + id + '_h' + i + 't', o['h' + i + 't']); add('prj_' + id + '_h' + i + 'p', o['h' + i + 'p']); }); });
   add('m_c1', ME.chips.typo); add('m_c3', ME.chips.button); add('m_c4', ME.chips.resp); add('m_c4s', ME.chips.respSmall);
   return map;
@@ -1351,19 +1351,64 @@ async function vProjects(v) {
     P.innerHTML = '';
     P.appendChild(h('div', { class: 'row', style: 'margin-bottom:10px' }, pbtn('← Projets', function () { list(); A.go(); }), h('b', { style: 'flex:1;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, o.name || p.name || 'Projet')));
     function f(k, label, rows, def) { return fld(label, tx(o[k], function (x) { O(id)[k] = x; live(); }, def != null ? def : p[k], rows)); }
+    function arr(k) { var x = O(id); if (!Array.isArray(x[k])) x[k] = []; return x[k]; }
+    function move(a, i, d) { var j = i + d; if (j < 0 || j >= a.length) return; a.splice(j, 0, a.splice(i, 1)[0]); }
+    function galleryBox() {
+      var box = h('div', {});
+      function draw() {
+        box.innerHTML = ''; var G = Array.isArray(O(id).gallery) ? O(id).gallery : [];
+        G.forEach(function (g, i) {
+          var th = h('img', { src: g.image, alt: '' });
+          box.appendChild(h('div', { class: 'vci' }, h('div', { class: 'vci-i' }, th, h('span', { class: 'badge' }, String(i + 2))),
+            h('div', { class: 'vci-f' }, tx(g.caption, function (x) { g.caption = x; live(); }, 'Légende (facultatif)'),
+              h('div', { class: 'row' }, pbtn('🖼️ Photo', function () { pickImage(function (u) { g.image = u; th.src = u; mark(); live(); }); }, 'gold'), pbtn('←', function () { move(G, i, -1); mark(); live(); draw(); }), pbtn('→', function () { move(G, i, 1); mark(); live(); draw(); }), pbtn('✕', function () { G.splice(i, 1); mark(); live(); draw(); }, 'del')))));
+        });
+        box.appendChild(h('button', { class: 'addtile', onclick: function () { pickImage(function (u) { arr('gallery').push({ image: u, caption: '' }); mark(); live(); draw(); }); } }, h('b', {}, '+'), 'Ajouter une photo au carrousel'));
+      }
+      draw(); return box;
+    }
+    function linksBox() {
+      var box = h('div', {});
+      function draw() {
+        box.innerHTML = ''; var L = Array.isArray(O(id).links) ? O(id).links : [];
+        L.forEach(function (l, i) {
+          box.appendChild(h('div', { class: 'vblk' }, h('div', { class: 'row', style: 'margin-bottom:8px' }, h('b', { style: 'flex:1' }, 'Lien ' + (i + 1)), pbtn('↑', function () { move(L, i, -1); mark(); live(); draw(); }), pbtn('↓', function () { move(L, i, 1); mark(); live(); draw(); }), pbtn('✕', function () { L.splice(i, 1); mark(); live(); draw(); }, 'del')),
+            fld('Texte du bouton', tx(l.label, function (x) { l.label = x; live(); }, 'Ex. Voir le site')), fld('Adresse (URL)', tx(l.url, function (x) { l.url = x; live(); }, 'https://…'))));
+        });
+        box.appendChild(h('button', { class: 'addtile', onclick: function () { arr('links').push({ label: '', url: '' }); mark(); live(); draw(); } }, h('b', {}, '+'), 'Ajouter un lien'));
+      }
+      draw(); return box;
+    }
+    function blocksBox() {
+      var box = h('div', {});
+      function draw() {
+        box.innerHTML = ''; var B = Array.isArray(O(id).blocks) ? O(id).blocks : [];
+        B.forEach(function (b, i) {
+          box.appendChild(h('div', { class: 'vblk' }, h('div', { class: 'row', style: 'margin-bottom:8px' }, h('b', { style: 'flex:1' }, 'Bloc ' + (i + 1)), pbtn('↑', function () { move(B, i, -1); mark(); live(); draw(); }), pbtn('↓', function () { move(B, i, 1); mark(); live(); draw(); }), pbtn('✕', function () { B.splice(i, 1); mark(); live(); draw(); }, 'del')),
+            fld('Titre', tx(b.title, function (x) { b.title = x; live(); }, 'Ex. Le processus créatif')), fld('Texte', tx(b.text, function (x) { b.text = x; live(); }, '', 4)),
+            h('div', { class: 'row' }, pbtn('🖼️ ' + (b.image ? 'Changer la photo' : 'Ajouter une photo'), function () { pickImage(function (u) { b.image = u; mark(); live(); draw(); }); }, 'gold'), b.image ? pbtn('Retirer la photo', function () { delete b.image; mark(); live(); draw(); }) : null)));
+        });
+        box.appendChild(h('button', { class: 'addtile', onclick: function () { arr('blocks').push({ title: '', text: '' }); mark(); live(); draw(); } }, h('b', {}, '+'), 'Ajouter un bloc de détails'));
+      }
+      draw(); return box;
+    }
     var pub = h('input', { type: 'checkbox' }); pub.checked = o.published !== false; pub.onchange = function () { O(id).published = pub.checked; mark(); A.reload(null, 0); };
     P.appendChild(h('label', { class: 'vfe', style: 'display:flex;gap:8px;align-items:center' }, pub, 'Fiche détaillée (sinon : simple zoom sur l’image)'));
     var sel = h('select', { onchange: function () { O(id).cat = sel.value; mark(); live(); } }); Object.keys(PCAT).forEach(function (k) { sel.appendChild(h('option', { value: k }, PCAT[k])); }); sel.value = o.cat || p.cat;
     var imgIn = tx(o.image, function (x) { O(id).image = x; live(); }, p.image || 'img/mon-projet.png');
     P.appendChild(h('div', { class: 'vgt' }, 'Informations'));
     P.appendChild(f('name', 'Nom du projet', 0)); P.appendChild(f('client', 'Client', 0)); if (custom) P.appendChild(fld('Catégorie', sel));
-    P.appendChild(f('loc', 'Localisation', 0, 'France')); P.appendChild(f('site', 'Site web (URL)', 0, 'https://…'));
+    P.appendChild(f('loc', 'Localisation', 0, 'France')); P.appendChild(f('site', 'Site web (URL)', 0, 'https://…')); P.appendChild(f('siteLabel', 'Texte affiché pour le site web', 0, 'Ex. Voir le site'));
     P.appendChild(fld('Image', h('div', { class: 'row' }, imgIn, pbtn('🖼️', function () { pickImage(function (u) { O(id).image = u; imgIn.value = u; mark(); live(); }); }, 'gold'))));
     P.appendChild(f('video', 'Vidéo YouTube (lien)', 0)); P.appendChild(f('tags', 'Services fournis (virgules)', 0, c.tags.join(', ')));
+    P.appendChild(f('year', 'Année', 0, '2026')); P.appendChild(f('duration', 'Durée du projet', 0, '3 semaines')); P.appendChild(f('role', 'Votre rôle', 0, 'Direction artistique, design, développement')); P.appendChild(f('tools', 'Outils utilisés', 0, 'Figma, Photoshop, Illustrator'));
+    P.appendChild(h('div', { class: 'vgt' }, 'Photos du carrousel (en plus de l’image principale)')); P.appendChild(h('p', { class: 'hint' }, 'L’image principale ci-dessus est la photo 1. Ajoutez les suivantes ici : la fiche affiche alors un carrousel.')); P.appendChild(galleryBox());
     P.appendChild(h('div', { class: 'vgt' }, 'Description')); P.appendChild(f('ctx', 'Le contexte', 3)); P.appendChild(f('enjeu', 'L’enjeu', 3));
     P.appendChild(h('div', { class: 'vgt' }, 'Notre approche'));
     [0, 1, 2].forEach(function (i) { P.appendChild(f('h' + i + 't', 'Approche ' + (i + 1) + ' — titre', 0, c.how[i][0])); P.appendChild(f('h' + i + 'p', 'Approche ' + (i + 1) + ' — texte', 2, c.how[i][1])); });
     P.appendChild(h('div', { class: 'vgt' }, 'Résultat')); P.appendChild(f('res', 'Le résultat', 3));
+    P.appendChild(h('div', { class: 'vgt' }, 'Liens personnalisés')); P.appendChild(h('p', { class: 'hint' }, 'Ajoutez autant de liens que vous voulez (Spotify, Instagram, boutique…), avec le texte de votre choix. Ils s’affichent sous le résultat.')); P.appendChild(linksBox());
+    P.appendChild(h('div', { class: 'vgt' }, 'Détails supplémentaires')); P.appendChild(h('p', { class: 'hint' }, 'Ajoutez autant de blocs que vous voulez (titre, texte et photo facultative) : ils s’affichent sous le résultat.')); P.appendChild(blocksBox());
     if (custom) P.appendChild(h('div', { class: 'vact' }, pbtn('Supprimer ce projet', function () { del(id); }, 'del')));
   }
   list();
