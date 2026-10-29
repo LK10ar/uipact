@@ -292,6 +292,7 @@
       m = m.replace(/^.*\//, ''); var k = m ? m.replace(/\.html$/, '') : 'index'; return PAGES.indexOf(k) > -1 ? k : null;
     }
     function init() {
+      HTMLElement.prototype.focus = function () {};
       var css = document.createElement('style');
       css.textContent = '#instaPopup,.popup-overlay{display:none!important}.cms-hov{outline:2px dashed #C9A24B!important;outline-offset:3px}.cms-sel{outline:2px solid #E4C77A!important;outline-offset:3px}' +
         '.cms-off{opacity:.3!important;text-decoration:line-through!important}.cms-block{opacity:1!important;transform:none!important;visibility:visible!important}' +
@@ -348,7 +349,15 @@
         else if (d.type === 'prj') {
           window.__cmsPrj = d.projects || {}; ed.projects = window.__cmsPrj;
           var cs = document.getElementById('caseStudy');
-          if (cs && cs.classList.contains('open')) { var sp = document.getElementById('csPanel'), y = sp ? sp.scrollTop : 0; window.dispatchEvent(new HashChangeEvent('hashchange')); if (sp) sp.scrollTop = y; }
+          if (cs && cs.classList.contains('open') && typeof window.renderProject === 'function') {
+            var sp = document.getElementById('csPanel'), y = sp ? sp.scrollTop : 0;
+            try { window.renderProject(decodeURIComponent(location.hash.slice(1))); } catch (err) { console.error(err); }
+            if (sp) sp.scrollTop = y;
+          }
+        }
+        else if (d.type === 'open') {
+          var y0 = window.scrollY; if (location.hash !== '#' + d.id) location.hash = d.id;
+          setTimeout(function () { window.scrollTo({ top: y0, behavior: 'instant' }); }, 60);
         }
       });
       window.addEventListener('load', function () { setTimeout(function () { var v = null; try { v = sessionStorage.getItem('uipact_edit_scroll'); } catch (e) {} goScroll(v); }, 700); });
