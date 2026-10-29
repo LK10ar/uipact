@@ -638,6 +638,17 @@ function uploadFile(cb) {
   i.click();
 }
 function closeModal() { var m = $('#modal'); m.hidden = true; m.innerHTML = ''; }
+var GH = { repo: 'LK10ar/uipact', dir: 'img', ref: 'main' }, ghCache = null;
+async function ghImages() {
+  if (ghCache) return ghCache;
+  try {
+    var r = await fetch('https://api.github.com/repos/' + GH.repo + '/contents/' + GH.dir + '?ref=' + GH.ref); if (!r.ok) throw new Error('github');
+    var j = await r.json();
+    ghCache = j.filter(function (f) { return f.type === 'file' && /\.(png|jpe?g|webp|gif|svg|avif)$/i.test(f.name); }).map(function (f) { return { name: f.name, path: GH.dir + '/' + encodeURIComponent(f.name).replace(/%2F/g, '/') }; });
+    ghCache.sort(function (a, b) { return a.name.localeCompare(b.name); });
+  } catch (e) { return []; }
+  return ghCache;
+}
 async function pickImage(cb) {
   var m = $('#modal'); m.hidden = false; m.innerHTML = ''; var box = h('div', { class: 'mbox' }); m.appendChild(box); m.onclick = function (e) { if (e.target === m) closeModal(); };
   var seen = {}, mine = h('div', { class: 'pick' }), site = h('div', { class: 'pick' });
@@ -645,7 +656,17 @@ async function pickImage(cb) {
   var u = h('input', { placeholder: '… ou collez une adresse (https://… ou img/photo.png)' });
   box.appendChild(h('div', { class: 'row', style: 'margin-bottom:12px' }, h('b', { style: 'flex:1;font-size:1.15rem' }, 'Choisir une image'), h('button', { onclick: closeModal }, 'Fermer')));
   box.appendChild(h('div', { class: 'row' }, h('button', { class: 'gold', onclick: function () { uploadFile(function (x) { closeModal(); cb(x); }); } }, '📁 Envoyer depuis mon ordinateur'), u, h('button', { onclick: function () { var x = u.value.trim(); if (x) { closeModal(); cb(x); } } }, 'Utiliser cette adresse')));
-  box.appendChild(h('h3', {}, 'Mes photos envoyées')); box.appendChild(mine); box.appendChild(h('h3', {}, 'Photos du site')); box.appendChild(site);
+  var gh = h('div', { class: 'pick' }), ghq = h('input', { placeholder: 'Rechercher dans le dossier img…', style: 'margin-bottom:10px' });
+  box.appendChild(h('h3', {}, 'Mes photos envoyées')); box.appendChild(mine);
+  box.appendChild(h('h3', {}, 'Dossier img du site (GitHub)')); box.appendChild(ghq); box.appendChild(gh);
+  gh.appendChild(h('p', { class: 'hint' }, 'Chargement des images…'));
+  ghImages().then(function (list) {
+    gh.innerHTML = '';
+    list.forEach(function (x) { var b = h('button', { class: 'pk', title: x.name, 'data-n': x.name.toLowerCase(), onclick: function () { closeModal(); cb(x.path); } }, h('img', { src: x.path, loading: 'lazy', alt: '' })); gh.appendChild(b); });
+    if (!list.length) gh.appendChild(h('p', { class: 'hint' }, 'Impossible de lire le dossier img sur GitHub pour l’instant. Collez le chemin (img/nom.png) dans le champ ci-dessus.'));
+  });
+  ghq.oninput = function () { var q = ghq.value.trim().toLowerCase(); [].forEach.call(gh.querySelectorAll('.pk'), function (b) { b.style.display = !q || b.getAttribute('data-n').indexOf(q) > -1 ? '' : 'none'; }); };
+  box.appendChild(h('h3', {}, 'Photos du site')); box.appendChild(site);
   PORT.forEach(function (x) { add(site, x[0]); }); add(site, 'logo.png'); Object.keys(S.carousels).forEach(function (k) { (S.carousels[k] || []).forEach(function (x) { add(site, x.image); }); });
   try { (await api('/api/media')).forEach(function (x) { add(mine, x.url); }); } catch (e) { /* pas de base : on garde seulement les photos du site */ }
   if (!mine.children.length) mine.appendChild(h('p', { class: 'hint' }, 'Rien d\u2019envoyé pour l\u2019instant.'));
