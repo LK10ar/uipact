@@ -249,9 +249,20 @@
       put(box);
     }
   }
+  /* ===== Projets retirés du portfolio ===== */
+  function hideProjects() {
+    var P = window.__cmsPrj || {};
+    [].forEach.call(document.querySelectorAll('[data-project],a[href*="portfolio.html#"],[data-id]'), function (el) {
+      var id = el.getAttribute('data-project') || el.getAttribute('data-id') || (String(el.getAttribute('href') || '').split('#')[1] || '');
+      if (!id || !P[id]) return;
+      el.classList.toggle(EDIT ? 'cms-ghost' : 'cms-gone', !!P[id].hidden);
+    });
+  }
+  window.addEventListener('load', hideProjects);
+  document.addEventListener('DOMContentLoaded', function () { [0, 300, 1000, 2500].forEach(function (ms) { setTimeout(hideProjects, ms); }); });
   (function () {
     var st = document.createElement('style');
-    st.textContent = '.cms-car{position:relative;width:100%}.cms-car-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.cms-car-track::-webkit-scrollbar{display:none}' +
+    st.textContent = '.cms-gone{display:none!important}.cms-ghost{opacity:.3!important}.cms-car{position:relative;width:100%}.cms-car-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.cms-car-track::-webkit-scrollbar{display:none}' +
       '.cms-slide{flex:0 0 100%;scroll-snap-align:center;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.cms-slide img{display:block;max-width:100%;max-height:75vh;object-fit:contain;margin:0 auto}' +
       '.cms-slide figcaption{margin-top:10px;font-size:.9rem;opacity:.8;text-align:center}' +
       '.cms-car-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:1px solid var(--c-gold,#C9A24B);background:rgba(16,27,61,.75);color:var(--c-gold2,#E4C77A);font-size:1.6rem;line-height:1;cursor:pointer;z-index:2}.cms-car-nav:hover{background:var(--c-gold,#C9A24B);color:var(--c-navy,#101B3D)}.cms-car-nav.prev{left:10px}.cms-car-nav.next{right:10px}' +
