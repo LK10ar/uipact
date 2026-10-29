@@ -1342,7 +1342,7 @@ async function vProjects(v) {
     allPrj().forEach(function (id) {
       var o = S.projects[id] || {}, p = PR.P[id] || { cat: o.cat || 'web' }, img = o.image || p.image || '';
       P.appendChild(h('div', { class: 'vpr', onclick: function () { form(id, true); } }, h('div', { class: 'vpr-i', style: img ? 'background-image:url(\'' + img + '\')' : '' }),
-        h('div', { class: 'vpr-b' }, h('b', {}, o.name || p.name || 'Sans titre'), h('small', {}, (PCAT[o.cat || p.cat] || '') + (o.custom ? ' · nouveau' : '') + (o.published === false ? ' · zoom simple' : ''))), pbtn('✎', function () {})));
+        h('div', { class: 'vpr-b' }, h('b', {}, o.name || p.name || 'Sans titre'), h('small', {}, (PCAT[o.cat || p.cat] || '') + (o.custom ? ' · nouveau' : '') + (o.published === false ? ' · zoom simple' : '') + (o.hidden ? ' · masqué' : ''))), pbtn('✎', function () {})));
     });
   }
   function form(id, open) {
@@ -1394,6 +1394,8 @@ async function vProjects(v) {
     }
     var pub = h('input', { type: 'checkbox' }); pub.checked = o.published !== false; pub.onchange = function () { O(id).published = pub.checked; mark(); A.reload(null, 0); };
     P.appendChild(h('label', { class: 'vfe', style: 'display:flex;gap:8px;align-items:center' }, pub, 'Fiche détaillée (sinon : simple zoom sur l’image)'));
+    var shw = h('input', { type: 'checkbox' }); shw.checked = !o.hidden; shw.onchange = function () { O(id).hidden = !shw.checked; mark(); live(); A.reload(null, 0); };
+    P.appendChild(h('label', { class: 'vfe', style: 'display:flex;gap:8px;align-items:center' }, shw, 'Afficher ce projet dans le portfolio (décoché = retiré du site)'));
     var sel = h('select', { onchange: function () { O(id).cat = sel.value; mark(); live(); } }); Object.keys(PCAT).forEach(function (k) { sel.appendChild(h('option', { value: k }, PCAT[k])); }); sel.value = o.cat || p.cat;
     var imgIn = tx(o.image, function (x) { O(id).image = x; live(); }, p.image || 'img/mon-projet.png');
     P.appendChild(h('div', { class: 'vgt' }, 'Informations'));
