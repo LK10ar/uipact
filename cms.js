@@ -184,6 +184,32 @@
     document.documentElement.dir = /^(ar|he|fa|ur)/.test(lang) ? 'rtl' : 'ltr';
   }
 
+  /* ===== Fiche projet : liens personnalisés et texte du lien « Site web » ===== */
+  function safeUrl(u) { u = String(u || '').trim(); if (!u) return ''; if (/^(https?:|mailto:|tel:)/i.test(u)) return u; if (/^(javascript|data):/i.test(u)) return ''; return 'https://' + u.replace(/^\/+/, ''); }
+  function projLinks() {
+    var cs = document.getElementById('caseStudy'), panel = document.getElementById('csPanel'); if (!cs || !panel) return;
+    var id = ''; try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) {}
+    var o = (window.__cmsPrj || {})[id]; if (!o) return;
+    var oldBox = panel.querySelector('.cms-plinks'); if (oldBox) oldBox.remove();
+    var site = safeUrl(o.site), sl = tr('prj_' + id + '_sl', o.siteLabel);
+    if (site && sl) [].forEach.call(panel.querySelectorAll('a[href]'), function (a) { if (a.classList.contains('cms-plink')) return; var h = a.getAttribute('href'); if (h === o.site || h === site) { a.textContent = sl; if (!/\u2197/.test(sl)) a.appendChild(document.createTextNode(' \u2197')); } });
+    var L = (o.links || []).filter(function (l) { return l && safeUrl(l.url); }); if (!L.length) return;
+    var box = document.createElement('div'); box.className = 'cms-plinks no-cms';
+    L.forEach(function (l, i) { var a = document.createElement('a'); a.className = 'cms-plink'; a.href = safeUrl(l.url); a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = tr('prj_' + id + '_l' + i, l.label) || l.url; box.appendChild(a); });
+    var heads = [].slice.call(panel.querySelectorAll('h1,h2,h3,h4')), rt = (window.__u ? window.__u('Le résultat') : 'Le résultat'), h = heads.filter(function (x) { return x.textContent.trim() === rt; })[0], at = null;
+    if (h) { at = h.parentNode === panel ? h.nextElementSibling : h.parentNode; }
+    if (at && at.parentNode) at.parentNode.insertBefore(box, at.nextSibling); else panel.appendChild(box);
+  }
+  (function () {
+    var st = document.createElement('style');
+    st.textContent = '.cms-plinks{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0}.cms-plink{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border:1px solid var(--c-gold,#C9A24B);border-radius:99px;color:var(--c-gold2,#E4C77A);text-decoration:none;font-weight:600;transition:background .2s,color .2s}.cms-plink::after{content:"\\2197"}.cms-plink:hover{background:var(--c-gold,#C9A24B);color:var(--c-navy,#101B3D)}';
+    document.head.appendChild(st);
+    document.addEventListener('DOMContentLoaded', function () {
+      var cs = document.getElementById('caseStudy'); if (!cs) return; var busy = false, t;
+      new MutationObserver(function () { if (busy) return; clearTimeout(t); t = setTimeout(function () { busy = true; try { projLinks(); } catch (e) { console.error('cms', e); } setTimeout(function () { busy = false; }, 0); }, 30); }).observe(cs, { childList: true, subtree: true });
+    });
+  })();
+
   if (!LIVE || EDIT) return;
   var KEY = 'uipact_cms_' + lang, raw = localStorage.getItem(KEY);
   document.addEventListener('DOMContentLoaded', function () {
@@ -350,9 +376,9 @@
           window.__cmsPrj = d.projects || {}; ed.projects = window.__cmsPrj;
           var cs = document.getElementById('caseStudy');
           if (cs && cs.classList.contains('open') && typeof window.renderProject === 'function') {
-            var sp = document.getElementById('csPanel'), y = sp ? sp.scrollTop : 0;
+            var sp = document.getElementById('csPanel'), y = sp ? sp.scrollTop : 0, gt = document.querySelector('.cs-gal-track'), gx = gt ? gt.scrollLeft : 0;
             try { window.renderProject(decodeURIComponent(location.hash.slice(1))); } catch (err) { console.error(err); }
-            if (sp) sp.scrollTop = y;
+            if (sp) sp.scrollTop = y; var gt2 = document.querySelector('.cs-gal-track'); if (gt2 && gx) gt2.scrollLeft = gx;
           }
         }
         else if (d.type === 'open') {
