@@ -1332,7 +1332,7 @@ async function vProjects(v) {
     hint: 'Cliquez sur un projet du portfolio : sa fiche s’ouvre sur le site et se modifie à droite, en direct. + ajoute un projet.',
     onReady: function () { if (cur) openSite(cur); },
     onMsg: function (d) { if (d.type !== 'proj') return; if (d.action === 'edit') form(d.id); else if (d.action === 'add') add(); else if (d.action === 'del') del(d.id); } }), P = A.panel;
-  function openSite(id) { try { var w = A.frame.contentWindow; if (w.location.hash !== '#' + id) w.location.hash = id; } catch (e) {} }
+  function openSite(id) { A.post({ type: 'open', id: id }); }
   function live() { A.post({ type: 'prj', projects: S.projects }); }
   function add() { var id = 'p' + Date.now().toString(36); S.projects[id] = { custom: true, published: true, cat: 'web', name: 'Nouveau projet' }; mark(); cur = id; form(id, true); A.reload(null, 0); }
   function del(id) { if (confirm('Supprimer ce projet ?')) { delete S.projects[id]; mark(); cur = null; list(); A.go(); } }
