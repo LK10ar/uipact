@@ -41,7 +41,7 @@
     return out;
   }
   function hsh(t) { var x = 5381; for (var i = 0; i < t.length; i++) x = ((x << 5) + x + t.charCodeAt(i)) | 0; return (x >>> 0).toString(36); }
-  var UI = ["Un", "Graphiste", "Web designer", "Créatif", "Stratège", "passionné par l'art et la technique.", "Voir —", "Démarrer un projet", "Découvrir", "Voir le portfolio", "Un projet de site ou de logo ? Parlons-en 👋", "Fermer", "Méthode", "Trois étapes,", "un résultat", "Stratégie", "Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.", "Créativité", "Concevoir une identité et des interfaces qui vous démarquent et racontent votre histoire.", "Précision", "Livrer des fichiers et des pages soignés, prêts à être utilisés partout.", "Savoir-faire", "Le studio,", "de A à Z", "Création graphique", "Logo · Identité · Supports", "Création print", "Cartes · Flyers · Affiches", "Sites internet", "Vitrine · One-page", "Identité visuelle", "Charte · Rédaction", "UX / UI design", "Maquettes · Prototypes", "Votre prochain projet", "commence ici", "Parlons de votre vision : stratégie, créativité et précision au service de votre image.", "Dites bonjour 👋", "Un projet de logo, de site, de print ou d'application ? Décrivez-le, je reviens vers vous.", "Disponible pour de nouveaux projets", "Services souhaités", "Site internet", "Autre", "Envoi en cours…", "Message envoyé !", "Merci, je reviens vers vous très vite.", "Du concept au", "site en ligne", "Wireframe", "La structure et le parcours de vos visiteurs, posés avant toute décoration.", "Palette", "Typographie", "Design", "Palette de couleurs, typographies et identité : votre univers visuel prend forme.", "Interface", "Intégration", "Interfaces soignées, pensées pour s'afficher parfaitement sur mobile comme sur ordinateur.", "En ligne", "● En ligne", "Votre site,", "prêt à convaincre", "Toutes les couches s'assemblent : votre site est prêt à convaincre.", "Étude de cas", "Description du projet", "Le contexte", "L'enjeu", "Notre approche", "Le résultat", "Services fournis", "Client", "Localisation", "Site web", "Prestation", "Nous contacter", "Projet suivant", "Un projet similaire ?", "Parlons de votre projet, sans engagement.", "France", "Développement web", "UX / UI Design", "UI", "UX", "SEO", "Branding", "Logo", "Figma", "Prototype", "Print", "Direction artistique", "Mise en page", "Une interface pensée pour convertir.", "Maquettes, hiérarchie visuelle et parcours simplifiés pour guider le visiteur jusqu'à l'action.", "Un site fluide sur tous les écrans.", "Développement responsive, rapide et soigné, du mobile au grand écran.", "Des bases solides pour le référencement.", "Structure propre, balises et contenus pensés pour apparaître sur Google.", "Une idée forte.", "Recherche de territoire de marque, de symboles et de références avant de dessiner.", "Un système cohérent.", "Logo, couleurs et typographies déclinés pour fonctionner partout.", "Des fichiers prêts à l'emploi.", "Livraison des formats utiles pour le web, le print et les réseaux sociaux.", "Comprendre les usages.", "Définition des besoins et des parcours avant toute maquette.", "Des écrans clairs et cohérents.", "Wireframes puis maquettes haute fidélité sur Figma, avec un design system.", "Un prototype testable.", "Parcours interactif pour valider les choix avant le développement.", "Un message lisible en un coup d'œil.", "Hiérarchie visuelle et mise en page travaillées pour capter l'attention.", "Une identité respectée.", "Couleurs, typographies et visuels alignés sur la charte du client.", "Des fichiers prêts à imprimer.", "Export aux bons formats, avec fonds perdus et profils couleur adaptés.", "Me contacter", "Portfolio", "Réalisations", "Le portfolio en", "Un projet ?", "La démonstration en vidéo", "Accueil", "À propos", "Contact", "Mentions légales", "© 2026 UIPACT — Tous droits réservés.", "Agence de conception visuelle & web."];
+  var UI = ["Un", "Graphiste", "Web designer", "Créatif", "Stratège", "passionné par l'art et la technique.", "Voir —", "Démarrer un projet", "Découvrir", "Voir le portfolio", "Un projet de site ou de logo ? Parlons-en 👋", "Fermer", "Méthode", "Trois étapes,", "un résultat", "Stratégie", "Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne.", "Créativité", "Concevoir une identité et des interfaces qui vous démarquent et racontent votre histoire.", "Précision", "Livrer des fichiers et des pages soignés, prêts à être utilisés partout.", "Savoir-faire", "Le studio,", "de A à Z", "Création graphique", "Logo · Identité · Supports", "Création print", "Cartes · Flyers · Affiches", "Sites internet", "Vitrine · One-page", "Identité visuelle", "Charte · Rédaction", "UX / UI design", "Maquettes · Prototypes", "Votre prochain projet", "commence ici", "Parlons de votre vision : stratégie, créativité et précision au service de votre image.", "Dites bonjour 👋", "Un projet de logo, de site, de print ou d'application ? Décrivez-le, je reviens vers vous.", "Disponible pour de nouveaux projets", "Services souhaités", "Site internet", "Autre", "Envoi en cours…", "Message envoyé !", "Merci, je reviens vers vous très vite.", "Du concept au", "site en ligne", "Wireframe", "La structure et le parcours de vos visiteurs, posés avant toute décoration.", "Palette", "Typographie", "Design", "Palette de couleurs, typographies et identité : votre univers visuel prend forme.", "Interface", "Intégration", "Interfaces soignées, pensées pour s'afficher parfaitement sur mobile comme sur ordinateur.", "En ligne", "● En ligne", "Votre site,", "prêt à convaincre", "Toutes les couches s'assemblent : votre site est prêt à convaincre.", "Étude de cas", "Description du projet", "Le contexte", "L'enjeu", "Notre approche", "Le résultat", "Services fournis", "Client", "Année", "Durée", "Rôle", "Outils", "Localisation", "Site web", "Prestation", "Nous contacter", "Projet suivant", "Un projet similaire ?", "Parlons de votre projet, sans engagement.", "France", "Développement web", "UX / UI Design", "UI", "UX", "SEO", "Branding", "Logo", "Figma", "Prototype", "Print", "Direction artistique", "Mise en page", "Une interface pensée pour convertir.", "Maquettes, hiérarchie visuelle et parcours simplifiés pour guider le visiteur jusqu'à l'action.", "Un site fluide sur tous les écrans.", "Développement responsive, rapide et soigné, du mobile au grand écran.", "Des bases solides pour le référencement.", "Structure propre, balises et contenus pensés pour apparaître sur Google.", "Une idée forte.", "Recherche de territoire de marque, de symboles et de références avant de dessiner.", "Un système cohérent.", "Logo, couleurs et typographies déclinés pour fonctionner partout.", "Des fichiers prêts à l'emploi.", "Livraison des formats utiles pour le web, le print et les réseaux sociaux.", "Comprendre les usages.", "Définition des besoins et des parcours avant toute maquette.", "Des écrans clairs et cohérents.", "Wireframes puis maquettes haute fidélité sur Figma, avec un design system.", "Un prototype testable.", "Parcours interactif pour valider les choix avant le développement.", "Un message lisible en un coup d'œil.", "Hiérarchie visuelle et mise en page travaillées pour capter l'attention.", "Une identité respectée.", "Couleurs, typographies et visuels alignés sur la charte du client.", "Des fichiers prêts à imprimer.", "Export aux bons formats, avec fonds perdus et profils couleur adaptés.", "Me contacter", "Portfolio", "Réalisations", "Le portfolio en", "Un projet ?", "La démonstration en vidéo", "Accueil", "À propos", "Contact", "Mentions légales", "© 2026 UIPACT — Tous droits réservés.", "Agence de conception visuelle & web."];
   window.CMS = { UI: UI, hsh: hsh, scan: scan, DEF: DEF, PAGES: PAGES, LANGS: LANGS, esc: esc, merge: merge, pk: pk };
   window.__cmsPK = pk;
   if (window.CMS_ADMIN) return;
@@ -184,29 +184,84 @@
     document.documentElement.dir = /^(ar|he|fa|ur)/.test(lang) ? 'rtl' : 'ltr';
   }
 
-  /* ===== Fiche projet : liens personnalisés et texte du lien « Site web » ===== */
+  /* ===== Fiche projet : carrousel, détails, blocs et liens personnalisés ===== */
   function safeUrl(u) { u = String(u || '').trim(); if (!u) return ''; if (/^(https?:|mailto:|tel:)/i.test(u)) return u; if (/^(javascript|data):/i.test(u)) return ''; return 'https://' + u.replace(/^\/+/, ''); }
-  function projLinks() {
-    var cs = document.getElementById('caseStudy'), panel = document.getElementById('csPanel'); if (!cs || !panel) return;
+  function uu(s) { return window.__u ? window.__u(s) : s; }
+  function leaf(root, words) { var all = root.querySelectorAll('*'); for (var i = 0; i < all.length; i++) { var e = all[i]; if (!e.children.length && words.indexOf(e.textContent.trim().toLowerCase()) > -1) return e; } return null; }
+  function carousel(slides) {
+    var car = document.createElement('div'); car.className = 'cms-car cms-extra no-cms';
+    var track = document.createElement('div'); track.className = 'cms-car-track'; car.appendChild(track);
+    slides.forEach(function (sl) {
+      var f = document.createElement('figure'); f.className = 'cms-slide'; var im = document.createElement('img'); im.src = sl.image; im.alt = sl.caption || ''; im.loading = 'lazy'; f.appendChild(im);
+      if (sl.caption) { var c = document.createElement('figcaption'); c.textContent = sl.caption; f.appendChild(c); } track.appendChild(f);
+    });
+    if (slides.length < 2) return car;
+    var cur = 0, dots = document.createElement('div'), timer, paused = false; dots.className = 'cms-car-dots';
+    function go(i) { cur = (i + slides.length) % slides.length; track.scrollTo({ left: cur * track.clientWidth, behavior: 'smooth' }); mark(); }
+    function mark() { [].forEach.call(dots.children, function (d, k) { d.classList.toggle('on', k === cur); }); }
+    slides.forEach(function (_, k) { var d = document.createElement('button'); d.type = 'button'; d.setAttribute('aria-label', 'Photo ' + (k + 1)); d.onclick = function () { go(k); }; dots.appendChild(d); });
+    ['prev', 'next'].forEach(function (w) { var bt = document.createElement('button'); bt.type = 'button'; bt.className = 'cms-car-nav ' + w; bt.setAttribute('aria-label', w === 'prev' ? 'Précédent' : 'Suivant'); bt.textContent = w === 'prev' ? '‹' : '›'; bt.onclick = function () { go(cur + (w === 'prev' ? -1 : 1)); }; car.appendChild(bt); });
+    car.appendChild(dots); mark();
+    track.addEventListener('scroll', function () { var i = Math.round(track.scrollLeft / (track.clientWidth || 1)); if (i !== cur) { cur = i; mark(); } });
+    car.addEventListener('mouseenter', function () { paused = true; }); car.addEventListener('mouseleave', function () { paused = false; });
+    car.addEventListener('touchstart', function () { paused = true; }, { passive: true }); car.addEventListener('touchend', function () { setTimeout(function () { paused = false; }, 4000); }, { passive: true });
+    timer = setInterval(function () { if (!car.isConnected) { clearInterval(timer); return; } if (!paused) go(cur + 1); }, 4500);
+    return car;
+  }
+  function projExtras() {
+    var panel = document.getElementById('csPanel'); if (!panel) return;
     var id = ''; try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) {}
+    [].forEach.call(panel.querySelectorAll('.cms-extra'), function (n) { n.remove(); });
+    [].forEach.call(panel.querySelectorAll('[data-cms-h]'), function (n) { n.style.display = ''; n.removeAttribute('data-cms-h'); });
     var o = (window.__cmsPrj || {})[id]; if (!o) return;
-    var oldBox = panel.querySelector('.cms-plinks'); if (oldBox) oldBox.remove();
     var site = safeUrl(o.site), sl = tr('prj_' + id + '_sl', o.siteLabel);
-    if (site && sl) [].forEach.call(panel.querySelectorAll('a[href]'), function (a) { if (a.classList.contains('cms-plink')) return; var h = a.getAttribute('href'); if (h === o.site || h === site) { a.textContent = sl; if (!/\u2197/.test(sl)) a.appendChild(document.createTextNode(' \u2197')); } });
-    var L = (o.links || []).filter(function (l) { return l && safeUrl(l.url); }); if (!L.length) return;
-    var box = document.createElement('div'); box.className = 'cms-plinks no-cms';
-    L.forEach(function (l, i) { var a = document.createElement('a'); a.className = 'cms-plink'; a.href = safeUrl(l.url); a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = tr('prj_' + id + '_l' + i, l.label) || l.url; box.appendChild(a); });
-    var heads = [].slice.call(panel.querySelectorAll('h1,h2,h3,h4')), rt = (window.__u ? window.__u('Le résultat') : 'Le résultat'), h = heads.filter(function (x) { return x.textContent.trim() === rt; })[0], at = null;
-    if (h) { at = h.parentNode === panel ? h.nextElementSibling : h.parentNode; }
-    if (at && at.parentNode) at.parentNode.insertBefore(box, at.nextSibling); else panel.appendChild(box);
+    if (site && sl) [].forEach.call(panel.querySelectorAll('a[href]'), function (a) { var h = a.getAttribute('href'); if (h === o.site || h === site) a.textContent = sl + ' \u2197'; });
+    var lab = leaf(panel, ['client', uu('Client').toLowerCase()]);
+    if (lab) {
+      var card = lab; while (card.parentNode && card.parentNode !== panel && card.parentNode.children.length < 3) card = card.parentNode;
+      [['Année', o.year], ['Durée', o.duration], ['Rôle', o.role], ['Outils', o.tools]].forEach(function (x) {
+        if (!x[1] || !card.parentNode) return; var cl = card.cloneNode(true), lv = [].filter.call(cl.querySelectorAll('*'), function (e) { return !e.children.length; });
+        if (lv.length < 2) return; lv[0].textContent = uu(x[0]); lv[1].textContent = x[1]; cl.classList.add('cms-extra'); card.parentNode.appendChild(cl);
+      });
+    }
+    var G = (o.gallery || []).filter(function (g) { return g && g.image; });
+    if (G.length && !panel.querySelector('.cs-gal-track')) {
+      var main = [].filter.call(panel.querySelectorAll('img'), function (im) { return !im.closest('.cms-extra') && !im.closest('header,footer,a,button'); })[0];
+      var slides = [{ image: main ? main.currentSrc || main.src : (o.image || ''), caption: '' }].concat(G.map(function (g, i) { return { image: g.image, caption: tr('prj_' + id + '_g' + i, g.caption) }; })).filter(function (x) { return x.image; });
+      var car = carousel(slides);
+      if (main) { main.style.display = 'none'; main.setAttribute('data-cms-h', '1'); main.parentNode.insertBefore(car, main.nextSibling); }
+      else if (lab) { var gg = lab; while (gg.parentNode && gg.parentNode !== panel && gg.parentNode.children.length < 3) gg = gg.parentNode; gg.parentNode.parentNode.insertBefore(car, gg.parentNode.nextSibling); }
+    }
+    var B = (o.blocks || []).filter(function (b) { return b && (b.title || b.text || b.image); }), L = (o.links || []).filter(function (l) { return l && safeUrl(l.url); });
+    if (!B.length && !L.length) return;
+    var rt = uu('Le résultat').toLowerCase(), h = [].filter.call(panel.querySelectorAll('h1,h2,h3,h4'), function (x) { return x.textContent.trim().toLowerCase() === rt; })[0];
+    var ref = h ? (h.nextElementSibling || h) : null, parent = ref ? ref.parentNode : panel;
+    function put(n) { n.classList.add('cms-extra'); if (ref) parent.insertBefore(n, ref.nextSibling); else parent.appendChild(n); ref = n; }
+    B.forEach(function (b, i) {
+      var t = tr('prj_' + id + '_b' + i + 't', b.title), p = tr('prj_' + id + '_b' + i + 'p', b.text);
+      if (t) { var hc = h ? h.cloneNode(false) : document.createElement('h3'); hc.removeAttribute('id'); hc.textContent = t; put(hc); }
+      if (p) { var pc = h && h.nextElementSibling ? h.nextElementSibling.cloneNode(false) : document.createElement('p'); pc.textContent = p; pc.style.whiteSpace = 'pre-line'; put(pc); }
+      if (b.image) { var im = document.createElement('img'); im.src = b.image; im.alt = t || ''; im.loading = 'lazy'; im.className = 'cms-bimg'; put(im); }
+    });
+    if (L.length) {
+      var box = document.createElement('div'); box.className = 'cms-plinks no-cms';
+      L.forEach(function (l, i) { var a = document.createElement('a'); a.className = 'cms-plink'; a.href = safeUrl(l.url); a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = tr('prj_' + id + '_l' + i, l.label) || l.url; box.appendChild(a); });
+      put(box);
+    }
   }
   (function () {
     var st = document.createElement('style');
-    st.textContent = '.cms-plinks{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0}.cms-plink{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border:1px solid var(--c-gold,#C9A24B);border-radius:99px;color:var(--c-gold2,#E4C77A);text-decoration:none;font-weight:600;transition:background .2s,color .2s}.cms-plink::after{content:"\\2197"}.cms-plink:hover{background:var(--c-gold,#C9A24B);color:var(--c-navy,#101B3D)}';
+    st.textContent = '.cms-car{position:relative;width:100%}.cms-car-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.cms-car-track::-webkit-scrollbar{display:none}' +
+      '.cms-slide{flex:0 0 100%;scroll-snap-align:center;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.cms-slide img{display:block;max-width:100%;max-height:75vh;object-fit:contain;margin:0 auto}' +
+      '.cms-slide figcaption{margin-top:10px;font-size:.9rem;opacity:.8;text-align:center}' +
+      '.cms-car-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:1px solid var(--c-gold,#C9A24B);background:rgba(16,27,61,.75);color:var(--c-gold2,#E4C77A);font-size:1.6rem;line-height:1;cursor:pointer;z-index:2}.cms-car-nav:hover{background:var(--c-gold,#C9A24B);color:var(--c-navy,#101B3D)}.cms-car-nav.prev{left:10px}.cms-car-nav.next{right:10px}' +
+      '.cms-car-dots{display:flex;justify-content:center;gap:8px;padding:12px 0}.cms-car-dots button{width:9px;height:9px;padding:0;border-radius:50%;border:0;background:rgba(255,255,255,.3);cursor:pointer}.cms-car-dots button.on{background:var(--c-gold,#C9A24B);transform:scale(1.25)}' +
+      '.cms-bimg{display:block;max-width:100%;border-radius:14px;margin:14px 0}' +
+      '.cms-plinks{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0}.cms-plink{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border:1px solid var(--c-gold,#C9A24B);border-radius:99px;color:var(--c-gold2,#E4C77A);text-decoration:none;font-weight:600;transition:background .2s,color .2s}.cms-plink::after{content:"\\2197"}.cms-plink:hover{background:var(--c-gold,#C9A24B);color:var(--c-navy,#101B3D)}';
     document.head.appendChild(st);
     document.addEventListener('DOMContentLoaded', function () {
       var cs = document.getElementById('caseStudy'); if (!cs) return; var busy = false, t;
-      new MutationObserver(function () { if (busy) return; clearTimeout(t); t = setTimeout(function () { busy = true; try { projLinks(); } catch (e) { console.error('cms', e); } setTimeout(function () { busy = false; }, 0); }, 30); }).observe(cs, { childList: true, subtree: true });
+      new MutationObserver(function () { if (busy) return; clearTimeout(t); t = setTimeout(function () { busy = true; try { projExtras(); } catch (e) { console.error('cms', e); } setTimeout(function () { busy = false; }, 0); }, 40); }).observe(cs, { childList: true, subtree: true });
     });
   })();
 
