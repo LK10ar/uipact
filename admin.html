@@ -988,7 +988,7 @@ async function collect() {
   add('st_txt', ST.text); add('m_eb', ME.eyebrow); add('m_title', ME.title); add('m_em', ME.titleEm); ME.steps.forEach(function (z, i) { add('m_' + i + '_t', z.title); add('m_' + i + '_p', z.text); });
   (C.UI || []).forEach(function (t) { add('ui_' + hsh(t), t); });
   allPrj().forEach(function (id) { var p = window.PRJ.P[id] || {}, o = S.projects[id] || {};
-    ['name', 'client', 'loc', 'ctx', 'enjeu', 'res'].forEach(function (k) { add('prj_' + id + '_' + k, o[k] || p[k]); }); add('prj_' + id + '_tags', o.tags); add('prj_' + id + '_sl', o.siteLabel); (o.links || []).forEach(function (l, i) { add('prj_' + id + '_l' + i, l.label); });
+    ['name', 'client', 'loc', 'ctx', 'enjeu', 'res'].forEach(function (k) { add('prj_' + id + '_' + k, o[k] || p[k]); }); add('prj_' + id + '_tags', o.tags); add('prj_' + id + '_sl', o.siteLabel); (o.links || []).forEach(function (l, i) { add('prj_' + id + '_l' + i, l.label); }); (o.blocks || []).forEach(function (b, i) { add('prj_' + id + '_b' + i + 't', b.title); add('prj_' + id + '_b' + i + 'p', b.text); }); (o.gallery || []).forEach(function (g, i) { add('prj_' + id + '_g' + i, g.caption); });
     [0, 1, 2].forEach(function (i) { add('prj_' + id + '_h' + i + 't', o['h' + i + 't']); add('prj_' + id + '_h' + i + 'p', o['h' + i + 'p']); }); });
   add('m_c1', ME.chips.typo); add('m_c3', ME.chips.button); add('m_c4', ME.chips.resp); add('m_c4s', ME.chips.respSmall);
   return map;
