@@ -138,7 +138,7 @@ main.wide{max-width:none;padding:6px 22px 60px}
 .vcol{display:flex;align-items:center;gap:10px;margin-bottom:6px}.vcol span{flex:1}.vcol input[type=color]{width:54px;height:36px;flex:0 0 auto}
 .vblk{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}.vblk h4{margin:0 0 8px}.vsp .pic-i{aspect-ratio:16/9;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:rgba(128,128,128,.15)}.vsp .pic-i img{width:100%;height:100%;object-fit:contain;display:block}.vsp .pic-b{margin:8px 0 10px;display:flex;flex-direction:column;gap:6px}.vsp .pic-b small{color:var(--mut)}
 .vci{display:grid;grid-template-columns:96px 1fr;gap:10px;padding:10px;margin-bottom:8px;border:1px solid var(--line);border-radius:12px}.vci.drag{opacity:.4}.vci-i{position:relative}.vci-i img{width:96px;height:72px;object-fit:cover;border-radius:8px;display:block}.vci-i .badge{position:absolute;top:4px;left:4px;background:var(--gold);color:var(--navy);border-radius:99px;font-size:.72rem;font-weight:700;width:20px;height:20px;display:grid;place-items:center}.vci-f{display:flex;flex-direction:column;gap:6px}.vci-f input{padding:6px 10px}
-.vpr{display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;padding:8px;margin-bottom:6px;border:1px solid var(--line);border-radius:12px}.vpr-i{width:64px;height:48px;border-radius:8px;background:rgba(128,128,128,.2) center/cover;cursor:pointer}.vpr-b{display:flex;flex-direction:column;gap:2px;min-width:0}.vpr-b b{cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vpr-b small{color:var(--mut)}
+.vpr{display:grid;grid-template-columns:64px 1fr auto auto auto;cursor:grab;gap:10px;align-items:center;padding:8px;margin-bottom:6px;border:1px solid var(--line);border-radius:12px}.vpr-i{width:64px;height:48px;border-radius:8px;background:rgba(128,128,128,.2) center/cover;cursor:pointer}.vpr-b{display:flex;flex-direction:column;gap:2px;min-width:0}.vpr-b b{cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vpr-b small{color:var(--mut)}
 
 .vfr.min{overflow:auto;justify-content:flex-start}.vfr.min iframe{min-width:1100px;flex:0 0 1100px;width:1100px}
 .vfe{padding:6px;margin-bottom:6px;border-radius:10px}.vfe.flash{box-shadow:0 0 0 2px var(--gold);background:rgba(201,162,75,.12)}.vblk.hl{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,162,75,.35)}
@@ -1016,7 +1016,10 @@ async function collect() {
 }
 
 /* ---------------- Fiches projets du portfolio ---------------- */
-function allPrj() { return window.PRJ.order.concat(Object.keys(S.projects || {}).filter(function (k) { return S.projects[k] && S.projects[k].custom; })); }
+function allPrj() {
+  var base = window.PRJ.order.concat(Object.keys(S.projects || {}).filter(function (k) { return S.projects[k] && S.projects[k].custom; })), P = S.projects || {};
+  return base.map(function (id, i) { return { id: id, i: i, k: P[id] && P[id].order != null ? +P[id].order : i }; }).sort(function (a, b) { return a.k - b.k || a.i - b.i; }).map(function (x) { return x.id; });
+}
 var PCAT = { web: 'Site web', branding: 'Identité visuelle', uxui: 'UX / UI', print: 'Print' };
 async function vProjects(v) {
   var PR = window.PRJ; S.projects = S.projects || {};
@@ -1357,13 +1360,19 @@ async function vProjects(v) {
   function live() { A.post({ type: 'prj', projects: S.projects }); }
   function add() { var id = 'p' + Date.now().toString(36); S.projects[id] = { custom: true, published: true, cat: 'web', name: 'Nouveau projet' }; mark(); cur = id; form(id, true); A.reload(null, 0); }
   function del(id) { if (confirm('Supprimer ce projet ?')) { delete S.projects[id]; mark(); cur = null; list(); A.go(); } }
+  function mv(id, to) {
+    var a = allPrj(), from = a.indexOf(id); if (from < 0) return; to = Math.max(0, Math.min(a.length - 1, to)); if (to === from) return;
+    a.splice(to, 0, a.splice(from, 1)[0]); a.forEach(function (k, i) { O(k).order = i; }); mark(); A.reload(null, 0);
+  }
+  var dragId = null;
   function list() {
     cur = null; P.innerHTML = ''; P.appendChild(h('div', { class: 'row', style: 'margin-bottom:10px' }, h('b', { style: 'flex:1' }, 'Projets (' + allPrj().length + ')'), pbtn('＋ Ajouter', add, 'gold')));
-    P.appendChild(h('p', { class: 'hint' }, 'Cliquez sur un projet (ici ou sur le site) pour ouvrir sa fiche.'));
-    allPrj().forEach(function (id) {
+    P.appendChild(h('p', { class: 'hint' }, 'Cliquez sur un projet pour ouvrir sa fiche. Pour changer l’ordre du portfolio : glissez-déposez une ligne, ou utilisez ↑ ↓.'));
+    allPrj().forEach(function (id, pos) {
       var o = S.projects[id] || {}, p = PR.P[id] || { cat: o.cat || 'web' }, img = o.image || p.image || '';
-      P.appendChild(h('div', { class: 'vpr', onclick: function () { form(id, true); } }, h('div', { class: 'vpr-i', style: img ? 'background-image:url(\'' + img + '\')' : '' }),
-        h('div', { class: 'vpr-b' }, h('b', {}, o.name || p.name || 'Sans titre'), h('small', {}, (PCAT[o.cat || p.cat] || '') + (o.custom ? ' · nouveau' : '') + (o.published === false ? ' · zoom simple' : '') + (o.hidden ? ' · masqué' : ''))), pbtn('✎', function () {})));
+      P.appendChild(h('div', { class: 'vpr', draggable: 'true', title: 'Glissez pour déplacer', ondragstart: function (e) { dragId = id; e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', id); } catch (x) {} }, ondragover: function (e) { e.preventDefault(); }, ondrop: function (e) { e.preventDefault(); if (dragId && dragId !== id) { var to = allPrj().indexOf(id); mv(dragId, to); list(); } dragId = null; }, onclick: function () { form(id, true); } }, h('div', { class: 'vpr-i', style: img ? 'background-image:url(\'' + img + '\')' : '' }),
+        h('div', { class: 'vpr-b' }, h('b', {}, o.name || p.name || 'Sans titre'), h('small', {}, (PCAT[o.cat || p.cat] || '') + (o.custom ? ' · nouveau' : '') + (o.published === false ? ' · zoom simple' : '') + (o.hidden ? ' · masqué' : ''))),
+        pbtn('↑', function (e) { e.stopPropagation(); mv(id, pos - 1); list(); }), pbtn('↓', function (e) { e.stopPropagation(); mv(id, pos + 1); list(); }), pbtn('✎', function () {})));
     });
   }
   function form(id, open) {
@@ -1415,6 +1424,8 @@ async function vProjects(v) {
     }
     var pub = h('input', { type: 'checkbox' }); pub.checked = o.published !== false; pub.onchange = function () { O(id).published = pub.checked; mark(); A.reload(null, 0); };
     P.appendChild(h('label', { class: 'vfe', style: 'display:flex;gap:8px;align-items:center' }, pub, 'Fiche détaillée (sinon : simple zoom sur l’image)'));
+    var posIn = h('input', { type: 'number', min: 1, max: allPrj().length, value: allPrj().indexOf(id) + 1 }); posIn.onchange = function () { mv(id, (parseInt(posIn.value, 10) || 1) - 1); form(id, false); };
+    P.appendChild(fld('Position dans le portfolio (1 = en premier)', posIn));
     var shw = h('input', { type: 'checkbox' }); shw.checked = !o.hidden; shw.onchange = function () { O(id).hidden = !shw.checked; mark(); live(); A.reload(null, 0); };
     P.appendChild(h('label', { class: 'vfe', style: 'display:flex;gap:8px;align-items:center' }, shw, 'Afficher ce projet dans le portfolio (décoché = retiré du site)'));
     var sel = h('select', { onchange: function () { O(id).cat = sel.value; mark(); live(); } }); Object.keys(PCAT).forEach(function (k) { sel.appendChild(h('option', { value: k }, PCAT[k])); }); sel.value = o.cat || p.cat;
