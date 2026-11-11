@@ -559,7 +559,7 @@ var API = String(window.UIPACT_API || '').replace(/\/$/, ''), C = window.CMS, $ 
 var tok = sessionStorage.getItem('uipact_tok'), S = {}, tab = 'home', dirty = false;
 var TABS = [['home', '🏠', 'Accueil', 'Vue d\u2019ensemble et raccourcis'], ['texts', '✏️', 'Textes', 'Modifier, masquer ou ajouter des textes'], ['images', '🖼️', 'Photos des pages', 'Remplacer les photos fixes de chaque page'],
   ['anim', '🎬', 'Animations', 'Textes et photos des animations de la page d’accueil'],
-  ['carousels', '🎠', 'Carrousels', 'Ajouter, supprimer et déplacer les photos des carrousels 3D'], ['media', '📁', 'Bibliothèque', 'Toutes vos photos envoyées'], ['colors', '🎨', 'Couleurs', 'La palette du site'],
+  ['carousels', '🎠', 'Carrousels', 'Ajouter, supprimer et déplacer les photos des carrousels 3D'], ['media', '📁', 'Bibliothèque', 'Toutes vos photos envoyées'], ['colors', '🎨', 'Couleurs', 'La palette du site'], ['particles', '✨', 'Particules 3D', 'Réglages des formes 3D de la page d’accueil'],
   ['header', '🔝', 'Header', 'Le menu en haut des pages'], ['footer', '🔚', 'Footer', 'Le bas des pages'], ['seo', '🔍', 'SEO', 'Ce que Google et les réseaux sociaux affichent'],
   ['projects', '📂', 'Fiches projets', 'Publier et modifier les fiches du portfolio'],
   ['langs', '🌍', 'Langues', 'Traduire le site et ajouter des langues'], ['msgs', '✉️', 'Messages', 'Les messages du formulaire de contact']];
@@ -588,7 +588,7 @@ $('#login').onsubmit = async function (e) {
   catch (x) { $('#lerr').textContent = /fetch/i.test(x.message) ? "Impossible de joindre l'API (vérifiez config.js, ou patientez 1 minute : le serveur se réveille)." : x.message; }
 };
 function norm() {
-  ['texts', 'hidden', 'blocks', 'images', 'carousels', 'translations', 'langNames', 'sections', 'trMeta', 'projects'].forEach(function (k) { S[k] = S[k] || {}; });
+  ['texts', 'hidden', 'blocks', 'images', 'carousels', 'translations', 'langNames', 'sections', 'trMeta', 'projects', 'particles'].forEach(function (k) { S[k] = S[k] || {}; });
   S.seo = S.seo || {}; S.seo.site = S.seo.site || {}; S.seo.pages = S.seo.pages || {}; S.seo.schema = S.seo.schema || {};
   S.languages = S.languages && S.languages.length ? S.languages : ['fr'];
 }
@@ -598,7 +598,7 @@ async function start() {
   norm(); dirty = false; bar(); drawTabs(); show();
 }
 function go(k) { tab = k; drawTabs(); show(); }
-var ORDER = ['home', 'projects', 'texts', 'images', 'anim', 'carousels', 'media', 'colors', 'header', 'footer', 'seo', 'langs', 'msgs'], GRP = { projects: 'Contenu', colors: 'Apparence', seo: 'Réglages', msgs: 'Courrier' };
+var ORDER = ['home', 'projects', 'texts', 'images', 'anim', 'carousels', 'media', 'colors', 'particles', 'header', 'footer', 'seo', 'langs', 'msgs'], GRP = { projects: 'Contenu', colors: 'Apparence', seo: 'Réglages', msgs: 'Courrier' };
 function drawTabs() { var t = $('#tabs'); t.innerHTML = ''; ORDER.map(function (k) { return LABEL[k]; }).forEach(function (x) { if (GRP[x[0]]) t.appendChild(h('div', { class: 'grp' }, GRP[x[0]])); t.appendChild(h('button', { class: 'nv' + (x[0] === tab ? ' on' : ''), title: x[3], onclick: function () { go(x[0]); } }, h('span', { class: 'ic' }, x[1]), x[2])); }); }
 $('#saveBtn').onclick = save;
 $('#undo').onclick = function () { if (confirm('Annuler toutes les modifications non enregistrées ?')) start(); };
@@ -613,7 +613,7 @@ async function save() {
 addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 function show() {
   var v = $('#view'); v.innerHTML = ''; v.className = ''; mark.pend = null; var t = LABEL[tab]; $('#vt').textContent = t[1] + '  ' + t[2]; $('#vd').textContent = t[3];
-  ({ home: vHome, texts: vTexts, anim: vAnim, images: vImages, carousels: vCars, media: vMedia, colors: vColors, header: vHeader, footer: vFooter, seo: vSeo, projects: vProjects, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); });
+  ({ home: vHome, texts: vTexts, anim: vAnim, images: vImages, carousels: vCars, media: vMedia, colors: vColors, particles: vParticles, header: vHeader, footer: vFooter, seo: vSeo, projects: vProjects, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); });
   window.scrollTo(0, 0);
 }
 async function pageDoc(p) { var r = await fetch(p + '.html'); if (!r.ok) throw new Error('Page introuvable : ' + p); return new DOMParser().parseFromString(await r.text(), 'text/html'); }
@@ -817,6 +817,34 @@ async function vFooter0(v) {
   draw();
 }
 
+/* ---------------- Particules 3D (accueil) ---------------- */
+var PART_DEF = { rep: 1, rad: 0.8, ns: 0.04, nsp: 0.3, count: 18000, size: 0.6, bg: 'UIPACT' };
+var PART_SET = [
+  ['rep', 'Force de répulsion', 'À quel point les particules s\u2019écartent quand la souris passe dessus (0 = aucune).', 0, 6.5, 0.1, function (x) { return x.toFixed(1); }],
+  ['rad', 'Rayon d\u2019action de la souris', 'Taille de la zone repoussée autour du curseur.', 0.3, 3.2, 0.1, function (x) { return x.toFixed(1) + ' m'; }],
+  ['ns', 'Amplitude du souffle', 'Mouvement permanent des particules (0 = elles ne bougent plus).', 0, 0.28, 0.01, function (x) { return Math.round(x * 100) + ' %'; }],
+  ['nsp', 'Vitesse de flottement', 'Vitesse de ce mouvement permanent.', 0, 2.5, 0.1, function (x) { return x.toFixed(1) + ' x'; }],
+  ['count', 'Nombre de particules (netteté)', 'Plus il y en a, plus les formes sont nettes, mais plus le site est lourd. Limité à 6 000 sur mobile.', 3000, 24000, 500, function (x) { return Math.round(x).toLocaleString('fr-FR'); }],
+  ['size', 'Finesse du grain (taille)', 'Taille de chaque particule : plus petit = plus fin.', 0.3, 2, 0.05, function (x) { return x.toFixed(2) + ' px'; }]
+];
+async function vParticles(v) {
+  var Pt = S.particles || (S.particles = {});
+  v.appendChild(h('h2', {}, 'Particules 3D de l\u2019accueil'));
+  v.appendChild(h('p', { class: 'hint' }, 'Ces réglages s\u2019appliquent à tous les visiteurs après enregistrement (le site se recharge une fois chez eux, puis garde ces valeurs). Pour les voir : ouvrez l\u2019accueil et faites Ctrl+F5.'));
+  PART_SET.forEach(function (d) {
+    var key = d[0], cur = Pt[key] != null ? Pt[key] : PART_DEF[key];
+    var val = h('b', { style: 'color:var(--gold,#E4C77A)' }, d[6](cur));
+    var r = h('input', { type: 'range', min: d[3], max: d[4], step: d[5], style: 'width:100%;accent-color:#C9A24B;margin:10px 0 4px' }); r.value = cur;
+    r.oninput = function () { var x = parseFloat(r.value); Pt[key] = x; val.textContent = d[6](x); mark(); };
+    v.appendChild(h('div', { class: 'card' }, h('div', { class: 'row' }, h('b', { style: 'flex:1' }, d[1]), val), r, h('small', {}, d[2] + ' Valeur d\u2019origine : ' + d[6](PART_DEF[key]) + '.')));
+  });
+  var auto = h('input', { type: 'checkbox' }); auto.checked = Pt.bg === 'AUTO';
+  var tin = h('input', { type: 'text', maxlength: 14, placeholder: 'UIPACT' }); tin.value = Pt.bg && Pt.bg !== 'AUTO' ? Pt.bg : '';
+  function setBg() { Pt.bg = auto.checked ? 'AUTO' : (tin.value.trim() || 'UIPACT'); tin.disabled = auto.checked; mark(); }
+  auto.onchange = setBg; tin.oninput = setBg; tin.disabled = auto.checked;
+  v.appendChild(h('div', { class: 'card' }, h('b', {}, 'Texte géant en arrière-plan'), h('div', { class: 'row', style: 'margin-top:8px' }, tin, h('label', { class: 'fx', style: 'white-space:nowrap' }, auto, 'Suivre le chapitre (CADRAGE, IDENTITÉ…)')), h('small', {}, '14 lettres maximum.')));
+  v.appendChild(h('button', { class: 'del', onclick: function () { if (confirm('Remettre les réglages d\u2019origine des particules ?')) { S.particles = {}; mark(); show(); } } }, 'Tout réinitialiser'));
+}
 /* ---------------- Couleurs ---------------- */
 async function vColors(v) {
   var T = S.theme || (S.theme = {}), D = C.DEF.theme;
