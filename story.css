@@ -1,5 +1,6 @@
 /* UIPACT — section « histoire » : formes 3D en particules qui changent au défilement */
-#story{position:relative;z-index:2;color:#EDEAE0;background:radial-gradient(90% 60% at 70% 30%,rgba(var(--c-gold-rgb,201,162,75),.09),transparent 65%),var(--c-bg,#0A1024);overflow:clip}
+/* le CSS global du site impose « section{max-width:1200px;padding:90px 20px} » : on l'annule pour que la scène occupe tout l'écran */
+#story{max-width:none;width:100%;margin:0;padding:0;position:relative;z-index:2;color:#EDEAE0;background:radial-gradient(90% 60% at 70% 30%,rgba(var(--c-gold-rgb,201,162,75),.09),transparent 65%),var(--c-bg,#0A1024);overflow:clip}
 #story::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(228,199,122,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(228,199,122,.03) 1px,transparent 1px);background-size:6vw 6vw;-webkit-mask-image:radial-gradient(ellipse 65% 55% at 50% 50%,#000 35%,transparent);mask-image:radial-gradient(ellipse 65% 55% at 50% 50%,#000 35%,transparent);pointer-events:none}
 .sty-stage{position:sticky;top:0;height:100vh;height:100svh;margin-bottom:-100vh;margin-bottom:-100svh;pointer-events:none}
 .sty-gl{position:absolute;inset:0}
