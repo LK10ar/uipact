@@ -559,6 +559,7 @@ var API = String(window.UIPACT_API || '').replace(/\/$/, ''), C = window.CMS, $ 
 var tok = sessionStorage.getItem('uipact_tok'), S = {}, tab = 'home', dirty = false;
 var TABS = [['home', '🏠', 'Accueil', 'Vue d\u2019ensemble et raccourcis'], ['texts', '✏️', 'Textes', 'Modifier, masquer ou ajouter des textes'], ['images', '🖼️', 'Photos des pages', 'Remplacer les photos fixes de chaque page'],
   ['anim', '🎬', 'Animations', 'Textes et photos des animations de la page d’accueil'],
+  ['services', '🧩', 'Services', 'Ajouter, retirer ou modifier les cartes « Mes services » de l\u2019accueil'],
   ['carousels', '🎠', 'Carrousels', 'Ajouter, supprimer et déplacer les photos des carrousels 3D'], ['media', '📁', 'Bibliothèque', 'Toutes vos photos envoyées'], ['colors', '🎨', 'Couleurs', 'La palette du site'], ['particles', '✨', 'Particules 3D', 'Réglages des formes 3D de la page d’accueil'],
   ['header', '🔝', 'Header', 'Le menu en haut des pages'], ['footer', '🔚', 'Footer', 'Le bas des pages'], ['seo', '🔍', 'SEO', 'Ce que Google et les réseaux sociaux affichent'],
   ['projects', '📂', 'Fiches projets', 'Publier et modifier les fiches du portfolio'],
@@ -598,7 +599,7 @@ async function start() {
   norm(); dirty = false; bar(); drawTabs(); show();
 }
 function go(k) { tab = k; drawTabs(); show(); }
-var ORDER = ['home', 'projects', 'texts', 'images', 'anim', 'carousels', 'media', 'colors', 'particles', 'header', 'footer', 'seo', 'langs', 'msgs'], GRP = { projects: 'Contenu', colors: 'Apparence', seo: 'Réglages', msgs: 'Courrier' };
+var ORDER = ['home', 'projects', 'texts', 'images', 'anim', 'services', 'carousels', 'media', 'colors', 'particles', 'header', 'footer', 'seo', 'langs', 'msgs'], GRP = { projects: 'Contenu', colors: 'Apparence', seo: 'Réglages', msgs: 'Courrier' };
 function drawTabs() { var t = $('#tabs'); t.innerHTML = ''; ORDER.map(function (k) { return LABEL[k]; }).forEach(function (x) { if (GRP[x[0]]) t.appendChild(h('div', { class: 'grp' }, GRP[x[0]])); t.appendChild(h('button', { class: 'nv' + (x[0] === tab ? ' on' : ''), title: x[3], onclick: function () { go(x[0]); } }, h('span', { class: 'ic' }, x[1]), x[2])); }); }
 $('#saveBtn').onclick = save;
 $('#undo').onclick = function () { if (confirm('Annuler toutes les modifications non enregistrées ?')) start(); };
@@ -613,7 +614,7 @@ async function save() {
 addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 function show() {
   var v = $('#view'); v.innerHTML = ''; v.className = ''; mark.pend = null; var t = LABEL[tab]; $('#vt').textContent = t[1] + '  ' + t[2]; $('#vd').textContent = t[3];
-  ({ home: vHome, texts: vTexts, anim: vAnim, images: vImages, carousels: vCars, media: vMedia, colors: vColors, particles: vParticles, header: vHeader, footer: vFooter, seo: vSeo, projects: vProjects, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); });
+  ({ home: vHome, texts: vTexts, anim: vAnim, services: vServices, images: vImages, carousels: vCars, media: vMedia, colors: vColors, particles: vParticles, header: vHeader, footer: vFooter, seo: vSeo, projects: vProjects, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); });
   window.scrollTo(0, 0);
 }
 async function pageDoc(p) { var r = await fetch(p + '.html'); if (!r.ok) throw new Error('Page introuvable : ' + p); return new DOMParser().parseFromString(await r.text(), 'text/html'); }
@@ -1125,8 +1126,41 @@ async function vAnim(v) {
   var c3b = h('div', { class: 'card' }, h('h3', {}, 'Étapes')); p3.appendChild(c3b); ME.steps.forEach(function (z, i) { step(c3b, z, i); });
   var c3c = h('div', { class: 'card' }, h('h3', {}, 'Image finale et étiquettes'), imgTile('Site final affiché à la dernière étape', function () { return ME.image; }, function (u) { ME.image = u; }, ANIM.method.image), h('div', { class: 'g2' })); p3.appendChild(c3c);
   [['typo', 'Étiquette « Typographie »'], ['button', 'Étiquette « Bouton »'], ['resp', 'Étiquette « Responsive »'], ['respSmall', 'Sous-texte « Responsive »']].forEach(function (f) { c3c.lastChild.appendChild(fld(f[1], tx(ME.chips[f[0]], function (x) { ME.chips[f[0]] = x; }))); });
-  v.appendChild(h('button', { class: 'del', style: 'margin-top:14px', onclick: function () { if (confirm('Remettre les trois animations comme à l\u2019origine ?')) { delete S.sections; mark(); show(); } } }, '↺ Tout remettre à l\u2019origine'));
+  v.appendChild(h('button', { class: 'del', style: 'margin-top:14px', onclick: function () { if (confirm('Remettre les trois animations comme à l\u2019origine ?')) { ['showcase', 'statement', 'method'].forEach(function (k) { delete S.sections[k]; }); mark(); show(); } } }, '↺ Tout remettre à l\u2019origine'));
   ps[0].b.click();
+}
+
+
+/* ---------------- Services : ajouter / retirer les cartes « Mes services » ---------------- */
+var SV_ICONS = {"palette": "Palette (graphisme)", "print": "Imprimante (print)", "site": "Fenêtre web (site)", "ux": "Interface (UX / UI)", "code": "Code", "star": "Étoile", "pen": "Crayon", "chat": "Bulle de message"};
+var SV_DEF = {"title": "MES SERVICES", "hidden": false, "cards": [{"icon": "palette", "title": "Création graphique", "text": "Un univers visuel aligné avec l'ADN de votre projet, vos valeurs et les besoins de votre client idéal. Une communication visuelle professionnelle, unique et impactante.", "highlight": "Logo, identité visuelle, tous supports print et digitaux...", "btn": "Création graphique", "href": "creation-graphique.html"}, {"icon": "print", "title": "Création Print", "text": "Je conçois l'ensemble de vos supports de communication imprimés pour mettre en valeur votre image de marque lors de vos rendez-vous clients ou sur vos points de vente.", "highlight": "Cartes de visite, flyers, affiches, brochures...", "btn": "Création Print", "href": "creation-print.html"}, {"icon": "site", "title": "Sites internet", "text": "Mes savoir-faire réunis pour vous proposer un site vitrine à votre image et facile à prendre en main ou un webdesign 100% personnalisé.", "highlight": "Site vitrine, one-page, webdesign sur-mesure", "btn": "Sites internet", "href": "sites-web.html"}, {"icon": "ux", "title": "UX / UI Design", "text": "Conception d'interfaces utilisateurs intuitives et esthétiques pour vos applications web et mobiles, centrées sur l'expérience et la conversion.", "highlight": "Maquettes, prototypes, parcours utilisateur", "btn": "UX / UI Design", "href": "ux-ui.html"}]};
+function svData() { S.sections = S.sections || {}; if (!S.sections.services || !Array.isArray(S.sections.services.cards)) S.sections.services = clone(SV_DEF); return S.sections.services; }
+async function vServices(v) {
+  var D = svData(), list = h('div');
+  v.appendChild(h('p', { class: 'hint' }, 'Ajoutez, supprimez, déplacez ou modifiez les cartes de la section « Mes services » de l\u2019accueil. Cliquez sur « Enregistrer » puis rechargez le site (Ctrl + F5).'));
+  var shown = h('input', { type: 'checkbox' }); shown.checked = !D.hidden; shown.onchange = function () { D.hidden = !shown.checked; mark(); };
+  v.appendChild(h('div', { class: 'card' }, fld('Titre de la section', tx(D.title, function (x) { D.title = x; })), h('label', { class: 'row', style: 'gap:8px;margin-top:8px' }, shown, 'Afficher la section « Mes services » sur l\u2019accueil')));
+  v.appendChild(list);
+  function move(i, d) { var j = i + d; if (j < 0 || j >= D.cards.length) return; var t = D.cards[i]; D.cards[i] = D.cards[j]; D.cards[j] = t; mark(); draw(); }
+  function draw() {
+    list.innerHTML = '';
+    D.cards.forEach(function (c, i) {
+      var ic = h('select'); Object.keys(SV_ICONS).forEach(function (k) { var o = h('option', { value: k }, SV_ICONS[k]); if (k === c.icon) o.selected = true; ic.appendChild(o); }); ic.onchange = function () { c.icon = ic.value; mark(); };
+      list.appendChild(h('div', { class: 'card', style: 'margin-top:12px' },
+        h('div', { class: 'row' }, h('b', { style: 'flex:1' }, 'Carte ' + (i + 1) + (c.title ? ' · ' + c.title : '')),
+          h('button', { class: 'sm', title: 'Monter', onclick: function () { move(i, -1); } }, '↑'), h('button', { class: 'sm', title: 'Descendre', onclick: function () { move(i, 1); } }, '↓'),
+          h('button', { class: 'sm del', onclick: function () { if (confirm('Supprimer la carte « ' + (c.title || 'sans titre') + ' » ?')) { D.cards.splice(i, 1); mark(); draw(); } } }, '🗑 Supprimer')),
+        h('div', { class: 'g2' }, fld('Icône', ic), fld('Titre', tx(c.title, function (x) { c.title = x; }))),
+        fld('Description', tx(c.text, function (x) { c.text = x; }, '', 3)),
+        fld('Petite ligne en dessous (exemples)', tx(c.highlight, function (x) { c.highlight = x; })),
+        h('div', { class: 'g2' }, fld('Texte du bouton', tx(c.btn, function (x) { c.btn = x; })), fld('Lien du bouton', tx(c.href, function (x) { c.href = x; }, 'ex. sites-web.html')))));
+    });
+    if (!D.cards.length) list.appendChild(h('p', { class: 'hint' }, 'Aucune carte : la section est masquée sur le site tant que vous n\u2019en ajoutez pas.'));
+  }
+  draw();
+  v.appendChild(h('div', { class: 'row', style: 'margin-top:14px;gap:10px' },
+    h('button', { class: 'sm', onclick: function () { D.cards.push({ icon: 'star', title: 'Nouveau service', text: '', highlight: '', btn: 'En savoir plus', href: 'contact.html' }); mark(); draw(); } }, '+ Ajouter une carte'),
+    h('button', { class: 'del', onclick: function () { if (confirm('Remettre les 4 cartes d\u2019origine ?')) { S.sections.services = clone(SV_DEF); mark(); show(); } } }, '↺ Remettre les cartes d\u2019origine')));
 }
 
 /* ---------------- Aperçus Header / Footer ---------------- */

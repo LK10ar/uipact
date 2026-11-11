@@ -109,6 +109,7 @@ uniform float uMouseActive;
 uniform float uRepulsionRadius;
 uniform float uRepulsionStrength;
 uniform float uPointSize;
+uniform float uBurst;
 
 varying vec3 vColor;
 varying float vDistToMouse;
@@ -123,7 +124,7 @@ void main() {
   float nX = snoise(noiseCoord);
   float nY = snoise(noiseCoord + vec3(17.1, 31.7, 43.3));
   float nZ = snoise(noiseCoord + vec3(63.9, 11.5, 87.2));
-  vec3 transitionTurbulence = vec3(nX, nY, nZ) * (burst * 0.45);
+  vec3 transitionTurbulence = vec3(nX, nY, nZ) * (burst * 0.45 * uBurst);
 
   // Perpetual living float (always active)
   vec3 perpetualCoord = position * 1.2 + vec3(uTime * uNoiseSpeed * 0.35);
@@ -197,7 +198,7 @@ void main() {
   var CFG = [{ ry: .12, rx: .28 }, { ry: -.22, rx: .1 }, { ry: .35, rx: .18 }, { ry: -.16, rx: .05 }, { ry: .22, rx: .08 }, { ry: .05, rx: .04 }, { ry: -.14, rx: .06 }];
   var uni = {
     uMorphProgress: { value: 0 }, uTime: { value: 0 }, uNoiseStrength: { value: P.ns }, uNoiseSpeed: { value: reduce ? 0 : P.nsp },
-    uMouse3D: { value: new THREE.Vector3(0, 0, .4) }, uMouseActive: { value: 0 }, uRepulsionRadius: { value: P.rad }, uRepulsionStrength: { value: P.rep }, uPointSize: { value: P.size }
+    uMouse3D: { value: new THREE.Vector3(0, 0, .4) }, uMouseActive: { value: 0 }, uRepulsionRadius: { value: P.rad }, uRepulsionStrength: { value: P.rep }, uPointSize: { value: P.size }, uBurst: { value: 1 }
   };
   var FOV = 40, CAM = 6, TH = Math.tan(FOV * Math.PI / 360), TARGET = 1.55; // même caméra que webnation.tech
   var BD = [], LAY = [];
@@ -248,10 +249,10 @@ void main() {
     var halfW = CAM * TH * (W / H);
     LAY = shapes.map(function (sh, i) {
       var bd = BD[i], tt = chs[i].querySelector('.sty-txt');
-      if (mob) {                                // mobile : la forme au-dessus du texte
-        var top = 84, bottom = Math.max(H * .3, Math.min(H * .55, tt.offsetTop - 12)), cy = (top + bottom) / 2;
-        var sm = Math.min(.62, .9 * halfW / bd.hw, .9 * ((bottom - top) / 2) / (bd.hh * ppu));
-        return { s: Math.max(sm, .25), x: 0, y: -(cy - H / 2) / ppu };
+      if (mob) {                                // mobile : grande forme au-dessus de la carte de texte (qui est translucide)
+        var topPx = 74, botPx = Math.max(H * .34, tt.offsetTop + 28), cy = (topPx + botPx) / 2;
+        var sm = Math.min(.95, .98 * halfW / bd.hw, .98 * ((botPx - topPx) / 2) / (bd.hh * ppu));
+        return { s: Math.max(sm, .3), x: 0, y: -(cy - H / 2) / ppu };
       }
       var hl = host.getBoundingClientRect().left, r = tt.getBoundingClientRect(), right = chs[i].classList.contains('r'), side = right ? -1 : 1;
       var x0 = right ? 72 : r.right - hl + 48, x1 = right ? r.left - hl - 48 : W - 24;
@@ -299,12 +300,13 @@ void main() {
     }
     uni.uMorphProgress.value = m;
     cur.lerp(tgt, .14); uni.uMouse3D.value.copy(cur); mA += (mT - mA) * .1; uni.uMouseActive.value = mA;
-    var A = CFG[a], B = CFG[b], tw = Math.sin(m * Math.PI) * .35;
+    var A = CFG[a], B = CFG[b], mob = mobile(), tw = Math.sin(m * Math.PI) * (mob ? .7 : .35);
     var mty = ndc.x !== -999 ? ndc.x * .2 : 0, mtx = ndc.y !== -999 ? -ndc.y * .14 : 0;
     cRY = damp(cRY, A.ry * (1 - m) + B.ry * m + tw + mty, 7, dt); cRX = damp(cRX, A.rx * (1 - m) + B.rx * m + mtx, 7, dt);
     var LA = LAY[a] || { s: 1, x: 0, y: 0 }, LB = LAY[b] || LA, tx = LA.x * (1 - m) + LB.x * m, ty = LA.y * (1 - m) + LB.y * m, ts = LA.s * (1 - m) + LB.s * m;
     if (snap) { cPX = tx; cPY = ty; cS = ts; snap = false; }
     cPX = damp(cPX, tx, 6, dt); cPY = damp(cPY, ty, 6, dt); cS = damp(cS, ts, 6, dt);
+    uni.uBurst.value = mob ? Math.min(3, .95 / Math.max(cS, .3)) : 1; uni.uPointSize.value = P.size * (mob ? 1.45 : 1);
     group.rotation.y = cRY; group.rotation.x = cRX; group.position.set(cPX, cPY, 0); group.scale.setScalar(cS);
     renderer.render(scene, camera);
     // chapitre actif : index, réglages, texte de fond

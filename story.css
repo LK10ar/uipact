@@ -41,12 +41,20 @@
 
 @media (max-width:980px){
   .sty-idx{display:none}
-  .sty-ch,.sty-ch.r{justify-content:flex-start;align-items:flex-end;padding:0 24px 8vh}
-  .sty-txt{width:100%;padding-top:60px;background:linear-gradient(transparent,rgba(10,16,36,.9) 38%)}
-  #story .sty-txt h2{font-size:clamp(1.9rem,8vw,2.6rem)}
-  .sty-lgs{grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
-  .sty-lg{min-height:42px;font-size:.7rem;padding:4px}
-  .sty-st{margin-bottom:18px}
-  .sty-chips{margin-bottom:20px}
+  .sty-ch,.sty-ch.r{justify-content:center;align-items:flex-end;padding:0 14px max(14px,env(safe-area-inset-bottom))}
+  /* carte arrondie, translucide : la forme 3D reste visible au-dessus et un peu derrière */
+  .sty-txt{width:100%;box-sizing:border-box;padding:20px 20px 18px;border-radius:24px;border:1px solid rgba(228,199,122,.22);background:linear-gradient(180deg,rgba(14,22,50,.72),rgba(8,13,32,.86));-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);box-shadow:0 18px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06)}
+  #story .sty-eb{margin:0 0 12px;font-size:.66rem}
+  #story .sty-txt h2{font-size:clamp(1.55rem,7vw,2.1rem);margin:0 0 12px}
+  #story .sty-txt p{font-size:.92rem;line-height:1.6;margin:0 0 14px}
+  .sty-chips{margin:0 0 14px;gap:5px}
+  .sty-chips li{padding:5px 9px;font-size:.6rem}
+  .sty-lgs{grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}
+  .sty-lg{min-height:38px;font-size:.64rem;padding:3px;border-radius:10px}
+  .sty-st{margin-bottom:14px}
+  .sty-st b{font-size:2rem}
+  .sty-st div{padding:0 20px}
+  .sty-btns{gap:12px}
+  #story .sty-btn{padding:11px 20px;font-size:.9rem}
 }
 @media (prefers-reduced-motion:reduce){#story.js .sty-txt{transition:none}}
