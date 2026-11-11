@@ -165,7 +165,7 @@ void main() {
 
   // Crisp perspective particle sizing
   float proximityBoost = 1.0 + (1.0 - clamp(dist / uRepulsionRadius, 0.0, 1.0)) * 0.8 * uMouseActive;
-  gl_PointSize = aScale * uPointSize * proximityBoost * (15.5 / -mvPosition.z);
+  gl_PointSize = aScale * uPointSize * proximityBoost * (23.0 / -mvPosition.z);
 }
 `;
 
@@ -199,6 +199,8 @@ void main() {
     uMorphProgress: { value: 0 }, uTime: { value: 0 }, uNoiseStrength: { value: P.ns }, uNoiseSpeed: { value: reduce ? 0 : P.nsp },
     uMouse3D: { value: new THREE.Vector3(0, 0, .4) }, uMouseActive: { value: 0 }, uRepulsionRadius: { value: P.rad }, uRepulsionStrength: { value: P.rep }, uPointSize: { value: P.size }
   };
+  var FOV = 40, CAM = 6, TH = Math.tan(FOV * Math.PI / 360), TARGET = 1.55; // même caméra que webnation.tech
+  var BD = [], LAY = [];
   var renderer, scene, camera, group, points, shapes = [], pa, pt, ca, ct, aS = -1, bS = -1;
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -207,13 +209,14 @@ void main() {
   renderer.setSize(host.clientWidth || innerWidth, host.clientHeight || innerHeight);
   renderer.domElement.style.cssText = 'width:100%;height:100%;display:block';
   host.appendChild(renderer.domElement);
-  scene = new THREE.Scene(); camera = new THREE.PerspectiveCamera(45, (host.clientWidth || innerWidth) / (host.clientHeight || innerHeight), .1, 50); camera.position.set(0, .1, 4);
+  scene = new THREE.Scene(); camera = new THREE.PerspectiveCamera(FOV, (host.clientWidth || innerWidth) / (host.clientHeight || innerHeight), .1, 60); camera.position.set(0, 0, CAM);
   group = new THREE.Group(); scene.add(group);
   points = new THREE.Points(new THREE.BufferGeometry(), new THREE.ShaderMaterial({ vertexShader: VERTEX_SHADER, fragmentShader: FRAGMENT_SHADER, uniforms: uni, transparent: true, depthWrite: false }));
   points.frustumCulled = false; group.add(points);
 
   function build(count) {
     shapes = GEN.map(function (g) { return g(count); });
+    BD = shapes.map(normalize);
     var geo = new THREE.BufferGeometry();
     pa = new THREE.BufferAttribute(new Float32Array(shapes[0].positions), 3); pt = new THREE.BufferAttribute(new Float32Array(shapes[1].positions), 3);
     ca = new THREE.BufferAttribute(new Float32Array(shapes[0].colors), 3); ct = new THREE.BufferAttribute(new Float32Array(shapes[1].colors), 3);
@@ -225,37 +228,38 @@ void main() {
   build(P.count);
 
   /* ---------- mise en page : la forme se place dans l'espace libre à côté du texte, sans jamais le toucher ---------- */
-  var BD = [], LAY = [];
-  // emprise RÉELLE à l'écran : on applique la rotation de la pose + la perspective (±.2 rad pour le mouvement de souris)
-  function bounds(sh, ry, rx) {
-    var p = sh.positions, st = Math.max(1, Math.floor(p.length / 3 / 1500)) * 3, x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
-    [ry - .2, ry + .2].forEach(function (r) {
-      var cy = Math.cos(r), sy = Math.sin(r), cx = Math.cos(rx), sx = Math.sin(rx);
-      for (var i = 0; i < p.length; i += st) {
-        var x = p[i], y = p[i + 1], z = p[i + 2], a = x * cy + z * sy, z1 = -x * sy + z * cy, y2 = y * cx - z1 * sx, z2 = y * sx + z1 * cx, k = 4 / Math.max(1.2, 4 - z2), px = a * k, py = y2 * k;
-        if (px < x0) x0 = px; if (px > x1) x1 = px; if (py < y0) y0 = py; if (py > y1) y1 = py;
-      }
-    });
-    return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, hw: Math.max((x1 - x0) / 2, .2), hh: Math.max((y1 - y0) / 2, .2) };
+  // Chaque forme est recentrée sur l'origine et ramenée à la MÊME taille (rayon TARGET), comme sur webnation.tech.
+  // Les 1 % de points les plus éloignés sont ignorés pour qu'un point isolé ne rende pas la forme minuscule.
+  function normalize(sh) {
+    var p = sh.positions, c = p.length / 3, xs = new Float32Array(c), ys = new Float32Array(c), zs = new Float32Array(c), i;
+    for (i = 0; i < c; i++) { xs[i] = p[i * 3]; ys[i] = p[i * 3 + 1]; zs[i] = p[i * 3 + 2]; }
+    xs.sort(); ys.sort(); zs.sort();
+    var lo = Math.floor(c * .01), hi = Math.min(c - 1, Math.ceil(c * .99));
+    var cx = (xs[lo] + xs[hi]) / 2, cy = (ys[lo] + ys[hi]) / 2, cz = (zs[lo] + zs[hi]) / 2;
+    var hw = Math.max((xs[hi] - xs[lo]) / 2, .1), hh = Math.max((ys[hi] - ys[lo]) / 2, .1), k = TARGET / Math.max(hw, hh);
+    for (i = 0; i < c; i++) { p[i * 3] = (p[i * 3] - cx) * k; p[i * 3 + 1] = (p[i * 3 + 1] - cy) * k; p[i * 3 + 2] = (p[i * 3 + 2] - cz) * k; }
+    return { hw: hw * k * 1.1, hh: hh * k * 1.1 }; // +10 % de marge (rotation, bruit, perspective)
   }
+  /* Positionnement identique à webnation.tech : la forme est centrée à ~46 % de la demi-largeur, du côté opposé au texte,
+     avec une échelle min(1, demi-largeur/3.4). On réduit seulement si elle toucherait le texte. */
   function layout() {
     var W = host.clientWidth || innerWidth, H = host.clientHeight || innerHeight, mob = mobile();
-    var ppu = H / (2 * 4 * Math.tan(22.5 * Math.PI / 180)); // pixels par unité 3D (caméra à 4 de distance, champ 45°)
-    BD = shapes.map(function (sh, i) { return bounds(sh, CFG[i].ry, CFG[i].rx); });
+    var ppu = H / (2 * CAM * TH);               // pixels par unité 3D au plan z = 0
+    var halfW = CAM * TH * (W / H);
     LAY = shapes.map(function (sh, i) {
-      var bd = BD[i], x0, x1, y0, y1;
-      if (mob) {
-        var tt = chs[i].querySelector('.sty-txt'); // le texte est en bas : on garde la place au-dessus de lui
-        x0 = W * .08; x1 = W * .92; y0 = 84; y1 = Math.max(H * .3, Math.min(H * .5, tt.offsetTop - 12));
+      var bd = BD[i], tt = chs[i].querySelector('.sty-txt');
+      if (mob) {                                // mobile : la forme au-dessus du texte
+        var top = 84, bottom = Math.max(H * .3, Math.min(H * .55, tt.offsetTop - 12)), cy = (top + bottom) / 2;
+        var sm = Math.min(.62, .9 * halfW / bd.hw, .9 * ((bottom - top) / 2) / (bd.hh * ppu));
+        return { s: Math.max(sm, .25), x: 0, y: -(cy - H / 2) / ppu };
       }
-      else {
-        var r = chs[i].querySelector('.sty-txt').getBoundingClientRect(), right = chs[i].classList.contains('r');
-        y0 = 96; y1 = H - 72;
-        if (right) { x0 = 110; x1 = r.left - 64; } else { x0 = r.right + 64; x1 = W - 40; }
-      }
-      var bw = Math.max(Math.min(x1 - x0, mob ? W : W * .42), 180), bh = Math.max(Math.min(y1 - y0, H * .72), 180);
-      var sc = Math.min(bw / (2 * bd.hw * ppu * 1.08), bh / (2 * bd.hh * ppu * 1.08), 1.3);
-      return { s: sc, x: ((x0 + x1) / 2 - W / 2) / ppu - bd.cx * sc, y: -((y0 + y1) / 2 - H / 2) / ppu - bd.cy * sc };
+      var r = tt.getBoundingClientRect(), right = chs[i].classList.contains('r'), side = right ? -1 : 1;
+      var x0 = right ? 72 : r.right + 48, x1 = right ? r.left - 48 : W - 24;
+      var sc0 = Math.min(1, halfW / 3.4), tx = side * Math.min(halfW * .46, 2.3);
+      var maxS = function (c) { return Math.min((c - x0) / (bd.hw * ppu), (x1 - c) / (bd.hw * ppu), (H * .43) / (bd.hh * ppu)); };
+      var cpx = W / 2 + tx * ppu, sc = Math.min(sc0, maxS(cpx));
+      if (sc < sc0 * .8) { cpx = (x0 + x1) / 2; tx = (cpx - W / 2) / ppu; sc = Math.min(sc0, maxS(cpx)); } // peu de place : on recentre dans l'espace libre
+      return { s: Math.max(sc, .3), x: tx, y: 0 };
     });
   }
   layout();
