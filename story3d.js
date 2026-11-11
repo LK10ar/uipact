@@ -194,8 +194,7 @@ void main() {
   /* ---------- scène Three.js ---------- */
   var GEN = [S.generateCompass, S.generateNetwork, S.generatePrintedSheets, S.generateWebWindow, S.generateMobile, S.generatePadlock, S.generateGrowthChart].slice(0, n);
   // une pose par forme : rotation Y/X, position X (+ = à droite, - = à gauche), échelle. Le texte est de l'autre côté.
-  var CFG = [{ ry: .12, rx: .28, px: 1.1, s: 1 }, { ry: -.22, rx: .1, px: -1.1, s: 1 }, { ry: .35, rx: .18, px: 1.1, s: 1 }, { ry: -.16, rx: .05, px: -1.1, s: 1 },
-    { ry: .22, rx: .08, px: 1.1, s: 1 }, { ry: .05, rx: .04, px: -1.15, s: .78 }, { ry: -.14, rx: .06, px: 1.1, s: .92 }];
+  var CFG = [{ ry: .12, rx: .28 }, { ry: -.22, rx: .1 }, { ry: .35, rx: .18 }, { ry: -.16, rx: .05 }, { ry: .22, rx: .08 }, { ry: .05, rx: .04 }, { ry: -.14, rx: .06 }];
   var uni = {
     uMorphProgress: { value: 0 }, uTime: { value: 0 }, uNoiseStrength: { value: P.ns }, uNoiseSpeed: { value: reduce ? 0 : P.nsp },
     uMouse3D: { value: new THREE.Vector3(0, 0, .4) }, uMouseActive: { value: 0 }, uRepulsionRadius: { value: P.rad }, uRepulsionStrength: { value: P.rep }, uPointSize: { value: P.size }
@@ -225,6 +224,34 @@ void main() {
   }
   build(P.count);
 
+  /* ---------- mise en page : la forme se place dans l'espace libre à côté du texte, sans jamais le toucher ---------- */
+  var BD = [], LAY = [];
+  function bounds(sh) {
+    var p = sh.positions, x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    for (var i = 0; i < p.length; i += 3) { if (p[i] < x0) x0 = p[i]; if (p[i] > x1) x1 = p[i]; if (p[i + 1] < y0) y0 = p[i + 1]; if (p[i + 1] > y1) y1 = p[i + 1]; }
+    return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, hw: Math.max((x1 - x0) / 2, .2), hh: Math.max((y1 - y0) / 2, .2) };
+  }
+  function layout() {
+    var W = host.clientWidth || innerWidth, H = host.clientHeight || innerHeight, mob = mobile();
+    var ppu = H / (2 * 4 * Math.tan(22.5 * Math.PI / 180)); // pixels par unité 3D (caméra à 4 de distance, champ 45°)
+    BD = shapes.map(bounds);
+    LAY = shapes.map(function (sh, i) {
+      var bd = BD[i], x0, x1, y0, y1;
+      if (mob) { x0 = W * .06; x1 = W * .94; y0 = 80; y1 = H * .46; }
+      else {
+        var r = chs[i].querySelector('.sty-txt').getBoundingClientRect(), right = chs[i].classList.contains('r');
+        y0 = 96; y1 = H - 72;
+        if (right) { x0 = 110; x1 = r.left - 64; } else { x0 = r.right + 64; x1 = W - 40; }
+      }
+      var bw = Math.max(x1 - x0, 180), bh = Math.max(y1 - y0, 180);
+      var sc = Math.min(bw / (2 * bd.hw * ppu * 1.16), bh / (2 * bd.hh * ppu * 1.16), 1.3);
+      return { s: sc, x: ((x0 + x1) / 2 - W / 2) / ppu - bd.cx * sc, y: -((y0 + y1) / 2 - H / 2) / ppu - bd.cy * sc };
+    });
+  }
+  layout();
+  addEventListener('load', layout);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
+
   /* ---------- souris : répulsion ---------- */
   var plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -.3), ray = new THREE.Raycaster(), hit = new THREE.Vector3(), ndc = new THREE.Vector2(-999, -999);
   var tgt = new THREE.Vector3(0, 0, .4), cur = new THREE.Vector3(0, 0, .4), mT = 0, mA = 0, lastChime = 0, smx = 0, smy = 0, vs = false;
@@ -237,10 +264,10 @@ void main() {
   }
   addEventListener('mousemove', onMove, { passive: true }); addEventListener('touchmove', onMove, { passive: true });
   document.addEventListener('mouseleave', function () { mT = 0; });
-  addEventListener('resize', function () { var w = host.clientWidth || innerWidth, h = host.clientHeight || innerHeight; camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h); onScroll(); });
+  addEventListener('resize', function () { var w = host.clientWidth || innerWidth, h = host.clientHeight || innerHeight; camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h); layout(); onScroll(); });
 
   /* ---------- boucle ---------- */
-  var tf = 0, cf = 0, act = -1, cRY = 0, cRX = 0, cPX = 1.1, cPY = 0, cS = 1, last = performance.now(), running = false;
+  var tf = 0, cf = 0, act = -1, cRY = 0, cRX = 0, cPX = 0, cPY = 0, cS = 1, snap = true, last = performance.now(), running = false;
   function onScroll() { var r = sec.getBoundingClientRect(); tf = clamp(-r.top / (stage.offsetHeight || innerHeight), 0, n - 1); }
   addEventListener('scroll', onScroll, { passive: true });
   var damp = THREE.MathUtils.damp;
@@ -258,11 +285,12 @@ void main() {
     }
     uni.uMorphProgress.value = m;
     cur.lerp(tgt, .14); uni.uMouse3D.value.copy(cur); mA += (mT - mA) * .1; uni.uMouseActive.value = mA;
-    var A = CFG[a], B = CFG[b], tw = Math.sin(m * Math.PI) * .35, mob = mobile();
+    var A = CFG[a], B = CFG[b], tw = Math.sin(m * Math.PI) * .35;
     var mty = ndc.x !== -999 ? ndc.x * .2 : 0, mtx = ndc.y !== -999 ? -ndc.y * .14 : 0;
     cRY = damp(cRY, A.ry * (1 - m) + B.ry * m + tw + mty, 7, dt); cRX = damp(cRX, A.rx * (1 - m) + B.rx * m + mtx, 7, dt);
-    cPX = damp(cPX, mob ? 0 : A.px * (1 - m) + B.px * m, 6, dt); cPY = damp(cPY, mob ? .62 : 0, 6, dt);
-    cS = damp(cS, (A.s * (1 - m) + B.s * m) * (mob ? .62 : .92), 6, dt);
+    var LA = LAY[a] || { s: 1, x: 0, y: 0 }, LB = LAY[b] || LA, tx = LA.x * (1 - m) + LB.x * m, ty = LA.y * (1 - m) + LB.y * m, ts = LA.s * (1 - m) + LB.s * m;
+    if (snap) { cPX = tx; cPY = ty; cS = ts; snap = false; }
+    cPX = damp(cPX, tx, 6, dt); cPY = damp(cPY, ty, 6, dt); cS = damp(cS, ts, 6, dt);
     group.rotation.y = cRY; group.rotation.x = cRX; group.position.set(cPX, cPY, 0); group.scale.setScalar(cS);
     renderer.render(scene, camera);
     // chapitre actif : index, réglages, texte de fond
