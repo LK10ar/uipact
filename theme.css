@@ -429,7 +429,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
 html[data-theme] #hero.hero{background:none!important;max-width:none!important;width:100%}
 main,section,.ticker-wrap,.page-header,.portfolio-header,.section-divider,.services-divider-wrap,footer{position:relative;z-index:1}
 html[data-theme="dark"] .page-header,html[data-theme="dark"] .ticker-wrap{background:transparent!important}
-html[data-theme="dark"] #services,html[data-theme="dark"] 
+html[data-theme="dark"] #services,html[data-theme="dark"] #about,html[data-theme="dark"] #portfolio,html[data-theme="dark"] #contact{background:transparent!important}
 #scene3d{position:fixed;inset:0;z-index:0;pointer-events:none;perspective:1100px;overflow:hidden}
 #scene3d .rig{position:absolute;inset:0;transform-style:preserve-3d}
 #scene3d .p{position:absolute;left:0;top:0;transform-style:preserve-3d;will-change:transform}
