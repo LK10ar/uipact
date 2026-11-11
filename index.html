@@ -519,11 +519,13 @@
         }
     </style>
     <link rel="stylesheet" href="theme.css">
-    <link rel="stylesheet" href="story.css?v=2">
+    <link rel="stylesheet" href="story.css?v=3">
     <script src="config.js"></script>
     <script src="cms.js"></script>
     <script src="theme.js"></script>
-    <script src="story.js?v=2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js" defer></script>
+    <script src="story-shapes.js?v=3" defer></script>
+    <script src="story3d.js?v=3" defer></script>
 </head>
 <body>
 
@@ -571,33 +573,33 @@
         </div>
     </section>
 
-        <section id="story" class="no-cms" aria-label="Ma façon de travailler">
-        <div class="sty-stage"><div class="sty-vis"><div class="sty-scene"></div><div class="sty-card"><small></small><b></b><i></i></div></div><div class="sty-cnt">01</div></div>
-        <div class="sty-ch" data-t="Comprendre"><div class="sty-txt"><div class="sty-eb">01 · Comprendre</div><h2>Une idée forte <i>avant le premier trait</i></h2><p>Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne. Chaque création part d'un territoire de marque clair.</p>
+            <section id="story" class="no-cms" aria-label="Ma façon de travailler">
+        <div class="sty-stage"><div class="sty-bgt" aria-hidden="true"><span>UIPACT</span></div><div class="sty-gl" aria-hidden="true"></div></div>
+        <div class="sty-ch" data-t="Comprendre" data-bg="CADRAGE"><div class="sty-txt"><div class="sty-eb">01 · Comprendre</div><h2>Une idée forte <i>avant le premier trait</i></h2><p>Comprendre votre projet, vos objectifs et votre cible avant de dessiner la moindre ligne. Chaque création part d'un territoire de marque clair.</p>
             <ul class="sty-chips"><li>Cadrage</li><li>Brief</li><li>Références</li><li>Territoire de marque</li></ul>
             <a class="sty-lnk" href="a-propos.html">À propos</a>
         </div></div>
-        <div class="sty-ch" data-t="Identité visuelle"><div class="sty-txt"><div class="sty-eb">02 · Identité</div><h2>Une marque <i>reconnue au premier regard</i></h2><p>Logo, couleurs et typographies déclinés en un système cohérent, pour fonctionner partout : web, print et réseaux sociaux.</p>
+        <div class="sty-ch r" data-t="Identité visuelle" data-bg="IDENTITÉ"><div class="sty-txt"><div class="sty-eb">02 · Identité</div><h2>Une marque <i>reconnue au premier regard</i></h2><p>Logo, couleurs et typographies déclinés en un système cohérent, pour fonctionner partout : web, print et réseaux sociaux.</p>
             <ul class="sty-chips"><li>Logo</li><li>Charte graphique</li><li>Typographies</li><li>Palette</li></ul>
             <a class="sty-lnk" href="identite-visuelle.html">Identité visuelle</a>
         </div></div>
-        <div class="sty-ch" data-t="Création print"><div class="sty-txt"><div class="sty-eb">03 · Print</div><h2>Des supports <i>qu'on garde en main</i></h2><p>Cartes de visite, flyers, affiches : une mise en page lisible en un coup d'œil, fidèle à votre identité.</p>
+        <div class="sty-ch" data-t="Création print" data-bg="PRINT"><div class="sty-txt"><div class="sty-eb">03 · Print</div><h2>Des supports <i>qu'on garde en main</i></h2><p>Cartes de visite, flyers, affiches : une mise en page lisible en un coup d'œil, fidèle à votre identité.</p>
             <ul class="sty-chips"><li>Cartes de visite</li><li>Flyers</li><li>Affiches</li><li>Brochures</li></ul>
             <a class="sty-lnk" href="creation-print.html">Création Print</a>
         </div></div>
-        <div class="sty-ch" data-t="Site internet"><div class="sty-txt"><div class="sty-eb">04 · Site internet</div><h2>Un site à votre image, <i>fluide sur tous les écrans</i></h2><p>Un site vitrine, une one-page ou un webdesign 100% sur mesure : rapide, soigné et facile à prendre en main.</p>
+        <div class="sty-ch r" data-t="Site internet" data-bg="SITE"><div class="sty-txt"><div class="sty-eb">04 · Site internet</div><h2>Un site à votre image, <i>fluide sur tous les écrans</i></h2><p>Un site vitrine, une one-page ou un webdesign 100% sur mesure : rapide, soigné et facile à prendre en main.</p>
             <ul class="sty-chips"><li>Site vitrine</li><li>One-page</li><li>Sur-mesure</li><li>SEO</li></ul>
             <a class="sty-lnk" href="sites-web.html">Sites internet</a>
         </div></div>
-        <div class="sty-ch" data-t="UX / UI Design"><div class="sty-txt"><div class="sty-eb">05 · UX / UI</div><h2>Des interfaces <i>claires, pensées pour l'usage</i></h2><p>Des parcours et des écrans intuitifs pour vos applications web et mobiles, centrés sur l'expérience et la conversion.</p>
+        <div class="sty-ch" data-t="UX / UI Design" data-bg="MOBILE"><div class="sty-txt"><div class="sty-eb">05 · UX / UI</div><h2>Des interfaces <i>claires, pensées pour l'usage</i></h2><p>Des parcours et des écrans intuitifs pour vos applications web et mobiles, centrés sur l'expérience et la conversion.</p>
             <ul class="sty-chips"><li>Wireframes</li><li>Maquettes Figma</li><li>Prototype</li></ul>
             <a class="sty-lnk" href="ux-ui.html">UX / UI Design</a>
         </div></div>
-        <div class="sty-ch" data-t="Sécurité"><div class="sty-txt"><div class="sty-eb">06 · Sécurité</div><h2>Un site <i>rapide, sûr et à jour</i></h2><p>Hébergement, mises à jour, sauvegardes, surveillance : votre site reste en forme pour continuer de travailler pour vous. Une faille ou un bug ? J'interviens.</p>
+        <div class="sty-ch r" data-t="Sécurité" data-bg="SÉCURITÉ"><div class="sty-txt"><div class="sty-eb">06 · Sécurité</div><h2>Un site <i>rapide, sûr et à jour</i></h2><p>Hébergement, mises à jour, sauvegardes, surveillance : votre site reste en forme pour continuer de travailler pour vous. Une faille ou un bug ? J'interviens.</p>
             <ul class="sty-chips"><li>Hébergement</li><li>HTTPS</li><li>Sauvegardes</li><li>Mises à jour</li></ul>
             <a class="sty-lnk" href="contact.html">Parler de mon site</a>
         </div></div>
-        <div class="sty-ch" data-t="Confiance"><div class="sty-txt"><div class="sty-eb">07 · Confiance</div><h2>Ils m'ont <i>fait confiance</i></h2>
+        <div class="sty-ch" data-t="Confiance" data-bg="CONFIANCE"><div class="sty-txt"><div class="sty-eb">07 · Confiance</div><h2>Ils m'ont <i>fait confiance</i></h2>
             <div class="sty-st"><div><b data-n="23">0</b><span>projets réalisés</span></div><div><b data-n="4">0</b><span>domaines d'expertise</span></div></div>
             <div class="sty-lgs"><div class="sty-lg" style="font-weight:800;font-style:italic">AlphaRun</div><div class="sty-lg" style="letter-spacing:.2em;text-transform:uppercase;font-size:.72rem">Zovalux</div><div class="sty-lg" style="font-family:Georgia,serif;font-style:italic">Relax Haven</div><div class="sty-lg" style="font-family:Georgia,serif">La Sirène Dorée</div><div class="sty-lg" style="letter-spacing:.14em;text-transform:uppercase;font-size:.66rem">Sphere Architecture</div><div class="sty-lg" style="font-family:Georgia,serif;font-weight:700">Le Chêne Doré</div></div>
             <div class="sty-btns"><a class="sty-btn" href="portfolio.html">Voir le portfolio</a><a class="sty-lnk" href="contact.html">Démarrer un projet</a></div>
