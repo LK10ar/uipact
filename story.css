@@ -8,13 +8,13 @@
 /* texte géant en arrière-plan */
 .sty-bgt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;will-change:transform}
 .sty-bgt span{font-size:clamp(5rem,19vw,20rem);line-height:1;font-weight:800;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(228,199,122,.07) 45%,transparent 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;user-select:none}
-.sty-idx{position:absolute;left:clamp(10px,1.6vw,28px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px;pointer-events:auto;z-index:3}
+.sty-idx{position:absolute;left:clamp(14px,2vw,34px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px;pointer-events:auto;z-index:3}
 .sty-idx button{all:unset;cursor:pointer;font:600 .72rem/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.12em;color:rgba(237,234,224,.35);transition:color .3s,transform .3s}
 .sty-idx button:hover{color:rgba(237,234,224,.8)}
 .sty-idx button.on{color:var(--c-gold2,#E4C77A);transform:translateX(4px)}
 /* chapitres : le texte alterne gauche / droite, la forme passe de l'autre côté */
-.sty-ch{position:relative;z-index:1;min-height:100vh;min-height:100svh;display:flex;align-items:center;padding:0 clamp(24px,5vw,80px) 0 clamp(60px,8vw,140px);box-sizing:border-box}
-.sty-ch.r{justify-content:flex-end;padding:0 clamp(60px,8vw,140px) 0 clamp(24px,5vw,80px)}
+.sty-ch{position:relative;z-index:1;min-height:100vh;min-height:100svh;display:flex;align-items:center;padding:0 clamp(24px,4vw,72px) 0 clamp(104px,10vw,180px);box-sizing:border-box}
+.sty-ch.r{justify-content:flex-end;padding:0 clamp(32px,4vw,72px) 0 clamp(104px,10vw,180px)}
 .sty-txt{width:min(100%,500px)}
 #story.js .sty-txt{opacity:0;transform:translateY(34px);transition:opacity .8s ease,transform .8s ease}
 #story.js .sty-ch.on .sty-txt{opacity:1;transform:none}
@@ -44,6 +44,9 @@
   .sty-ch,.sty-ch.r{justify-content:flex-start;align-items:flex-end;padding:0 24px 8vh}
   .sty-txt{width:100%;padding-top:60px;background:linear-gradient(transparent,rgba(10,16,36,.9) 38%)}
   #story .sty-txt h2{font-size:clamp(1.9rem,8vw,2.6rem)}
-  .sty-lgs{grid-template-columns:repeat(2,1fr)}
+  .sty-lgs{grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+  .sty-lg{min-height:42px;font-size:.7rem;padding:4px}
+  .sty-st{margin-bottom:18px}
+  .sty-chips{margin-bottom:20px}
 }
 @media (prefers-reduced-motion:reduce){#story.js .sty-txt{transition:none}}
