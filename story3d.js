@@ -236,7 +236,7 @@ void main() {
     xs.sort(); ys.sort(); zs.sort();
     var lo = Math.floor(c * .01), hi = Math.min(c - 1, Math.ceil(c * .99));
     var cx = (xs[lo] + xs[hi]) / 2, cy = (ys[lo] + ys[hi]) / 2, cz = (zs[lo] + zs[hi]) / 2;
-    var hw = Math.max((xs[hi] - xs[lo]) / 2, .1), hh = Math.max((ys[hi] - ys[lo]) / 2, .1), k = TARGET / Math.max(hw, hh);
+    var hw = Math.max((xs[hi] - xs[lo]) / 2, .1), hh = Math.max((ys[hi] - ys[lo]) / 2, .1), k = Math.min(TARGET * 1.15 / Math.sqrt(hw * hh), 1.9 / hw, 1.75 / hh); // même surface visuelle pour toutes les formes, bornée en largeur/hauteur
     for (i = 0; i < c; i++) { p[i * 3] = (p[i * 3] - cx) * k; p[i * 3 + 1] = (p[i * 3 + 1] - cy) * k; p[i * 3 + 2] = (p[i * 3 + 2] - cz) * k; }
     return { hw: hw * k * 1.1, hh: hh * k * 1.1 }; // +10 % de marge (rotation, bruit, perspective)
   }
@@ -253,8 +253,8 @@ void main() {
         var sm = Math.min(.62, .9 * halfW / bd.hw, .9 * ((bottom - top) / 2) / (bd.hh * ppu));
         return { s: Math.max(sm, .25), x: 0, y: -(cy - H / 2) / ppu };
       }
-      var r = tt.getBoundingClientRect(), right = chs[i].classList.contains('r'), side = right ? -1 : 1;
-      var x0 = right ? 72 : r.right + 48, x1 = right ? r.left - 48 : W - 24;
+      var hl = host.getBoundingClientRect().left, r = tt.getBoundingClientRect(), right = chs[i].classList.contains('r'), side = right ? -1 : 1;
+      var x0 = right ? 72 : r.right - hl + 48, x1 = right ? r.left - hl - 48 : W - 24;
       var sc0 = Math.min(1, halfW / 3.4), tx = side * Math.min(halfW * .46, 2.3);
       var maxS = function (c) { return Math.min((c - x0) / (bd.hw * ppu), (x1 - c) / (bd.hw * ppu), (H * .43) / (bd.hh * ppu)); };
       var cpx = W / 2 + tx * ppu, sc = Math.min(sc0, maxS(cpx));
