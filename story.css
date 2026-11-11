@@ -43,6 +43,9 @@
   .sty-ch,.sty-ch.r{justify-content:flex-start;align-items:flex-end;padding:0 24px 8vh}
   .sty-txt{width:100%;padding-top:60px;background:linear-gradient(transparent,rgba(10,16,36,.9) 38%)}
   #story .sty-txt h2{font-size:clamp(1.9rem,8vw,2.6rem)}
-  .sty-lgs{grid-template-columns:repeat(2,1fr)}
+  .sty-lgs{grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+  .sty-lg{min-height:42px;font-size:.7rem;padding:4px}
+  .sty-st{margin-bottom:18px}
+  .sty-chips{margin-bottom:20px}
 }
 @media (prefers-reduced-motion:reduce){#story.js .sty-txt{transition:none}}

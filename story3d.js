@@ -7,7 +7,7 @@
   var S = window.UIPShapes, stage = sec.querySelector('.sty-stage'), host = stage.querySelector('.sty-gl'), bgw = stage.querySelector('.sty-bgt'), bgt = bgw.querySelector('span');
   var chs = [].slice.call(sec.querySelectorAll('.sty-ch')), n = chs.length;
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var mobile = function () { return innerWidth < 820; };
+  var mobile = function () { return innerWidth < 980; };
   var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
   // Valeurs par défaut = tes réglages ; l'admin peut les modifier (section « particles », enregistrée sur l'API)
   var P = { rep: 1, rad: .8, ns: .04, nsp: .3, count: 18000, size: .6, bg: 'UIPACT' };
@@ -237,7 +237,10 @@ void main() {
     BD = shapes.map(bounds);
     LAY = shapes.map(function (sh, i) {
       var bd = BD[i], x0, x1, y0, y1;
-      if (mob) { x0 = W * .06; x1 = W * .94; y0 = 80; y1 = H * .46; }
+      if (mob) {
+        var tt = chs[i].querySelector('.sty-txt'); // le texte est en bas : on garde la place au-dessus de lui
+        x0 = W * .08; x1 = W * .92; y0 = 84; y1 = Math.max(H * .3, Math.min(H * .5, tt.offsetTop - 12));
+      }
       else {
         var r = chs[i].querySelector('.sty-txt').getBoundingClientRect(), right = chs[i].classList.contains('r');
         y0 = 96; y1 = H - 72;
