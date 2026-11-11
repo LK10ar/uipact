@@ -287,10 +287,7 @@ var UIPShapes = (() => {
         const localX = u * 0.72;
         const localY = v * 1.02;
         let localZ = 0;
-        if (s === 2 && u > 0.55 && v < -0.55) {
-          const curl = Math.hypot(u - 0.55, v + 0.55);
-          localZ += curl * 0.32;
-        }
+        // (coin corné supprimé : il soulevait le coin bas-droit et le détachait des bords)
         const rx = localX * cosR - localZ * sinR;
         const rz = localX * sinR + localZ * cosR + sheetZ;
         const ry = localY;
