@@ -589,7 +589,7 @@ $('#login').onsubmit = async function (e) {
   catch (x) { $('#lerr').textContent = /fetch/i.test(x.message) ? "Impossible de joindre l'API (vérifiez config.js, ou patientez 1 minute : le serveur se réveille)." : x.message; }
 };
 function norm() {
-  ['texts', 'hidden', 'blocks', 'images', 'carousels', 'translations', 'langNames', 'sections', 'trMeta', 'projects', 'particles'].forEach(function (k) { S[k] = S[k] || {}; });
+  ['texts', 'hidden', 'blocks', 'images', 'carousels', 'translations', 'langNames', 'sections', 'trMeta', 'projects', 'particles', 'particlesMobile'].forEach(function (k) { S[k] = S[k] || {}; });
   S.seo = S.seo || {}; S.seo.site = S.seo.site || {}; S.seo.pages = S.seo.pages || {}; S.seo.schema = S.seo.schema || {};
   S.languages = S.languages && S.languages.length ? S.languages : ['fr'];
 }
@@ -828,23 +828,35 @@ var PART_SET = [
   ['count', 'Nombre de particules (netteté)', 'Plus il y en a, plus les formes sont nettes, mais plus le site est lourd. Limité à 6 000 sur mobile.', 3000, 24000, 500, function (x) { return Math.round(x).toLocaleString('fr-FR'); }],
   ['size', 'Finesse du grain (taille)', 'Taille de chaque particule : plus petit = plus fin.', 0.3, 2, 0.05, function (x) { return x.toFixed(2) + ' px'; }]
 ];
-async function vParticles(v) {
-  var Pt = S.particles || (S.particles = {});
-  v.appendChild(h('h2', {}, 'Particules 3D de l\u2019accueil'));
-  v.appendChild(h('p', { class: 'hint' }, 'Ces réglages s\u2019appliquent à tous les visiteurs après enregistrement (le site se recharge une fois chez eux, puis garde ces valeurs). Pour les voir : ouvrez l\u2019accueil et faites Ctrl+F5.'));
+var PART_DEF_M = { rep: 1, rad: 0.8, ns: 0.04, nsp: 0.3, count: 6000, size: 0.6, bg: 'UIPACT' };
+var partTab = 'desktop';
+function partPanel(host, key, DEF, mobile) {
+  var Pt = S[key] || (S[key] = {});
   PART_SET.forEach(function (d) {
-    var key = d[0], cur = Pt[key] != null ? Pt[key] : PART_DEF[key];
+    var k = d[0], lo = d[3], hi = d[4], hint = d[2];
+    if (mobile && k === 'count') { lo = 1000; hi = 12000; hint = 'Plus il y en a, plus les formes sont nettes, mais plus le téléphone chauffe et rame. Sur mobile, mieux vaut rester raisonnable.'; }
+    var cur = Pt[k] != null ? Pt[k] : DEF[k];
     var val = h('b', { style: 'color:var(--gold,#E4C77A)' }, d[6](cur));
-    var r = h('input', { type: 'range', min: d[3], max: d[4], step: d[5], style: 'width:100%;accent-color:#C9A24B;margin:10px 0 4px' }); r.value = cur;
-    r.oninput = function () { var x = parseFloat(r.value); Pt[key] = x; val.textContent = d[6](x); mark(); };
-    v.appendChild(h('div', { class: 'card' }, h('div', { class: 'row' }, h('b', { style: 'flex:1' }, d[1]), val), r, h('small', {}, d[2] + ' Valeur d\u2019origine : ' + d[6](PART_DEF[key]) + '.')));
+    var r = h('input', { type: 'range', min: lo, max: hi, step: d[5], style: 'width:100%;accent-color:#C9A24B;margin:10px 0 4px' }); r.value = cur;
+    r.oninput = function () { var x = parseFloat(r.value); Pt[k] = x; val.textContent = d[6](x); mark(); };
+    host.appendChild(h('div', { class: 'card' }, h('div', { class: 'row' }, h('b', { style: 'flex:1' }, d[1]), val), r, h('small', {}, hint + ' Valeur d\u2019origine : ' + d[6](DEF[k]) + '.')));
   });
   var auto = h('input', { type: 'checkbox' }); auto.checked = Pt.bg === 'AUTO';
   var tin = h('input', { type: 'text', maxlength: 14, placeholder: 'UIPACT' }); tin.value = Pt.bg && Pt.bg !== 'AUTO' ? Pt.bg : '';
   function setBg() { Pt.bg = auto.checked ? 'AUTO' : (tin.value.trim() || 'UIPACT'); tin.disabled = auto.checked; mark(); }
   auto.onchange = setBg; tin.oninput = setBg; tin.disabled = auto.checked;
-  v.appendChild(h('div', { class: 'card' }, h('b', {}, 'Texte géant en arrière-plan'), h('div', { class: 'row', style: 'margin-top:8px' }, tin, h('label', { class: 'fx', style: 'white-space:nowrap' }, auto, 'Suivre le chapitre (CADRAGE, IDENTITÉ…)')), h('small', {}, '14 lettres maximum.')));
-  v.appendChild(h('button', { class: 'del', onclick: function () { if (confirm('Remettre les réglages d\u2019origine des particules ?')) { S.particles = {}; mark(); show(); } } }, 'Tout réinitialiser'));
+  host.appendChild(h('div', { class: 'card' }, h('b', {}, 'Texte géant en arrière-plan'), h('div', { class: 'row', style: 'margin-top:8px' }, tin, h('label', { class: 'fx', style: 'white-space:nowrap' }, auto, 'Suivre le chapitre (CADRAGE, IDENTITÉ…)')), h('small', {}, '14 lettres maximum.')));
+  host.appendChild(h('button', { class: 'del', onclick: function () { if (confirm('Remettre les réglages d\u2019origine des particules (' + (mobile ? 'mobile' : 'ordinateur') + ') ?')) { S[key] = {}; mark(); show(); } } }, 'Tout réinitialiser (' + (mobile ? 'mobile' : 'ordinateur') + ')'));
+}
+async function vParticles(v) {
+  v.appendChild(h('h2', {}, 'Particules 3D de l\u2019accueil'));
+  v.appendChild(h('p', { class: 'hint' }, 'Deux réglages séparés : un pour les ordinateurs, un pour les téléphones (écrans de moins de 861 px de large). Ils s\u2019appliquent à tous les visiteurs après enregistrement (le site se recharge une fois chez eux, puis garde ces valeurs). Pour les voir : ouvrez l\u2019accueil et faites Ctrl+F5.'));
+  var tabs = h('div', { class: 'seg' }), pd = h('div'), pm = h('div'), bd, bm;
+  function pick(m) { partTab = m; pd.hidden = m !== 'desktop'; pm.hidden = m !== 'mobile'; bd.classList.toggle('on', m === 'desktop'); bm.classList.toggle('on', m === 'mobile'); }
+  bd = h('button', { onclick: function () { pick('desktop'); } }, '🖥️ Ordinateur'); bm = h('button', { onclick: function () { pick('mobile'); } }, '📱 Mobile');
+  tabs.appendChild(bd); tabs.appendChild(bm); v.appendChild(tabs); v.appendChild(pd); v.appendChild(pm);
+  partPanel(pd, 'particles', PART_DEF, false); partPanel(pm, 'particlesMobile', PART_DEF_M, true);
+  pick(partTab);
 }
 /* ---------------- Couleurs ---------------- */
 async function vColors(v) {

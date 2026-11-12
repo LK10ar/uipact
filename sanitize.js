@@ -1,11 +1,13 @@
 // Nettoyage des réglages envoyés par l'admin (aucune dépendance : testé par `npm test`).
 const HEX = /^#[0-9a-fA-F]{6}$/;
 export const THEME_KEYS = ['gold', 'gold2', 'navy', 'navy2', 'bg', 'bgAlt', 'card', 'text', 'lightBg', 'lightAlt'];
-export const SECTIONS = ['theme', 'header', 'footer', 'texts', 'hidden', 'blocks', 'images', 'carousels', 'translations', 'languages', 'langNames', 'seo', 'sections', 'trMeta', 'projects', 'particles'];
+export const SECTIONS = ['theme', 'header', 'footer', 'texts', 'hidden', 'blocks', 'images', 'carousels', 'translations', 'languages', 'langNames', 'seo', 'sections', 'trMeta', 'projects', 'particles', 'particlesMobile'];
 // Toute langue est acceptée à partir d'un code ISO (fr, en, ar, zh, pt-br…) : l'admin peut en ajouter librement
 export const isLang = (c) => typeof c === 'string' && /^[a-z]{2,3}(-[a-z]{2,4})?$/.test(c);
 // Réglages des particules 3D de l'accueil : bornes acceptées (les valeurs hors limites sont ramenées dans la plage)
 export const PARTICLE_LIMITS = { rep: [0, 6.5], rad: [0.3, 3.2], ns: [0, 0.28], nsp: [0, 2.5], count: [3000, 24000], size: [0.3, 2] };
+// Même chose pour le mobile (nombre de particules plus bas : un téléphone est moins puissant)
+export const PARTICLE_LIMITS_MOBILE = { ...PARTICLE_LIMITS, count: [1000, 12000] };
 const BAD_URL = /^\s*(javascript|vbscript|data):/i;
 
 export function cleanValue(v, depth = 0) {
@@ -43,14 +45,16 @@ export function cleanSettings(body = {}) {
   if (data.translations && typeof data.translations === 'object') {
     data.translations = Object.fromEntries(Object.entries(data.translations).filter(([k]) => isLang(k)));
   }
-  if (data.particles && typeof data.particles === 'object') {
-    const out = {};
-    for (const [k, [lo, hi]] of Object.entries(PARTICLE_LIMITS)) {
-      const v = data.particles[k];
-      if (typeof v === 'number' && Number.isFinite(v)) out[k] = Math.min(hi, Math.max(lo, v));
+  for (const [key, limits] of [['particles', PARTICLE_LIMITS], ['particlesMobile', PARTICLE_LIMITS_MOBILE]]) {
+    if (data[key] && typeof data[key] === 'object') {
+      const out = {};
+      for (const [k, [lo, hi]] of Object.entries(limits)) {
+        const v = data[key][k];
+        if (typeof v === 'number' && Number.isFinite(v)) out[k] = Math.min(hi, Math.max(lo, v));
+      }
+      if (typeof data[key].bg === 'string' && data[key].bg.trim()) out.bg = data[key].bg.trim().slice(0, 14);
+      data[key] = out;
     }
-    if (typeof data.particles.bg === 'string' && data.particles.bg.trim()) out.bg = data.particles.bg.trim().slice(0, 14);
-    data.particles = out;
   }
   if (JSON.stringify(data).length > 3_000_000) throw new Error('Réglages trop volumineux');
   return data;

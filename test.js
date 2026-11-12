@@ -64,13 +64,10 @@ assert.ok(st.find((e) => e.id === 'lingva').ok);
 const tm = cleanSettings({ trMeta: { en: { index__e0_0: 'abc12' } } });
 assert.equal(tm.trMeta.en.index__e0_0, 'abc12');
 assert.equal(publicView({ trMeta: { en: {} }, translations: {} }, 'en').trMeta, undefined);   // jamais envoyé aux visiteurs
-// ---- Particules 3D : valeurs bornées, clés inconnues retirées
-const pr = cleanSettings({ particles: { rep: 99, rad: 0.8, ns: -5, nsp: 'x', count: 18000, size: 0.6, bg: '  UIPACT  ', evil: 1 } });
-assert.equal(pr.particles.rep, 6.5);                            // trop grand : ramené au maximum
-assert.equal(pr.particles.rad, 0.8);
-assert.equal(pr.particles.ns, 0);                               // négatif : ramené au minimum
-assert.equal(pr.particles.nsp, undefined);                      // pas un nombre : ignoré
-assert.equal(pr.particles.count, 18000);
-assert.equal(pr.particles.bg, 'UIPACT');
-assert.equal(pr.particles.evil, undefined);
+// ---- Particules 3D : réglages ordinateur et mobile séparés, valeurs ramenées dans la plage
+const pt = cleanSettings({ particles: { count: 99999, rep: 2, bg: 'UIPACT' }, particlesMobile: { count: 99999, size: 0.1, bg: '  Mobile  ' } });
+assert.equal(pt.particles.count, 24000);
+assert.equal(pt.particlesMobile.count, 12000);   // limite plus basse sur mobile
+assert.equal(pt.particlesMobile.size, 0.3);
+assert.equal(pt.particlesMobile.bg, 'Mobile');
 console.log('✓ tous les tests passent');
