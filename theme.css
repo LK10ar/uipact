@@ -429,7 +429,7 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
 html[data-theme] #hero.hero{background:none!important;max-width:none!important;width:100%}
 main,section,.ticker-wrap,.page-header,.portfolio-header,.section-divider,.services-divider-wrap,footer{position:relative;z-index:1}
 html[data-theme="dark"] .page-header,html[data-theme="dark"] .ticker-wrap{background:transparent!important}
-html[data-theme="dark"] #services,html[data-theme="dark"] #contact{background:transparent!important}
+html[data-theme="dark"] #services,html[data-theme="dark"] #contact,html[data-theme="dark"] .services-divider-wrap,html[data-theme="dark"] .section-divider{background:transparent!important}
 #scene3d{position:fixed;inset:0;z-index:0;pointer-events:none;perspective:1100px;overflow:hidden}
 #scene3d .rig{position:absolute;inset:0;transform-style:preserve-3d}
 #scene3d .p{position:absolute;left:0;top:0;transform-style:preserve-3d;will-change:transform}
@@ -1045,3 +1045,15 @@ html[data-theme="dark"] header select option,html[data-theme="dark"] select[id*=
 .wf3.d .w3-ft{ background:#0a1128; } .wf3.d .w3-ft p{ background:rgba(243,239,228,.3); } .wf3.d .w3-ft p:first-child{ background:var(--c-gold2); }
 @keyframes w3in{ from{ opacity:0; transform:translateY(1.6cqw); } }
 .p3-lay.on .w3-pg>div{ animation:w3in .6s both; } .p3-lay.on .w3-pg>div:nth-child(2){ animation-delay:.07s; } .p3-lay.on .w3-pg>div:nth-child(3){ animation-delay:.14s; } .p3-lay.on .w3-pg>div:nth-child(4){ animation-delay:.21s; } .p3-lay.on .w3-pg>div:nth-child(5){ animation-delay:.28s; }
+
+/* ========== Espacements entre sections (réduits) ========== */
+/* Ordinateur : moins de vide entre la phrase « …vous souhaitez véhiculer. » et « Ma méthode 01 » */
+@media(min-width:901px){
+  .st-sec{ padding-bottom:0; }
+  #sc3{ padding-top:0; margin-top:-10vh; }
+}
+/* Mobile : moins de vide entre le carrousel portfolio et « Méthode », puis entre « Méthode » et « À propos » */
+@media(max-width:860px){
+  #methode{ padding-top:0; padding-bottom:0; margin-top:-13vh; margin-bottom:-12vh; pointer-events:none; }
+  #methode .p3-in{ pointer-events:none; }
+}
