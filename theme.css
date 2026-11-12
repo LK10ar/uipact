@@ -1054,6 +1054,8 @@ html[data-theme="dark"] header select option,html[data-theme="dark"] select[id*=
 }
 /* Mobile : moins de vide entre le carrousel portfolio et « Méthode », puis entre « Méthode » et « À propos » */
 @media(max-width:860px){
-  #methode{ padding-top:0; padding-bottom:0; margin-top:-13vh; margin-bottom:-12vh; pointer-events:none; }
+  #portfolio.cf-sec{ padding-bottom:20px; }
+  #methode{ padding-top:0; padding-bottom:0; margin-top:-13vh; margin-bottom:-7vh; pointer-events:none; }
   #methode .p3-in{ pointer-events:none; }
+  #about{ padding-top:40px; }
 }
