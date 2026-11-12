@@ -387,6 +387,49 @@
         }
         .contact-textarea { height: 150px; resize: none; }
 
+        /* --- FORMULAIRE DE CONTACT (modifiable depuis l'admin, onglet « Formulaire de contact ») --- */
+        #contact [hidden] { display: none !important; }
+        #contact .hc-scene { max-width: 780px; }
+        #contact .hc-card { padding: 36px 38px; background: linear-gradient(180deg, rgba(22,36,90,.92), rgba(11,19,48,.94)) !important; }
+        #contact .ct-intro { max-width: 640px; margin: -8px auto 18px; text-align: center; line-height: 1.7; color: #B9B6AC; }
+        #contact .ct-phone { color: #E4C77A !important; display: flex; width: fit-content; margin: 0 auto 26px; align-items: center; gap: 10px; padding: 10px 20px; border-radius: 99px; text-decoration: none; font-weight: 700; color: #E4C77A; border: 1px solid rgba(228,199,122,.45); transition: background .25s; }
+        #contact .ct-phone:hover { background: rgba(228,199,122,.14); }
+        #contact .ct-phone svg { width: 18px; height: 18px; }
+        #contact .ct-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 18px; }
+        #contact .ct-full { grid-column: 1 / -1; }
+        #contact form .ct-l { display: block; margin: 0 0 8px; font-size: .95rem; font-weight: 600; color: #F3EFE4 !important; }
+        #contact .ct-req { margin-left: 4px; font-style: normal; color: #E4C77A; }
+        #contact .ct-in {
+            display: block; width: 100%; box-sizing: border-box; padding: 15px 18px; border-radius: 12px; border: 1px solid transparent;
+            font: inherit; font-size: 1rem; line-height: 1.3; transition: border-color .25s, box-shadow .25s, background .25s;
+        }
+        #contact.ct-light .ct-in { background: #ececec; color: #1b2033; }
+        #contact.ct-light .ct-in::placeholder { color: #6b7080; }
+        #contact.ct-dark .ct-in { background: rgba(255,255,255,.07); color: #F3EFE4; border-color: rgba(255,255,255,.2); }
+        #contact.ct-dark .ct-in::placeholder { color: rgba(243,239,228,.5); }
+        #contact.ct-dark select.ct-in option { color: #1b2033; }
+        #contact .ct-in:focus { outline: none; border-color: #C9A24B; box-shadow: 0 0 0 3px rgba(201,162,75,.3); }
+        #contact select.ct-in { -webkit-appearance: none; appearance: none; padding-right: 46px; cursor: pointer; background-repeat: no-repeat; background-position: right 18px center; background-size: 14px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+        #contact textarea.ct-in { min-height: 130px; resize: vertical; }
+        #contact .ct-consent { margin-top: 22px; }
+        #contact .ct-chk { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; line-height: 1.65; color: #F3EFE4; }
+        #contact .ct-chk input { flex: 0 0 20px; width: 20px; height: 20px; margin-top: 3px; accent-color: #C9A24B; }
+        #contact .ct-chk a { color: #E4C77A !important; }
+        #contact .ct-btn {
+            display: block; width: 100%; margin-top: 22px; padding: 16px 24px; border: 0; border-radius: 12px; cursor: pointer;
+            font: inherit; font-weight: 700; font-size: 1rem; letter-spacing: .04em; color: #101B3D;
+            background: linear-gradient(135deg, #C9A24B, #E4C77A); box-shadow: 0 12px 30px rgba(201,162,75,.28);
+            transition: transform .25s, box-shadow .25s, opacity .25s;
+        }
+        #contact .ct-btn:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(201,162,75,.45); }
+        #contact .ct-btn:disabled { opacity: .6; cursor: wait; transform: none; }
+        #contact .ct-note { margin: 16px 0 0; text-align: center; font-size: .85rem; line-height: 1.6; color: #B9B6AC; }
+        @media (max-width: 640px) {
+            #contact .ct-grid { grid-template-columns: 1fr; gap: 16px; }
+            #contact .hc-card { padding: 24px 16px; }
+        }
+
         /* --- Bouton Retour en Haut --- */
         #scrollTopBtn {
             display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1099; 
@@ -421,68 +464,85 @@
         }
         .social-links svg { width: 22px; height: 22px; }
 
-        /* --- POPUP INSTAGRAM --- */
+        /* --- POPUP (modifiable depuis l'admin, onglet « Popup ») --- */
         .popup-overlay {
-            display: none; 
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            display: none; position: fixed; inset: 0; z-index: 99999;
+            align-items: center; justify-content: center; padding: 18px; box-sizing: border-box;
+            background: rgba(5, 8, 20, var(--pp-o, .7));
+            -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+            opacity: 0; transition: opacity .35s ease;
         }
-        .popup-overlay.show {
-            display: flex;
-            opacity: 1;
+        .popup-overlay.show { display: flex; opacity: 1; }
+        .popup-overlay.pp-corner {
+            inset: auto 18px 18px auto; width: auto; height: auto; padding: 0; background: none;
+            -webkit-backdrop-filter: none; backdrop-filter: none; pointer-events: none;
         }
-        .popup-content {
-            background-color: var(--bg-color);
-            padding: 40px 30px;
-            border-radius: 15px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            position: relative;
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        .popup-overlay.pp-corner .pp-card { pointer-events: auto; }
+        .pp-card {
+            position: relative; width: min(100%, var(--pp-w, 460px)); max-height: calc(100vh - 36px); max-height: calc(100dvh - 36px);
+            overflow: hidden auto; border-radius: 26px; box-sizing: border-box; text-align: center; color: #F3EFE4;
+            background: linear-gradient(180deg, #16245a 0%, #0b1330 100%);
+            box-shadow: 0 34px 90px -22px rgba(0,0,0,.75), 0 0 0 1px rgba(228,199,122,.3), 0 0 60px -10px rgba(201,162,75,.25);
+            transform: translateY(26px) scale(.97); transition: transform .5s cubic-bezier(.2,.8,.2,1);
         }
-        .popup-overlay.show .popup-content {
-            transform: translateY(0);
+        .popup-overlay.show .pp-card { transform: none; }
+        .pp-card::after { content: ""; position: absolute; left: 12%; right: 12%; top: 0; height: 2px; z-index: 2; background: linear-gradient(90deg, transparent, #E4C77A, transparent); }
+        .pp-x {
+            position: absolute; top: 12px; right: 12px; z-index: 4; width: 38px; height: 38px; border-radius: 50%;
+            display: grid; place-items: center; cursor: pointer; font-size: 24px; line-height: 1; color: #fff;
+            background: rgba(8,13,32,.55); border: 1px solid rgba(255,255,255,.18); transition: background .25s, transform .25s;
         }
-        .close-popup {
-            position: absolute;
-            top: 15px; right: 20px;
-            font-size: 32px;
-            color: #888;
-            cursor: pointer;
-            transition: color 0.3s;
-            line-height: 1;
+        .pp-x:hover { background: rgba(201,162,75,.85); color: #101B3D; transform: rotate(90deg); }
+        .pp-img { width: 100%; height: 220px; background: transparent center / cover no-repeat; position: relative;
+            -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 100%); mask-image: linear-gradient(180deg, #000 55%, transparent 100%); }
+        .pp-body { position: relative; z-index: 1; padding: 30px 30px 28px; }
+        .pp-image-top .pp-body { padding-top: 6px; }
+        .pp-image-left { display: flex; align-items: stretch; }
+        .pp-image-left .pp-img { width: 42%; height: auto; min-height: 100%; flex: 0 0 42%; }
+        .pp-image-left .pp-img { -webkit-mask-image: linear-gradient(90deg, #000 55%, transparent 100%); mask-image: linear-gradient(90deg, #000 55%, transparent 100%); }
+        .pp-image-left .pp-body { flex: 1; align-self: center; }
+        .pp-image-bg .pp-img { position: absolute; inset: 0; height: 100%; z-index: 0; }
+        .pp-image-bg .pp-img { -webkit-mask-image: none; mask-image: none; }
+        .pp-image-bg .pp-img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,19,48,.55), rgba(11,19,48,.92)); }
+        .pp-image-bg .pp-body { padding-top: 54px; padding-bottom: 36px; }
+        .pp-badge {
+            display: inline-block; margin: 0 0 14px; padding: 6px 13px; border-radius: 99px; color: #E4C77A;
+            background: rgba(228,199,122,.12); border: 1px solid rgba(228,199,122,.4);
+            font: 600 .7rem/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing: .14em; text-transform: uppercase;
         }
-        .close-popup:hover { color: var(--color-fuchsia-vibrant); }
-        .popup-content h3 {
-            color: var(--color-blue-dark);
-            font-family: var(--font-title);
-            font-size: 1.8rem;
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-style: italic;
+        .pp-title { margin: 0 0 12px; color: #fff; font-family: var(--font-title, 'Instrument Serif', Georgia, serif); font-weight: 400; font-style: italic; font-size: clamp(1.8rem, 5vw, 2.3rem); line-height: 1.1; }
+        .pp-text { margin: 0 0 22px; color: rgba(243,239,228,.84); line-height: 1.65; white-space: pre-line; }
+        .pp-btns { display: flex; flex-direction: column; gap: 10px; }
+        .pp-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 22px; border-radius: 99px;
+            font-weight: 700; font-size: .95rem; text-decoration: none; border: 1px solid transparent; cursor: pointer;
+            transition: transform .25s, box-shadow .25s, background .25s;
         }
-        .popup-content p { color: #555; margin-bottom: 25px; line-height: 1.5; }
-        .popup-btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-            padding: 12px 25px; border-radius: 50px;
-            background: linear-gradient(135deg, var(--color-cyan-vibrant), var(--color-fuchsia-vibrant));
-            color: #fff !important; text-decoration: none; font-weight: 700;
-            transition: transform 0.3s, box-shadow 0.3s;
+        .pp-btn:hover { transform: translateY(-2px); }
+        .pp-btn svg { width: 20px; height: 20px; flex: 0 0 20px; }
+        .pp-btn.primary { background: linear-gradient(135deg, #C9A24B, #E4C77A); color: #101B3D !important; box-shadow: 0 10px 28px rgba(201,162,75,.3); }
+        .pp-btn.primary:hover { box-shadow: 0 16px 36px rgba(201,162,75,.48); }
+        .pp-btn.secondary { background: rgba(255,255,255,.07); border-color: rgba(228,199,122,.5); color: #F3EFE4 !important; }
+        .pp-btn.secondary:hover { background: rgba(228,199,122,.16); }
+        .pp-btn.ghost { background: none; color: #E4C77A !important; }
+        .pp-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; margin-top: 16px; }
+        .pp-links a { color: #E4C77A; font-size: .88rem; text-underline-offset: 3px; }
+        .pp-dismiss { margin-top: 14px; padding: 4px 8px; background: none; border: 0; color: rgba(243,239,228,.55); font: inherit; font-size: .85rem; text-decoration: underline; cursor: pointer; }
+        .pp-dismiss:hover { color: #fff; }
+        .popup-overlay [hidden] { display: none !important; }
+        /* couleurs renforcées : le thème du site impose sa propre couleur aux liens */
+        html #instaPopup a.pp-btn.primary { color: #101B3D !important; }
+        html #instaPopup a.pp-btn.secondary { color: #F3EFE4 !important; }
+        html #instaPopup a.pp-btn.ghost, html #instaPopup .pp-links a { color: #E4C77A !important; }
+        @media (max-width: 600px) {
+            .pp-image-left { flex-direction: column; }
+            .pp-image-left .pp-img { width: 100%; flex-basis: auto; height: 200px; min-height: 0; }
+            .pp-image-left .pp-img { -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 100%); mask-image: linear-gradient(180deg, #000 55%, transparent 100%); }
+            .pp-body { padding: 26px 22px 24px; }
+            .popup-overlay.pp-corner { inset: auto 10px 10px 10px; }
+            .popup-overlay.pp-corner .pp-card { width: 100%; }
         }
-        .popup-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(201, 162, 75, 0.45);
-        }
-        .popup-btn svg { width: 20px; height: 20px; }
+        @media (prefers-reduced-motion: reduce) { .pp-card, .popup-overlay { transition: none; } }
 
         /* --- RESPONSIVE MOBILE --- */
         @media (max-width: 1024px) {
@@ -744,33 +804,48 @@
         </div>
     </section>
 
-    <section id="contact">
+    <section id="contact" class="ct-light">
         <h2 class="section-title">CONTACT</h2>
-        
-        <form action="https://formsubmit.co/uipact@gmail.com" method="POST" class="contact-form">
-            <input type="text" name="nom" class="contact-input" placeholder="Votre Nom" required>
-            <input type="email" name="email" class="contact-input" placeholder="Votre Email" required>
-            <textarea name="message" class="contact-textarea" placeholder="Votre Message" required></textarea>
-            
-            <input type="hidden" name="_subject" value="Nouveau message depuis le site UIPACT !">
+        <p class="ct-intro no-cms" id="ctIntro" hidden></p>
+        <a class="ct-phone no-cms" id="ctPhone" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span id="ctPhoneT"></span></a>
 
-            <button type="submit" class="cta-button">Envoyer le message</button>
+        <form action="https://formsubmit.co/uipact@gmail.com" method="POST" class="contact-form ct-form" id="ctForm" data-ok-t="Message envoyé !" data-ok-p="Merci, je reviens vers vous très vite.">
+            <div class="ct-grid no-cms">
+                <div class="ct-f" data-f="prenom"><label class="ct-l" for="ct-prenom"><span class="ct-lt">Prénom</span><i class="ct-req">*</i></label><input class="ct-in" id="ct-prenom" name="prenom" type="text" placeholder="Votre prénom" autocomplete="given-name" required></div>
+                <div class="ct-f" data-f="nom"><label class="ct-l" for="ct-nom"><span class="ct-lt">Nom</span><i class="ct-req">*</i></label><input class="ct-in" id="ct-nom" name="nom" type="text" placeholder="Votre nom" autocomplete="family-name" required></div>
+                <div class="ct-f" data-f="email"><label class="ct-l" for="ct-email"><span class="ct-lt">Email</span><i class="ct-req">*</i></label><input class="ct-in" id="ct-email" name="email" type="email" placeholder="nom@entreprise.fr" autocomplete="email" required></div>
+                <div class="ct-f" data-f="telephone"><label class="ct-l" for="ct-tel"><span class="ct-lt">Téléphone</span><i class="ct-req">*</i></label><input class="ct-in" id="ct-tel" name="telephone" type="tel" placeholder="06 12 34 56 78" autocomplete="tel" required></div>
+                <div class="ct-f ct-full" data-f="site"><label class="ct-l" for="ct-site"><span class="ct-lt">Votre site web</span><i class="ct-req" hidden>*</i></label><input class="ct-in" id="ct-site" name="site" type="text" inputmode="url" placeholder="https://www.votre-entreprise.fr" autocomplete="url"></div>
+                <div class="ct-f ct-full" data-f="secteur"><label class="ct-l" for="ct-secteur"><span class="ct-lt">Votre secteur d’activité</span><i class="ct-req">*</i></label><select class="ct-in" id="ct-secteur" name="secteur" required><option value="">Choisissez votre secteur</option><option>Artisanat et bâtiment</option><option>Commerce de proximité</option><option>Services aux particuliers</option><option>Services aux entreprises</option><option>Santé et bien-être</option><option>Immobilier</option><option>Restauration et hôtellerie</option><option>E-commerce</option><option>Autre</option></select></div>
+                <div class="ct-f ct-full" data-f="message"><label class="ct-l" for="ct-message"><span class="ct-lt">Votre besoin en quelques mots</span><i class="ct-req" hidden>*</i></label><textarea class="ct-in" id="ct-message" name="message" placeholder="Un nouveau logo, un site vitrine, une refonte…"></textarea></div>
+            </div>
+            <div class="ct-consent no-cms" data-f="consent">
+                <span class="ct-l"><span id="ctConsentLabel">Consentement RGPD</span> <i class="ct-req">*</i></span>
+                <label class="ct-chk"><input type="checkbox" name="consentement" value="Oui" required><span><span id="ctConsentText">J’accepte que UIPACT utilise ces informations pour me recontacter au sujet de ma demande.</span> <a id="ctConsentLink" href="politique-confidentialite.html">Politique de confidentialité</a></span></label>
+            </div>
+
+            <input type="hidden" name="_subject" value="Nouveau message depuis le site UIPACT !">
+            <input type="text" name="_honey" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+
+            <button type="submit" class="ct-btn">Être rappelé</button>
+            <p class="ct-note no-cms" id="ctNote">Vos données servent uniquement à traiter votre demande et à vous recontacter. Elles ne sont ni revendues ni transmises à des tiers.</p>
         </form>
     </section>
 
-    <div id="instaPopup" class="popup-overlay">
-        <div class="popup-content">
-            <span class="close-popup" onclick="closePopup()">&times;</span>
-            <h3>Rejoignez la communauté !</h3>
-            <p>Suivez UIPACT sur Instagram pour découvrir mes dernières créations visuelles et les coulisses de mes projets.</p>
-            <a href="https://www.instagram.com/uipact/" target="_blank" rel="noopener noreferrer" class="popup-btn" onclick="closePopup()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
-                Suivez-moi sur Instagram
-            </a>
+    <div id="instaPopup" class="popup-overlay pp" role="dialog" aria-modal="true" aria-labelledby="ppTitle">
+        <div class="pp-card" id="ppCard">
+            <span class="pp-x" id="ppClose" role="button" tabindex="0" aria-label="Fermer">&times;</span>
+            <div class="pp-img no-cms" id="ppImg" hidden></div>
+            <div class="pp-body">
+                <span class="pp-badge no-cms" id="ppBadge" hidden></span>
+                <h3 class="pp-title" id="ppTitle">Rejoignez la communauté !</h3>
+                <p class="pp-text" id="ppText">Suivez UIPACT sur Instagram pour découvrir mes dernières créations visuelles et les coulisses de mes projets.</p>
+                <div class="pp-btns" id="ppBtns">
+                    <a class="pp-btn primary" href="https://www.instagram.com/uipact/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>Suivez-moi sur Instagram</a>
+                </div>
+                <div class="pp-links no-cms" id="ppLinks" hidden></div>
+                <button type="button" class="pp-dismiss no-cms" id="ppDismiss" hidden></button>
+            </div>
         </div>
     </div>
 
@@ -818,7 +893,7 @@
 
         <div class="footer-bottom">
             <p>&copy; 2026 UIPACT &mdash; Tous droits réservés.</p>
-            <p class="footer-signature">Conçu et développé par UIPACT</p>
+            <p class="footer-signature">Conçu et développé par Barrot Léo</p>
         </div>
     </footer>
 
@@ -876,33 +951,6 @@
             });
         });
 
-        // --- SCRIPT POPUP INSTAGRAM ---
-        const instaPopup = document.getElementById('instaPopup');
-        
-        function showPopup() {
-            // Vérifie si le popup a déjà été vu pendant cette session
-            if (!sessionStorage.getItem('instaPopupShown')) {
-                setTimeout(() => {
-                    instaPopup.classList.add('show');
-                }, 3000); // Fait apparaître le popup après 3 secondes
-            }
-        }
-
-        function closePopup() {
-            instaPopup.classList.remove('show');
-            // Enregistre dans le navigateur que le visiteur l'a fermé
-            sessionStorage.setItem('instaPopupShown', 'true');
-        }
-
-        // Fermer le popup en cliquant à l'extérieur de la boîte
-        window.addEventListener('click', function(event) {
-            if (event.target === instaPopup) {
-                closePopup();
-            }
-        });
-
-        // Lance la logique du popup une fois la page chargée
-        window.addEventListener('load', showPopup);
     </script>
 <script>
 /* Cartes « Mes services » gérées depuis l'admin (onglet « Services »). Sans réglage enregistré, le HTML d'origine reste affiché. */
@@ -933,6 +981,142 @@
   }
   apply(); addEventListener('storage', apply); document.addEventListener('visibilitychange', apply);
   var n = 0, t = setInterval(function () { apply(); if (++n > 200) clearInterval(t); }, 600); // le serveur peut mettre du temps à répondre : on réessaie ~2 min
+})();
+</script>
+<script>
+/* Popup et formulaire de contact de l'accueil, gérés depuis l'admin (onglets « Popup » et « Formulaire de contact »).
+   Sans réglage enregistré, le HTML d'origine reste affiché. */
+(function () {
+  var $ = function (i) { return document.getElementById(i); };
+  function cfg(n) { try { var s = (JSON.parse(localStorage.getItem('uipact_cms_' + (localStorage.getItem('uipact_lang') || 'fr')) || '{}').sections || {})[n]; return s && typeof s === 'object' ? s : null; } catch (e) { return null; } }
+  function deep(a, b) {
+    var o = JSON.parse(JSON.stringify(a)); if (!b) return o;
+    Object.keys(b).forEach(function (k) { var v = b[k]; if (v === undefined || v === null) return;
+      if (v && typeof v === 'object' && !Array.isArray(v) && o[k] && typeof o[k] === 'object' && !Array.isArray(o[k])) o[k] = deep(o[k], v); else o[k] = v; });
+    return o;
+  }
+  function safe(u) { u = String(u || '').trim(); return /^\s*(javascript|vbscript|data):/i.test(u) ? '#' : u; }
+  function el(t, c) { var e = document.createElement(t); if (c) e.className = c; return e; }
+  var IC = {
+    instagram: '<rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>',
+    facebook: '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
+    youtube: '<path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>',
+    linkedin: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>',
+    phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+    mail: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+    message: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+    link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+    arrow: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>'
+  };
+  function icon(n) { return IC[n] ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[n] + '</svg>' : ''; }
+
+  /* ================= POPUP ================= */
+  var PP_DEF = { enabled: true, trigger: 'delay', delay: 3, scroll: 40, freq: 'session', v: 1, pos: 'center', size: 'md', layout: 'image-top', overlay: 70, image: '', badge: '',
+    title: 'Rejoignez la communauté !', text: 'Suivez UIPACT sur Instagram pour découvrir mes dernières créations visuelles et les coulisses de mes projets.',
+    buttons: [{ label: 'Suivez-moi sur Instagram', href: 'https://www.instagram.com/uipact/', icon: 'instagram', style: 'primary', blank: true }], links: [], dismiss: '' };
+  var ov = $('instaPopup'), shown = false, fired = false, preview = /[?&]popup=preview/.test(location.search), lastPP = '', tmr = null, scr = null, exi = null;
+  function ppConf() { return deep(PP_DEF, cfg('popup')); }
+  function fill(a, b, first) {
+    a.className = 'pp-btn' + (first ? '' : ' no-cms') + ' ' + (b.style === 'secondary' || b.style === 'ghost' ? b.style : 'primary');
+    a.href = safe(b.href); if (b.blank !== false) { a.target = '_blank'; a.rel = 'noopener noreferrer'; } else { a.removeAttribute('target'); a.removeAttribute('rel'); }
+    a.innerHTML = icon(b.icon); a.appendChild(document.createTextNode(b.label));
+  }
+  function renderPP(P) {
+    if (!ov) return;
+    var card = $('ppCard'), img = !!P.image, lay = { 'image-left': 1, 'image-bg': 1 }[P.layout] ? P.layout : 'image-top';
+    ov.className = 'popup-overlay pp' + (P.pos === 'corner' ? ' pp-corner' : '') + (ov.classList.contains('show') ? ' show' : '');
+    ov.style.setProperty('--pp-o', (Math.min(90, Math.max(0, +P.overlay || 0)) / 100).toFixed(2));
+    var w = { sm: 380, md: 460, lg: 580 }[P.size] || 460;
+    card.className = 'pp-card' + (img ? ' pp-' + lay : ''); card.style.setProperty('--pp-w', (img && lay === 'image-left' ? w + 200 : w) + 'px');
+    var im = $('ppImg'); im.hidden = !img; im.style.backgroundImage = img ? 'url("' + String(P.image).replace(/["\\\n\r()]/g, '') + '")' : '';
+    var b = $('ppBadge'); b.hidden = !P.badge; b.textContent = P.badge || '';
+    var t = $('ppTitle'); t.hidden = !P.title; t.textContent = P.title || '';
+    var p = $('ppText'); p.hidden = !P.text; p.textContent = P.text || '';
+    var wrap = $('ppBtns'), first = wrap.querySelector('.pp-btn:not(.no-cms)');
+    [].slice.call(wrap.querySelectorAll('.pp-btn.no-cms')).forEach(function (x) { x.remove(); });
+    var bs = (P.buttons || []).filter(function (x) { return x && x.label; });
+    first.hidden = !bs.length; if (bs.length) fill(first, bs[0], true);
+    bs.slice(1).forEach(function (x) { var a = el('a'); fill(a, x, false); wrap.appendChild(a); }); wrap.hidden = !bs.length;
+    var lk = $('ppLinks'); lk.innerHTML = '';
+    (P.links || []).filter(function (x) { return x && x.label; }).forEach(function (x) { var a = el('a'); a.href = safe(x.href); a.textContent = x.label; if (x.blank) { a.target = '_blank'; a.rel = 'noopener noreferrer'; } lk.appendChild(a); });
+    lk.hidden = !lk.children.length;
+    var d = $('ppDismiss'); d.hidden = !P.dismiss; d.textContent = P.dismiss || '';
+  }
+  function sk(P) { return 'uipact_pp_' + (P.v || 1); }
+  function canShow(P) {
+    try { var f = P.freq || 'session', k = sk(P); if (f === 'always') return true; if (f === 'session') return !sessionStorage.getItem(k);
+      var t = localStorage.getItem(k); if (!t) return true; if (f === 'once') return false; return Date.now() - (+t || 0) > (f === 'week' ? 7 : 1) * 864e5; } catch (e) { return true; }
+  }
+  function rec(P) { try { var f = P.freq || 'session', k = sk(P); if (f === 'session') sessionStorage.setItem(k, '1'); else if (f !== 'always') localStorage.setItem(k, String(Date.now())); } catch (e) {} }
+  function showPP() { if (shown || !ov) return; var P = ppConf(); shown = true; renderPP(P); ov.classList.add('show'); if (!preview) rec(P); }
+  function hidePP() { if (ov) ov.classList.remove('show'); }
+  function disarm() { clearTimeout(tmr); if (scr) removeEventListener('scroll', scr); if (exi) document.removeEventListener('mouseout', exi); scr = exi = null; }
+  function fire() { if (fired || shown) return; var P = ppConf(); if (!P.enabled || !canShow(P)) return; fired = true; disarm(); showPP(); }
+  function arm() {
+    disarm(); if (fired || shown || preview) return; var P = ppConf(); if (!P.enabled || !canShow(P)) return;
+    var touch = !matchMedia('(hover: hover)').matches, d = Math.max(0, +P.delay || 0);
+    if (P.trigger === 'scroll') { scr = function () { var h = document.documentElement.scrollHeight - innerHeight; if (h > 0 && scrollY / h * 100 >= (+P.scroll || 40)) fire(); }; addEventListener('scroll', scr, { passive: true }); }
+    else if (P.trigger === 'exit' && !touch) { exi = function (e) { if (!e.relatedTarget && e.clientY <= 0) fire(); }; document.addEventListener('mouseout', exi); }
+    else tmr = setTimeout(fire, (P.trigger === 'exit' ? Math.max(d, 12) : d) * 1000);
+  }
+  if (ov) {
+    $('ppClose').addEventListener('click', hidePP); $('ppDismiss').addEventListener('click', hidePP);
+    $('ppClose').addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hidePP(); } });
+    ov.addEventListener('click', function (e) { if (e.target === ov && !ov.classList.contains('pp-corner')) hidePP(); else if (e.target.closest && e.target.closest('.pp-btns a, .pp-links a')) hidePP(); });
+    addEventListener('keydown', function (e) { if (e.key === 'Escape') hidePP(); });
+    if (preview) setTimeout(function () { fired = true; showPP(); }, 700);
+    if (document.readyState === 'complete') arm(); else addEventListener('load', arm);
+  }
+
+  /* ================= FORMULAIRE DE CONTACT ================= */
+  var CT_DEF = { title: 'CONTACT', intro: '', phone: '', style: 'light',
+    fields: {
+      prenom: { label: 'Prénom', ph: 'Votre prénom', on: true, req: true },
+      nom: { label: 'Nom', ph: 'Votre nom', on: true, req: true },
+      email: { label: 'Email', ph: 'nom@entreprise.fr', on: true, req: true },
+      telephone: { label: 'Téléphone', ph: '06 12 34 56 78', on: true, req: true },
+      site: { label: 'Votre site web', ph: 'https://www.votre-entreprise.fr', on: true, req: false },
+      secteur: { label: 'Votre secteur d’activité', ph: 'Choisissez votre secteur', on: true, req: true, options: ['Artisanat et bâtiment', 'Commerce de proximité', 'Services aux particuliers', 'Services aux entreprises', 'Santé et bien-être', 'Immobilier', 'Restauration et hôtellerie', 'E-commerce', 'Autre'] },
+      message: { label: 'Votre besoin en quelques mots', ph: 'Un nouveau logo, un site vitrine, une refonte…', on: true, req: false } },
+    consent: { on: true, label: 'Consentement RGPD', text: 'J’accepte que UIPACT utilise ces informations pour me recontacter au sujet de ma demande.', linkLabel: 'Politique de confidentialité', href: 'politique-confidentialite.html' },
+    button: 'Être rappelé', note: 'Vos données servent uniquement à traiter votre demande et à vous recontacter. Elles ne sont ni revendues ni transmises à des tiers.',
+    okTitle: 'Message envoyé !', okText: 'Merci, je reviens vers vous très vite.', subject: 'Nouveau message depuis le site UIPACT !' };
+  var lastCt = '';
+  function applyContact() {
+    var sec = $('contact'), form = $('ctForm'); if (!sec || !form) return;
+    var raw = cfg('contact'), key = JSON.stringify(raw || 0); if (key === lastCt) return; lastCt = key; if (!raw) return;
+    var C = deep(CT_DEF, raw);
+    sec.classList.toggle('ct-dark', C.style === 'dark'); sec.classList.toggle('ct-light', C.style !== 'dark');
+    var t = sec.querySelector('.section-title'); if (t) t.textContent = C.title;
+    var it = $('ctIntro'); it.textContent = C.intro || ''; it.hidden = !C.intro;
+    var digits = String(C.phone || '').replace(/[^\d+]/g, ''), ph = $('ctPhone'); ph.hidden = !digits; if (digits) { ph.href = 'tel:' + digits; $('ctPhoneT').textContent = C.phone; }
+    Object.keys(C.fields).forEach(function (k) {
+      var f = C.fields[k], w = form.querySelector('[data-f="' + k + '"]'); if (!w || !f) return;
+      var on = k === 'email' ? true : f.on !== false, req = k === 'email' ? true : (on && !!f.req), inp = w.querySelector('input,select,textarea');
+      w.hidden = !on; inp.disabled = !on; inp.required = req;
+      w.querySelector('.ct-lt').textContent = f.label || ''; w.querySelector('.ct-req').hidden = !req;
+      if (k === 'secteur') {
+        var cur = inp.value; inp.innerHTML = '';
+        var o0 = el('option'); o0.value = ''; o0.textContent = f.ph || 'Choisissez'; inp.appendChild(o0);
+        (f.options || []).forEach(function (x) { if (!x) return; var o = el('option'); o.textContent = x; inp.appendChild(o); }); inp.value = cur;
+      } else inp.placeholder = f.ph || '';
+    });
+    var cs = form.querySelector('[data-f="consent"]'), cb = cs.querySelector('input'), c = C.consent || {}, con = c.on !== false;
+    cs.hidden = !con; cb.disabled = !con; cb.required = con;
+    $('ctConsentLabel').textContent = c.label || ''; $('ctConsentText').textContent = c.text || '';
+    var lk = $('ctConsentLink'); lk.textContent = c.linkLabel || ''; lk.hidden = !c.linkLabel; lk.href = safe(c.href || '#');
+    form.querySelector('button[type=submit]').textContent = C.button || 'Envoyer';
+    var n = $('ctNote'); n.textContent = C.note || ''; n.hidden = !C.note;
+    form.querySelector('input[name=_subject]').value = C.subject || CT_DEF.subject;
+    form.setAttribute('data-ok-t', C.okTitle || CT_DEF.okTitle); form.setAttribute('data-ok-p', C.okText || CT_DEF.okText);
+  }
+
+  function tick() {
+    applyContact();
+    if (ov) { var k = JSON.stringify(cfg('popup') || 0); if (k !== lastPP) { lastPP = k; renderPP(ppConf()); if (!fired && !shown) arm(); } }
+  }
+  tick(); addEventListener('storage', tick); document.addEventListener('visibilitychange', tick);
+  var n = 0, t = setInterval(function () { tick(); if (++n > 200) clearInterval(t); }, 600);
 })();
 </script>
 </body>

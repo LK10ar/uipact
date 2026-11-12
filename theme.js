@@ -375,7 +375,7 @@
             fetch('https://formsubmit.co/ajax/uipact@gmail.com', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(o) })
                 .then(function (r) { return r.json(); })
                 .then(function (j) {
-                    if (j.success === 'true' || j.success === true) { f.innerHTML = '<div class="ok"><b>✓</b><h3>Message envoyé !</h3><p>Merci, je reviens vers vous très vite.</p></div>'; }
+                    if (j.success === 'true' || j.success === true) { f.innerHTML = '<div class="ok"><b>✓</b><h3></h3><p></p></div>'; f.querySelector('h3').textContent = f.getAttribute('data-ok-t') || 'Message envoyé !'; f.querySelector('p').textContent = f.getAttribute('data-ok-p') || 'Merci, je reviens vers vous très vite.'; }
                     else { throw 0; }
                 })
                 .catch(function () { btn.disabled = false; btn.textContent = t; HTMLFormElement.prototype.submit.call(f); });

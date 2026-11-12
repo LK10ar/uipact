@@ -560,6 +560,8 @@ var tok = sessionStorage.getItem('uipact_tok'), S = {}, tab = 'home', dirty = fa
 var TABS = [['home', '🏠', 'Accueil', 'Vue d\u2019ensemble et raccourcis'], ['texts', '✏️', 'Textes', 'Modifier, masquer ou ajouter des textes'], ['images', '🖼️', 'Photos des pages', 'Remplacer les photos fixes de chaque page'],
   ['anim', '🎬', 'Animations', 'Textes et photos des animations de la page d’accueil'],
   ['services', '🧩', 'Services', 'Ajouter, retirer ou modifier les cartes « Mes services » de l\u2019accueil'],
+  ['popup', '💬', 'Popup', 'Le message qui s’affiche sur l’accueil : texte, photo, boutons, liens'],
+  ['contact', '📝', 'Formulaire de contact', 'Champs, textes et messages du formulaire de l’accueil'],
   ['carousels', '🎠', 'Carrousels', 'Ajouter, supprimer et déplacer les photos des carrousels 3D'], ['media', '📁', 'Bibliothèque', 'Toutes vos photos envoyées'], ['colors', '🎨', 'Couleurs', 'La palette du site'], ['particles', '✨', 'Particules 3D', 'Réglages des formes 3D de la page d’accueil'],
   ['header', '🔝', 'Header', 'Le menu en haut des pages'], ['footer', '🔚', 'Footer', 'Le bas des pages'], ['seo', '🔍', 'SEO', 'Ce que Google et les réseaux sociaux affichent'],
   ['projects', '📂', 'Fiches projets', 'Publier et modifier les fiches du portfolio'],
@@ -599,7 +601,7 @@ async function start() {
   norm(); dirty = false; bar(); drawTabs(); show();
 }
 function go(k) { tab = k; drawTabs(); show(); }
-var ORDER = ['home', 'projects', 'texts', 'images', 'anim', 'services', 'carousels', 'media', 'colors', 'particles', 'header', 'footer', 'seo', 'langs', 'msgs'], GRP = { projects: 'Contenu', colors: 'Apparence', seo: 'Réglages', msgs: 'Courrier' };
+var ORDER = ['home', 'projects', 'texts', 'images', 'anim', 'services', 'popup', 'contact', 'carousels', 'media', 'colors', 'particles', 'header', 'footer', 'seo', 'langs', 'msgs'], GRP = { projects: 'Contenu', colors: 'Apparence', seo: 'Réglages', msgs: 'Courrier' };
 function drawTabs() { var t = $('#tabs'); t.innerHTML = ''; ORDER.map(function (k) { return LABEL[k]; }).forEach(function (x) { if (GRP[x[0]]) t.appendChild(h('div', { class: 'grp' }, GRP[x[0]])); t.appendChild(h('button', { class: 'nv' + (x[0] === tab ? ' on' : ''), title: x[3], onclick: function () { go(x[0]); } }, h('span', { class: 'ic' }, x[1]), x[2])); }); }
 $('#saveBtn').onclick = save;
 $('#undo').onclick = function () { if (confirm('Annuler toutes les modifications non enregistrées ?')) start(); };
@@ -614,7 +616,7 @@ async function save() {
 addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 function show() {
   var v = $('#view'); v.innerHTML = ''; v.className = ''; mark.pend = null; var t = LABEL[tab]; $('#vt').textContent = t[1] + '  ' + t[2]; $('#vd').textContent = t[3];
-  ({ home: vHome, texts: vTexts, anim: vAnim, services: vServices, images: vImages, carousels: vCars, media: vMedia, colors: vColors, particles: vParticles, header: vHeader, footer: vFooter, seo: vSeo, projects: vProjects, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); });
+  ({ home: vHome, texts: vTexts, anim: vAnim, services: vServices, popup: vPopup, contact: vContact, images: vImages, carousels: vCars, media: vMedia, colors: vColors, particles: vParticles, header: vHeader, footer: vFooter, seo: vSeo, projects: vProjects, langs: vLangs, msgs: vMsgs })[tab](v).catch(function (e) { toast(e.message, true); });
   window.scrollTo(0, 0);
 }
 async function pageDoc(p) { var r = await fetch(p + '.html'); if (!r.ok) throw new Error('Page introuvable : ' + p); return new DOMParser().parseFromString(await r.text(), 'text/html'); }
@@ -1173,6 +1175,139 @@ async function vServices(v) {
   v.appendChild(h('div', { class: 'row', style: 'margin-top:14px;gap:10px' },
     h('button', { class: 'sm', onclick: function () { D.cards.push({ icon: 'star', title: 'Nouveau service', text: '', highlight: '', btn: 'En savoir plus', href: 'contact.html' }); mark(); draw(); } }, '+ Ajouter une carte'),
     h('button', { class: 'del', onclick: function () { if (confirm('Remettre les 4 cartes d\u2019origine ?')) { S.sections.services = clone(SV_DEF); mark(); show(); } } }, '↺ Remettre les cartes d\u2019origine')));
+}
+
+/* ---------------- Popup de l'accueil ---------------- */
+var PP_ICONS = { none: 'Aucune', instagram: 'Instagram', facebook: 'Facebook', youtube: 'YouTube', linkedin: 'LinkedIn', phone: 'Téléphone', mail: 'E-mail', message: 'Bulle de message', link: 'Lien', arrow: 'Flèche' };
+var PP_DEF = { enabled: true, trigger: 'delay', delay: 3, scroll: 40, freq: 'session', v: 1, pos: 'center', size: 'md', layout: 'image-top', overlay: 70, image: '', badge: '',
+  title: 'Rejoignez la communauté !', text: 'Suivez UIPACT sur Instagram pour découvrir mes dernières créations visuelles et les coulisses de mes projets.',
+  buttons: [{ label: 'Suivez-moi sur Instagram', href: 'https://www.instagram.com/uipact/', icon: 'instagram', style: 'primary', blank: true }], links: [], dismiss: '' };
+function ppData() { S.sections = S.sections || {}; var d = Object.assign(clone(PP_DEF), S.sections.popup || {}); if (!Array.isArray(d.buttons)) d.buttons = []; if (!Array.isArray(d.links)) d.links = []; S.sections.popup = d; return d; }
+function chk(label, get, set) { var i = h('input', { type: 'checkbox' }); i.checked = !!get(); i.onchange = function () { set(i.checked); mark(); }; return h('label', { class: 'row', style: 'gap:8px;margin-top:8px' }, i, label); }
+function selx(opts, cur, set) { var s = h('select'); opts.forEach(function (o) { var op = h('option', { value: o[0] }, o[1]); if (o[0] === cur) op.selected = true; s.appendChild(op); }); s.onchange = function () { set(s.value); mark(); }; return s; }
+function numx(cur, min, max, set) { var i = h('input', { type: 'number', min: min, max: max, step: 1 }); i.value = cur; i.oninput = function () { var x = parseFloat(i.value); if (!isNaN(x)) { set(Math.min(max, Math.max(min, x))); mark(); } }; return i; }
+function iconSel(cur, set) { return selx(Object.keys(PP_ICONS).map(function (k) { return [k, PP_ICONS[k]]; }), cur || 'none', set); }
+function mvx(arr, i, d, redraw) { var j = i + d; if (j < 0 || j >= arr.length) return; var t = arr[i]; arr[i] = arr[j]; arr[j] = t; mark(); redraw(); }
+
+async function vPopup(v) {
+  var P = ppData(), bl = h('div'), ll = h('div');
+  v.appendChild(h('p', { class: 'hint' }, 'Le popup s’affiche sur la page d’accueil. Modifiez tout ici (texte, photo, boutons, liens, moment d’apparition), cliquez sur « Enregistrer », puis sur « Voir le popup sur le site ».'));
+  v.appendChild(h('div', { class: 'card' }, h('h3', {}, 'État'),
+    chk('Afficher le popup sur l’accueil', function () { return P.enabled !== false; }, function (x) { P.enabled = x; }),
+    h('div', { class: 'row', style: 'margin-top:12px;gap:10px' },
+      h('button', { class: 'sm gold', onclick: function () { window.open('index.html?popup=preview', '_blank'); } }, '👁 Voir le popup sur le site'),
+      h('button', { class: 'sm', title: 'Les visiteurs qui l’ont déjà fermé le reverront', onclick: function () { P.v = (P.v || 1) + 1; mark(); toast('Le popup sera réaffiché à tous les visiteurs après l’enregistrement'); } }, '↻ Le réafficher à tous les visiteurs'))));
+  v.appendChild(h('div', { class: 'card' }, h('h3', {}, 'Quand l’afficher'),
+    h('div', { class: 'g2' },
+      fld('Déclencheur', selx([['delay', 'Après un délai'], ['scroll', 'Quand le visiteur descend dans la page'], ['exit', 'Quand il s’apprête à quitter la page (ordinateur)']], P.trigger, function (x) { P.trigger = x; })),
+      fld('À quelle fréquence', selx([['session', 'Une fois par visite (par défaut)'], ['day', 'Une fois par jour'], ['week', 'Une fois par semaine'], ['once', 'Une seule fois par visiteur'], ['always', 'À chaque chargement de la page']], P.freq, function (x) { P.freq = x; }))),
+    h('div', { class: 'g2' },
+      fld('Délai (en secondes)', numx(P.delay, 0, 120, function (x) { P.delay = x; }), 'Pour « Après un délai ». Avec « Quand il quitte », sert de délai de secours sur téléphone (12 s minimum).'),
+      fld('Position de défilement (en %)', numx(P.scroll, 5, 100, function (x) { P.scroll = x; }), 'Pour « Quand le visiteur descend ».')),
+    fld('Position', selx([['center', 'Au centre, avec un fond assombri'], ['corner', 'En bas à droite, discret (sans fond assombri)']], P.pos, function (x) { P.pos = x; }))));
+
+  var th = h('div', { class: 'big', style: 'height:150px;border-radius:12px;background:#0b1330 center/cover no-repeat;border:1px solid rgba(255,255,255,.12)' });
+  function showImg() { th.style.backgroundImage = P.image ? 'url("' + String(P.image).replace(/["\\\n\r()]/g, '') + '")' : 'none'; th.textContent = P.image ? '' : 'Aucune photo'; th.style.display = 'grid'; th.style.placeItems = 'center'; th.style.color = '#8b93ad'; }
+  function putImg(u) { P.image = u; showImg(); mark(); }
+  showImg();
+  var ov = h('input', { type: 'range', min: 0, max: 90, step: 5, style: 'width:100%;accent-color:#C9A24B' }); ov.value = P.overlay; var ovv = h('b', {}, P.overlay + ' %');
+  ov.oninput = function () { P.overlay = parseInt(ov.value, 10); ovv.textContent = P.overlay + ' %'; mark(); };
+  v.appendChild(h('div', { class: 'card' }, h('h3', {}, 'Apparence'),
+    h('div', { class: 'g2' },
+      fld('Photo (facultative)', h('div', {}, th, h('div', { class: 'row', style: 'margin-top:8px;gap:8px' }, imgButtons(putImg)[0], h('button', { class: 'sm', onclick: function () { putImg(''); } }, '✕ Retirer la photo')))),
+      h('div', {},
+        fld('Disposition de la photo', selx([['image-top', 'Photo en haut'], ['image-left', 'Photo à gauche (ordinateur)'], ['image-bg', 'Photo en fond']], P.layout, function (x) { P.layout = x; })),
+        fld('Taille', selx([['sm', 'Petit'], ['md', 'Moyen'], ['lg', 'Grand']], P.size, function (x) { P.size = x; })),
+        fld('Assombrissement du fond', h('div', { class: 'row' }, ov, ovv))))));
+
+  v.appendChild(h('div', { class: 'card' }, h('h3', {}, 'Texte'),
+    fld('Petite étiquette au-dessus du titre (facultative)', tx(P.badge, function (x) { P.badge = x; }, 'ex. NOUVEAU, OFFRE DE LANCEMENT')),
+    fld('Titre', tx(P.title, function (x) { P.title = x; })),
+    fld('Texte', tx(P.text, function (x) { P.text = x; }, '', 4), 'Les retours à la ligne sont conservés.'),
+    fld('Lien « fermer » sous les boutons (facultatif)', tx(P.dismiss, function (x) { P.dismiss = x; }, 'ex. Non merci'))));
+
+  function drawB() {
+    bl.innerHTML = '';
+    P.buttons.forEach(function (b, i) {
+      bl.appendChild(h('div', { class: 'card', style: 'margin-top:12px' },
+        h('div', { class: 'row' }, h('b', { style: 'flex:1' }, 'Bouton ' + (i + 1) + (b.label ? ' · ' + b.label : '')),
+          h('button', { class: 'sm', onclick: function () { mvx(P.buttons, i, -1, drawB); } }, '↑'), h('button', { class: 'sm', onclick: function () { mvx(P.buttons, i, 1, drawB); } }, '↓'),
+          h('button', { class: 'sm del', onclick: function () { P.buttons.splice(i, 1); mark(); drawB(); } }, '🗑 Supprimer')),
+        h('div', { class: 'g2' }, fld('Texte du bouton', tx(b.label, function (x) { b.label = x; })), fld('Lien', tx(b.href, function (x) { b.href = x; }, 'https://… ou contact.html ou tel:0600000000'))),
+        h('div', { class: 'g2' }, fld('Icône', iconSel(b.icon, function (x) { b.icon = x; })), fld('Style', selx([['primary', 'Doré (principal)'], ['secondary', 'Contour (secondaire)'], ['ghost', 'Texte seul']], b.style || 'primary', function (x) { b.style = x; }))),
+        chk('Ouvrir dans un nouvel onglet', function () { return b.blank !== false; }, function (x) { b.blank = x; })));
+    });
+    if (!P.buttons.length) bl.appendChild(h('p', { class: 'hint' }, 'Aucun bouton : le popup affichera seulement le texte.'));
+  }
+  drawB();
+  v.appendChild(h('div', { class: 'card' }, h('h3', {}, 'Boutons'), bl, h('button', { class: 'sm', style: 'margin-top:12px', onclick: function () { P.buttons.push({ label: 'Nouveau bouton', href: 'contact.html', icon: 'arrow', style: 'secondary', blank: false }); mark(); drawB(); } }, '+ Ajouter un bouton')));
+
+  function drawL() {
+    ll.innerHTML = '';
+    P.links.forEach(function (l, i) {
+      ll.appendChild(h('div', { class: 'row', style: 'margin-top:10px;gap:8px;align-items:flex-end' },
+        fld('Texte', tx(l.label, function (x) { l.label = x; })), fld('Lien', tx(l.href, function (x) { l.href = x; })),
+        h('button', { class: 'sm', onclick: function () { mvx(P.links, i, -1, drawL); } }, '↑'), h('button', { class: 'sm', onclick: function () { mvx(P.links, i, 1, drawL); } }, '↓'),
+        h('button', { class: 'sm del', onclick: function () { P.links.splice(i, 1); mark(); drawL(); } }, '🗑')));
+    });
+  }
+  drawL();
+  v.appendChild(h('div', { class: 'card' }, h('h3', {}, 'Petits liens sous les boutons'), h('p', { class: 'hint' }, 'Facultatif : mentions légales, réseau social, etc.'), ll,
+    h('button', { class: 'sm', style: 'margin-top:12px', onclick: function () { P.links.push({ label: 'Nouveau lien', href: 'contact.html', blank: false }); mark(); drawL(); } }, '+ Ajouter un lien')));
+  v.appendChild(h('button', { class: 'del', style: 'margin-top:14px', onclick: function () { if (confirm('Remettre le popup comme à l’origine ?')) { S.sections.popup = clone(PP_DEF); mark(); show(); } } }, '↺ Remettre le popup d’origine'));
+}
+
+/* ---------------- Formulaire de contact de l'accueil ---------------- */
+var CT_DEF = { title: 'CONTACT', intro: '', phone: '', style: 'light',
+  fields: {
+    prenom: { label: 'Prénom', ph: 'Votre prénom', on: true, req: true },
+    nom: { label: 'Nom', ph: 'Votre nom', on: true, req: true },
+    email: { label: 'Email', ph: 'nom@entreprise.fr', on: true, req: true },
+    telephone: { label: 'Téléphone', ph: '06 12 34 56 78', on: true, req: true },
+    site: { label: 'Votre site web', ph: 'https://www.votre-entreprise.fr', on: true, req: false },
+    secteur: { label: 'Votre secteur d’activité', ph: 'Choisissez votre secteur', on: true, req: true, options: ['Artisanat et bâtiment', 'Commerce de proximité', 'Services aux particuliers', 'Services aux entreprises', 'Santé et bien-être', 'Immobilier', 'Restauration et hôtellerie', 'E-commerce', 'Autre'] },
+    message: { label: 'Votre besoin en quelques mots', ph: 'Un nouveau logo, un site vitrine, une refonte…', on: true, req: false } },
+  consent: { on: true, label: 'Consentement RGPD', text: 'J’accepte que UIPACT utilise ces informations pour me recontacter au sujet de ma demande.', linkLabel: 'Politique de confidentialité', href: 'politique-confidentialite.html' },
+  button: 'Être rappelé', note: 'Vos données servent uniquement à traiter votre demande et à vous recontacter. Elles ne sont ni revendues ni transmises à des tiers.',
+  okTitle: 'Message envoyé !', okText: 'Merci, je reviens vers vous très vite.', subject: 'Nouveau message depuis le site UIPACT !' };
+var CT_NAMES = { prenom: 'Prénom', nom: 'Nom', email: 'Email', telephone: 'Téléphone', site: 'Site web', secteur: 'Secteur d’activité (liste déroulante)', message: 'Besoin / message' };
+function ctData() {
+  S.sections = S.sections || {}; var cur = S.sections.contact || {}, d = clone(CT_DEF);
+  ['title', 'intro', 'phone', 'style', 'button', 'note', 'okTitle', 'okText', 'subject'].forEach(function (k) { if (cur[k] != null) d[k] = cur[k]; });
+  Object.keys(d.fields).forEach(function (k) { if (cur.fields && cur.fields[k]) Object.assign(d.fields[k], cur.fields[k]); });
+  if (cur.consent) Object.assign(d.consent, cur.consent);
+  S.sections.contact = d; return d;
+}
+async function vContact(v) {
+  var C = ctData();
+  v.appendChild(h('p', { class: 'hint' }, 'Le formulaire de contact de la page d’accueil. Les messages arrivent dans « Messages » et par e-mail. Cliquez sur « Enregistrer », puis rechargez le site (Ctrl + F5).'));
+  v.appendChild(h('div', { class: 'card' }, h('h3', {}, 'En-tête'),
+    fld('Titre de la section', tx(C.title, function (x) { C.title = x; })),
+    fld('Texte d’introduction (facultatif)', tx(C.intro, function (x) { C.intro = x; }, 'ex. Parlez-moi de votre projet, je vous rappelle sous 48 h.', 3)),
+    h('div', { class: 'g2' },
+      fld('Numéro de téléphone affiché (facultatif)', tx(C.phone, function (x) { C.phone = x; }, 'ex. 06 12 34 56 78'), 'Devient un bouton « appeler » au-dessus du formulaire.'),
+      fld('Style des champs', selx([['light', 'Clair (comme Webnation)'], ['dark', 'Sombre (verre)']], C.style, function (x) { C.style = x; })))));
+  Object.keys(C.fields).forEach(function (k) {
+    var f = C.fields[k], lock = k === 'email', box = h('div', { class: 'card', style: 'margin-top:12px' });
+    box.appendChild(h('div', { class: 'row' }, h('b', { style: 'flex:1' }, CT_NAMES[k]),
+      lock ? h('small', {}, 'Toujours affiché et obligatoire (pour vous répondre)') : h('div', { class: 'row', style: 'gap:16px;flex:none' }, chk('Afficher', function () { return f.on !== false; }, function (x) { f.on = x; }), chk('Obligatoire', function () { return !!f.req; }, function (x) { f.req = x; }))));
+    box.appendChild(h('div', { class: 'g2' }, fld('Intitulé', tx(f.label, function (x) { f.label = x; })), fld(k === 'secteur' ? 'Première ligne de la liste' : 'Texte d’exemple dans le champ', tx(f.ph, function (x) { f.ph = x; }))));
+    if (k === 'secteur') box.appendChild(fld('Choix de la liste (un par ligne)', tx((f.options || []).join('\n'), function (x) { f.options = x.split('\n').map(function (s) { return s.trim(); }).filter(Boolean); }, '', 9)));
+    v.appendChild(box);
+  });
+  var K = C.consent;
+  v.appendChild(h('div', { class: 'card', style: 'margin-top:12px' }, h('h3', {}, 'Consentement RGPD'),
+    chk('Afficher la case à cocher (obligatoire pour envoyer)', function () { return K.on !== false; }, function (x) { K.on = x; }),
+    fld('Titre', tx(K.label, function (x) { K.label = x; })), fld('Texte à côté de la case', tx(K.text, function (x) { K.text = x; }, '', 3)),
+    h('div', { class: 'g2' }, fld('Texte du lien', tx(K.linkLabel, function (x) { K.linkLabel = x; })), fld('Adresse du lien', tx(K.href, function (x) { K.href = x; })))));
+  v.appendChild(h('div', { class: 'card', style: 'margin-top:12px' }, h('h3', {}, 'Bouton et messages'),
+    fld('Texte du bouton d’envoi', tx(C.button, function (x) { C.button = x; })),
+    fld('Petite note sous le bouton (facultative)', tx(C.note, function (x) { C.note = x; }, '', 3)),
+    h('div', { class: 'g2' }, fld('Titre après l’envoi', tx(C.okTitle, function (x) { C.okTitle = x; })), fld('Texte après l’envoi', tx(C.okText, function (x) { C.okText = x; }))),
+    fld('Objet de l’e-mail que vous recevez', tx(C.subject, function (x) { C.subject = x; }))));
+  v.appendChild(h('div', { class: 'row', style: 'margin-top:14px;gap:10px' },
+    h('button', { class: 'sm gold', onclick: function () { window.open('index.html#contact', '_blank'); } }, '👁 Voir le formulaire sur le site'),
+    h('button', { class: 'del', onclick: function () { if (confirm('Remettre le formulaire comme à l’origine ?')) { S.sections.contact = clone(CT_DEF); mark(); show(); } } }, '↺ Remettre le formulaire d’origine')));
 }
 
 /* ---------------- Aperçus Header / Footer ---------------- */
