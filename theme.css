@@ -1059,3 +1059,6 @@ html[data-theme="dark"] header select option,html[data-theme="dark"] select[id*=
   #methode .p3-in{ pointer-events:none; }
   #about{ padding-top:40px; }
 }
+
+/* Pages légales : le texte est toujours visible, sans effet d'apparition au défilement */
+.legal-content, .legal-content.rv { opacity: 1 !important; transform: none !important; transition: none !important; }
