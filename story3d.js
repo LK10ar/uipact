@@ -9,14 +9,21 @@
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var mobile = function () { return innerWidth < 980; };
   var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
-  // Valeurs par défaut = tes réglages ; l'admin peut les modifier (section « particles », enregistrée sur l'API)
-  var P = { rep: 1, rad: .8, ns: .04, nsp: .3, count: 18000, size: .6, bg: 'UIPACT' };
+  // Valeurs par défaut ; l'admin les modifie : « particles » = ordinateur, « particlesMobile » = mobile (écrans < 980 px). Deux réglages indépendants.
+  var PD = { rep: 1, rad: .8, ns: .04, nsp: .3, count: 18000, size: .6, bg: 'UIPACT' };
+  var PM = { rep: 1, rad: .8, ns: .04, nsp: .3, count: 6000, size: .6, bg: 'UIPACT' };
+  function mk(def, cfg) {
+    var o = {}; for (var k in def) o[k] = def[k]; cfg = cfg || {};
+    ['rep', 'rad', 'ns', 'nsp', 'count', 'size'].forEach(function (k) { if (typeof cfg[k] === 'number' && isFinite(cfg[k])) o[k] = cfg[k]; });
+    if (typeof cfg.bg === 'string' && cfg.bg.trim()) o.bg = cfg.bg.trim().slice(0, 14).toUpperCase();
+    return o;
+  }
+  var PDK = mk(PD), PMK = mk(PM);
   try {
-    var cached = JSON.parse(localStorage.getItem('uipact_cms_' + (localStorage.getItem('uipact_lang') || 'fr')) || '{}').particles || {};
-    ['rep', 'rad', 'ns', 'nsp', 'count', 'size'].forEach(function (k) { if (typeof cached[k] === 'number' && isFinite(cached[k])) P[k] = cached[k]; });
-    if (typeof cached.bg === 'string' && cached.bg.trim()) P.bg = cached.bg.trim().slice(0, 14).toUpperCase();
+    var cached = JSON.parse(localStorage.getItem('uipact_cms_' + (localStorage.getItem('uipact_lang') || 'fr')) || '{}');
+    PDK = mk(PD, cached.particles); PMK = mk(PM, cached.particlesMobile);
   } catch (e) {}
-  if (mobile()) P.count = Math.min(P.count, 6000);
+  var isMob = mobile(), P = isMob ? PMK : PDK;
 
   /* ---------- index latéral + apparition des textes (fonctionnent même sans WebGL) ---------- */
   var idx = document.createElement('div'), idxBtns = []; idx.className = 'sty-idx'; idx.setAttribute('aria-label', 'Chapitres');
@@ -279,7 +286,14 @@ void main() {
   }
   addEventListener('mousemove', onMove, { passive: true }); addEventListener('touchmove', onMove, { passive: true });
   document.addEventListener('mouseleave', function () { mT = 0; });
-  addEventListener('resize', function () { var w = host.clientWidth || innerWidth, h = host.clientHeight || innerHeight; camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h); layout(); onScroll(); });
+  // passage ordinateur <-> mobile (rotation de l'écran, fenêtre redimensionnée) : on applique les réglages de l'autre mode
+  function syncP() {
+    var m = mobile(); if (m === isMob) return; isMob = m; var prev = P; P = m ? PMK : PDK;
+    uni.uNoiseStrength.value = P.ns; uni.uNoiseSpeed.value = reduce ? 0 : P.nsp; uni.uRepulsionRadius.value = P.rad; uni.uRepulsionStrength.value = P.rep;
+    if (P.count !== prev.count) build(P.count);
+    setBg();
+  }
+  addEventListener('resize', function () { syncP(); var w = host.clientWidth || innerWidth, h = host.clientHeight || innerHeight; camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h); layout(); onScroll(); });
 
   /* ---------- boucle ---------- */
   var tf = 0, cf = 0, act = -1, cRY = 0, cRX = 0, cPX = 0, cPY = 0, cS = 1, snap = true, last = performance.now(), running = false;
