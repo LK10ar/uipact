@@ -31,9 +31,13 @@
         // Apparition au scroll
         var els = document.querySelectorAll('.section-title,.portfolio-item,.service-card,.about-content,.contact-form,.value-item,.project-card,.tarif-item,.legal-content');
         if ('IntersectionObserver' in window) {
+            // Un élément s'affiche quand 10 % de sa hauteur est visible, ou quand une bonne part de l'écran l'est : sans ça, un bloc très haut
+            // (ex. le texte des pages légales) resterait invisible tant qu'on ne défile pas.
             var io = new IntersectionObserver(function (es) {
-                es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-            }, { threshold: .1 });
+                es.forEach(function (e) {
+                    if (e.isIntersecting && (e.intersectionRatio >= .1 || e.intersectionRect.height >= Math.min(innerHeight * .2, e.boundingClientRect.height))) { e.target.classList.add('in'); io.unobserve(e.target); }
+                });
+            }, { threshold: [0, .1] });
             els.forEach(function (e) { e.classList.add('rv'); io.observe(e); });
         }
 
