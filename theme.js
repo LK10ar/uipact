@@ -29,7 +29,7 @@
         }, { passive: true });
 
         // Apparition au scroll
-        var els = document.querySelectorAll('.section-title,.portfolio-item,.service-card,.about-content,.contact-form,.value-item,.project-card,.tarif-item,.legal-content');
+        var els = document.querySelectorAll('.section-title,.portfolio-item,.service-card,.about-content,.contact-form,.value-item,.project-card,.tarif-item'); // (.legal-content : texte légal toujours visible, sans effet d'apparition)
         if ('IntersectionObserver' in window) {
             // Un élément s'affiche quand 10 % de sa hauteur est visible, ou quand une bonne part de l'écran l'est : sans ça, un bloc très haut
             // (ex. le texte des pages légales) resterait invisible tant qu'on ne défile pas.
@@ -38,7 +38,12 @@
                     if (e.isIntersecting && (e.intersectionRatio >= .1 || e.intersectionRect.height >= Math.min(innerHeight * .2, e.boundingClientRect.height))) { e.target.classList.add('in'); io.unobserve(e.target); }
                 });
             }, { threshold: [0, .1] });
-            els.forEach(function (e) { e.classList.add('rv'); io.observe(e); });
+            els.forEach(function (e) {
+                e.classList.add('rv');
+                // un bloc plus haut que l'écran s'affiche tout de suite : son effet 3D le décalerait hors de l'écran et il resterait invisible
+                if (e.offsetHeight > innerHeight * 1.2) { e.classList.add('in'); return; }
+                io.observe(e);
+            });
         }
 
         // Écran de chargement : accueil uniquement, une fois par session
