@@ -852,7 +852,7 @@ function partPanel(host, key, DEF, mobile) {
 }
 async function vParticles(v) {
   v.appendChild(h('h2', {}, 'Particules 3D de l\u2019accueil'));
-  v.appendChild(h('p', { class: 'hint' }, 'Deux réglages séparés : un pour les ordinateurs, un pour les téléphones (écrans de moins de 861 px de large). Ils s\u2019appliquent à tous les visiteurs après enregistrement (le site se recharge une fois chez eux, puis garde ces valeurs). Pour les voir : ouvrez l\u2019accueil et faites Ctrl+F5.'));
+  v.appendChild(h('p', { class: 'hint' }, 'Deux réglages séparés : un pour les ordinateurs, un pour les téléphones (écrans de moins de 980 px de large). Ils s\u2019appliquent à tous les visiteurs après enregistrement (le site se recharge une fois chez eux, puis garde ces valeurs). Pour les voir : ouvrez l\u2019accueil et faites Ctrl+F5.'));
   var tabs = h('div', { class: 'seg' }), pd = h('div'), pm = h('div'), bd, bm;
   function pick(m) { partTab = m; pd.hidden = m !== 'desktop'; pm.hidden = m !== 'mobile'; bd.classList.toggle('on', m === 'desktop'); bm.classList.toggle('on', m === 'mobile'); }
   bd = h('button', { onclick: function () { pick('desktop'); } }, '🖥️ Ordinateur'); bm = h('button', { onclick: function () { pick('mobile'); } }, '📱 Mobile');
